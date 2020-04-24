@@ -1,0 +1,7 @@
+Daniel Alejandro Gaytan Botello A00819362
+Diego Enrique Treviño Ferrer A00819313
+
+
+*|* Semana 1 : 
+
+-Se realizo el avance del analizador lexico y sintactico. [In progress]
