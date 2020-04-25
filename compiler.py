@@ -1,15 +1,17 @@
 import popurri_tokens as p_t  # probablemente ni usemos esto
 import error_tokens as e  # probablemente si usemos esto
-# import _ as popurri_parser
-# import _ as popurri_listener
-# import _ as popurri_lexer
-from antlr4 import ParseTreeWalker
+
+from parser.PopurriLexer import PopurriLexer
+from parser.PopurriListener import PopurriListener
+from parser.PopurriParser import PopurriParser
+from antlr4 import *
+import sys
 
 # 10000 direcciones para cada tipo [INT, FLOAT, STRING, BOOL]
 MEM_DEFAULT = 10000
 
 
-class PopurriRuleHandler(popurri_listener):
+class PopurriRuleHandler(PopurriListener):
     '''
     -Esta clase nos permite simular la creacion de tabla de variables
     -[Tal vez podamos usar esta clase para simular la semantica basica de expresiones]
@@ -288,27 +290,27 @@ class PopurriRuleHandler(popurri_listener):
 
 
 class Compiler(object):
-
-    def __init__(self, file_stream=None, mem_size=MEM_DEFAULT):
-        self.file_stream = file_stream
-        self.pListener = PopurriRuleHandler()
+    def __init__(self, mem_size=MEM_DEFAULT):
         self.int_mem_counter = 0
         self.float_mem_counter = 0
         self.string_mem_counter = 0
         self.bool_mem_counter = 0
 
-    def compile(self):
-        lexer = PopurriLexer()
-        stream = CommonTokenStream()
-        parser = PopurriParser()
+    def compile(self, file):
+        input_stream = FileStream(file)
+        lexer = PopurriLexer(input_stream)
+        stream = CommonTokenStream(lexer)
+        parser = PopurriParser(stream)
 
-        tree = parser.module()
-
+        tree = parser.program()
         walker = ParseTreeWalker()
-        walker.walk(self.pListener, tree)
+        walker.walk(PopurriRuleHandler(), tree)
+        if parser.getNumberOfSyntaxErrors() is 0:
+            print("Compiled successfully!")
+
 
 
 # Testing purposes
 if __name__ == '__main__':
     compiler = Compiler()
-    compiler.compile()
+    compiler.compile(sys.argv[1])
