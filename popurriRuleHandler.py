@@ -1,4 +1,4 @@
-import PopurriListener
+from parser.PopurriListener import PopurriListener
 
 
 class PopurriRuleHandler(PopurriListener):
