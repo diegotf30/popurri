@@ -8,7 +8,7 @@ MULTDIVOP : '*' | '/' | '%';
 ASSIGNOP : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
 // Terminals
-WS : [ \t\r\n]+ -> skip;
+WS : [ \t\r]+ -> skip;
 COMMENT : '//' .*? -> skip;
 ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
 CONST_BOOL : 'true' | 'false';

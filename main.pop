@@ -2,7 +2,7 @@ module main
 
 var a = 25
 var b : double
-var arr : [[int]]
+var arr : [int]
 var arr2 = ["hola", "gaytan"]
 var parent : Parent
 var child : Child
