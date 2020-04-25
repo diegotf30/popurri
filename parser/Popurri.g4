@@ -9,11 +9,12 @@ ASSIGNOP : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
 // Terminals
 WS : [ \t\r\n]+ -> skip;
+COMMENT : '//' .*? -> skip;
 ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
 CONST_BOOL : 'true' | 'false';
 CONST_I : [1-9][0-9]*;
 CONST_F : [0-9]* '.' [0-9]+;
-CONST_STR : '\'' *? '\'' | '"' *? '"';
+CONST_STR : '\'' .*? '\'' | '"' .*? '"';
 TYPE :  'int' | 'float' | 'string' | '[' ('float' | 'int') ']';
 
 program : module declarations* classDeclaration* function* statement*;

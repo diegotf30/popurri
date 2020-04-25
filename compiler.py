@@ -297,7 +297,7 @@ class Compiler(object):
         self.bool_mem_counter = 0
 
     def compile(self, file):
-        input_stream = FileStream(file)
+        input_stream = FileStream(file, encoding='utf-8')
         lexer = PopurriLexer(input_stream)
         stream = CommonTokenStream(lexer)
         parser = PopurriParser(stream)
@@ -308,9 +308,6 @@ class Compiler(object):
         if parser.getNumberOfSyntaxErrors() is 0:
             print("Compiled successfully!")
 
-
-
-# Testing purposes
 if __name__ == '__main__':
     compiler = Compiler()
     compiler.compile(sys.argv[1])
