@@ -1,4 +1,5 @@
 from parser.PopurriListener import PopurriListener
+from popurri_tokens import *
 
 
 class PopurriRuleHandler(PopurriListener):
@@ -12,25 +13,44 @@ class PopurriRuleHandler(PopurriListener):
     -[var_dir] es el directorio de variables de una funcion [declarations]
     '''
 
-    def __init__(self, int_mem_slots=None, float_mem_slots=None, string_mem_slots=None, bool_mem_slots=None):
+    def __init__(self, mem_slots=None, mem_size=None):
         '''
         *- [global_dir] es el directorio global [declarations, classes, functions]
         '''
-        self.int_mem_slots = int_mem_slots
-        self.float_mem_slots = float_mem_slots
-        self.string_mem_slots = string_mem_slots
-        self.bool_mem_slots = bool_mem_slots
+        self.mem_slots = mem_slots
+        self.mem_ptr_dict = {
+            INT: 0,
+            FLOAT: mem_size,
+            STRING: mem_size * 2,
+            BOOL: mem_size * 3
+        }
+        self.global_dir_ptr = 0
+        self.curr_level_global = True
+
+    def getSymbolFromStr(self, symbol_str=None):
+        symbolTable = ['', 'int', 'float', 'string', 'bool']
+        if symbol_str is None:
+            return None
+        return symbolTable.index(str(symbol_str))
+
+    def getGlobalPtrFromId(self, id=None):
+        for iterator in range(len(self.global_dir)):
+            if id is self.global_dir[iterator]['id']:
+                return iterator
+        return None
 
     def enterModule(self, ctx):
         '''
         [Module] no afecta ningun aspecto del compilador o lenguaje, por lo que se ignora
         '''
+        print('module')
         pass
 
     def exitModule(self, ctx):
         '''
         [Module] no afecta ningun aspecto del compilador o lenguaje, por lo que se ignora
         '''
+        print('module exit')
         pass
 
     def enterProgram(self, ctx):
@@ -38,7 +58,16 @@ class PopurriRuleHandler(PopurriListener):
         [Program] marca el inicio de las reglas de la gramatica. Aqui inicia la fase de compilacion.
         '''
         # Inicializa las direcciones globales [no es necesario hacerlo explicito]
-        self.global_dir = {}
+        self.global_dir = [
+            {
+                'id': 'global',
+                'declarations': [],
+                'classes': [],
+                'functions': [],
+                'statements': [],
+            },
+        ]
+        print('program')
         pass
 
     def exitProgram(self, ctx):
@@ -47,7 +76,7 @@ class PopurriRuleHandler(PopurriListener):
         '''
         # Libera la memoria del compilador [Elimina las entradas de la tabla de direccines globales]
         self.global_dir.clear()
-        self.int_mem_slots = self.float_mem_slots = self.string_mem_slots = self.bool_mem_slots = []
+        self.mem_slots = []
         pass
 
     def enterDeclarations(self, ctx):
@@ -57,18 +86,60 @@ class PopurriRuleHandler(PopurriListener):
         pass
 
     def enterDeclaration(self, ctx):
-        pass
+
+        print(ctx.TYPE())
+        # Checks if var is already created in mem_slots
+        for slot in self.mem_slots:
+            if slot[0] is ctx.ID():
+                raise 'ERROR VAR ALREADY CREATED'
+
+        # Creates var
+        symbol_token = self.getSymbolFromStr(ctx.TYPE())
+        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (ctx.ID(), 0)
+        self.global_dir[self.global_dir_ptr]['declarations'].append(
+            self.mem_ptr_dict[symbol_token])
+
+        # increments the ptr for ctx.TYPE()in mem_ptr_dict
+        self.mem_ptr_dict[symbol_token] += 1
+
+        # Check if everything is correct[Debugging]
+        print(self.global_dir, self.mem_ptr_dict)
+        print('declaration')
 
     def exitDeclaration(self, ctx):
         pass
 
-    def enterClass(self, ctx):
-        pass
+    def enterClassDeclaration(self, ctx):
+        print('class')
 
-    def exitClass(self, ctx):
+        created_class = {
+            'type': 'class',
+            'id': None,
+            'class_parent': None,
+            'node_parent': 0,
+            'attributes': [],
+            'functions': [],
+        }
+        created_class['id'] = str(ctx.ID())
+
+        if ctx.parent() is not None:
+            created_class['class_parent'] = self.getGlobalPtrFromId(
+                ctx.parent())
+            if created_class['class_parent'] is None:
+                print('Error')
+
+        self.global_dir.append(created_class)
+        self.global_dir_ptr = len(self.global_dir) - 1
+        self.global_dir[created_class['node_parent']
+                        ]['classes'].append(self.global_dir_ptr)
+        print(self.global_dir, self.mem_ptr_dict, self.global_dir_ptr)
+
+    def exitClassDeclaration(self, ctx):
+        self.global_dir_ptr = 0
         pass
 
     def enterParent(self, ctx):
+        self.global_dir[self.global_dir_ptr]['parent'] = str(ctx.ID())
         pass
 
     def exitParent(self, ctx):
@@ -123,9 +194,11 @@ class PopurriRuleHandler(PopurriListener):
         pass
 
     def enterType(self, ctx):
+        print()
         pass
 
     def exitType(self, ctx):
+        print('type')
         pass
 
     def enterIterable(self, ctx):
