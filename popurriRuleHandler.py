@@ -35,7 +35,7 @@ class PopurriRuleHandler(PopurriListener):
 
     def getGlobalPtrFromId(self, id=None):
         for iterator in range(len(self.global_dir)):
-            if id is self.global_dir[iterator]['id']:
+            if str(id) == str(self.global_dir[iterator]['id']):
                 return iterator
         return None
 
@@ -134,7 +134,7 @@ class PopurriRuleHandler(PopurriListener):
     def enterParent(self, ctx):
         if ctx.ID() is not None:
             self.global_dir[self.global_dir_ptr]['class_parent'] = self.getGlobalPtrFromId(
-                str(ctx.ID()))
+                ctx.ID())
             if self.global_dir[self.global_dir_ptr]['class_parent'] is None:
                 print('Error')
 
@@ -188,7 +188,23 @@ class PopurriRuleHandler(PopurriListener):
         pass
 
     def enterAttribute(self, ctx):
-        pass
+        # Checks if var is already created in mem_slots
+        for slot in self.mem_slots:
+            if slot[0] is ctx.ID():
+                raise 'ERROR VAR ALREADY CREATED'
+
+        # Creates var
+        symbol_token = self.getSymbolFromStr(ctx.TYPE())
+        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (ctx.ID(), 0)
+        self.global_dir[self.global_dir_ptr]['attributes'].append(
+            self.mem_ptr_dict[symbol_token])
+
+        # increments the ptr for ctx.TYPE()in mem_ptr_dict
+        self.mem_ptr_dict[symbol_token] += 1
+
+        # Check if everything is correct[Debugging]
+        print(self.global_dir, self.mem_ptr_dict)
+        print('attribute')
 
     def exitAttribute(self, ctx):
         pass
