@@ -251,6 +251,51 @@ class PopurriListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PopurriParser#boolOp.
+    def enterBoolOp(self, ctx:PopurriParser.BoolOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#boolOp.
+    def exitBoolOp(self, ctx:PopurriParser.BoolOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#cmpOp.
+    def enterCmpOp(self, ctx:PopurriParser.CmpOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#cmpOp.
+    def exitCmpOp(self, ctx:PopurriParser.CmpOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#addOp.
+    def enterAddOp(self, ctx:PopurriParser.AddOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#addOp.
+    def exitAddOp(self, ctx:PopurriParser.AddOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#multDivOp.
+    def enterMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#multDivOp.
+    def exitMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#assignOp.
+    def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#assignOp.
+    def exitAssignOp(self, ctx:PopurriParser.AssignOpContext):
+        pass
+
+
     # Enter a parse tree produced by PopurriParser#constant.
     def enterConstant(self, ctx:PopurriParser.ConstantContext):
         pass

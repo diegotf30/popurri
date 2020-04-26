@@ -1,17 +1,10 @@
 grammar Popurri;
 
-// Operators
-BOOLOP : 'and' | 'or';
-CMPOP : '<' | '<=' | '>' | '>=' | 'is' | 'is' 'not';
-ADDOP : '+' | '-';
-MULTDIVOP : '*' | '/' | '%';
-ASSIGNOP : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
-
 // Terminals
 WS : [ \t\r\n]+ -> skip;
 COMMENT : '//' .*? '\n' -> skip;
 CONST_BOOL : 'true' | 'false';
-CONST_I : [1-9][0-9]*;
+CONST_I : [1-9][0-9]* | '0';
 CONST_F : [0-9]* '.' [0-9]+;
 CONST_STR : '\'' .*? '\'' | '"' .*? '"';
 TYPE :  'int' | 'float' | 'string' | 'bool' | '[' ('float' | 'int' | 'bool') ']';
@@ -32,7 +25,7 @@ attributes : 'var' attribute (',' attribute)* ;
 attribute : ID (':' TYPE)? ('=' cond)?;
 
 // Statements
-statement : whileLoop | forLoop | branch | returnStmt | assignment | funcCall | printStmt | inputStmt | 'break';
+statement : assignment | whileLoop | forLoop | branch | returnStmt | funcCall | printStmt | inputStmt | 'break';
 	whileLoop : 'while' cond '{' statement* '}';
 	forLoop : 'for' ID 'in' iterable '{' statement* '}';
 	branch : ifStmt elseIf* elseStmt?;
@@ -41,20 +34,26 @@ statement : whileLoop | forLoop | branch | returnStmt | assignment | funcCall | 
 		elseStmt : 'else' cond '{' statement* '}';
 	returnStmt : 'return' cond;
 
-	cond : ( cmp BOOLOP | 'not' )? cmp;
-	cmp : exp (CMPOP exp)?;
-	exp : add (ADDOP add)?;
-	add : multModDiv (MULTDIVOP multModDiv)?;
+	cond : ( cmp boolOp | 'not' )? cmp;
+	cmp : exp (cmpOp exp)?;
+	exp : add (addOp add)?;
+	add : multModDiv (multDivOp multModDiv)?;
 	multModDiv : val ('**' val)?;
-	val : '(' cond ')' | ADDOP? (ID | constant | indexation);
+	val : '(' cond ')' | addOp? (ID ('.' ID)? | constant | indexation);
 	indexation : iterable '[' exp ']';
 
-	assignment : (ID '.')? ID ASSIGNOP cond;
-	funcCall : (ID '.')? ID ('(' condParam ')')?;
+	assignment : (ID '.')? ID assignOp cond;
+	funcCall : (ID '.')? ID '(' condParam? ')';
 
+// Operators
+boolOp : 'and' | 'or';
+cmpOp : '<' | '<=' | '>' | '>=' | 'is' | 'is' 'not';
+addOp : '+' | '-';
+multDivOp : '*' | '/' | '%';
+assignOp : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
 constant : CONST_BOOL | CONST_I | CONST_F | CONST_STR | const_arr | 'none';
-const_arr : '[' condParam? ']' | '[' exp 'to' exp ('by' exp)? ']';
+const_arr : '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
 iterable : CONST_STR | const_arr | ID;
 
 // Special functions

@@ -2,6 +2,7 @@ import popurri_tokens as p_t  # probablemente ni usemos esto
 import error_tokens as e  # probablemente si usemos esto
 
 from parser.PopurriLexer import PopurriLexer
+from popurriRuleHandler import PopurriRuleHandler
 from parser.PopurriParser import PopurriParser
 from PopurriListener import PopurriListener
 from antlr4 import *
@@ -13,6 +14,7 @@ MEM_DEFAULT = 10000
 
 class Compiler(object):
     def __init__(self, mem_size=MEM_DEFAULT):
+        self.mem_size = mem_size
         self.int_mem_counter = self.float_mem_counter = self.string_mem_counter = self.bool_mem_counter = 0
         self.int_mem_slots = self.float_mem_slots = self.string_mem_slots = self.bool_mem_slots = [
             None] * mem_size
@@ -25,7 +27,9 @@ class Compiler(object):
 
         tree = parser.program()
         walker = ParseTreeWalker()
-        walker.walk(PopurriListener(), tree)
+        #walker.walk(PopurriListener(), tree)
+        walker.walk(PopurriRuleHandler(
+            mem_size=self.mem_size, mem_slots=[(None, None)] * self.mem_size * 4), tree)
         if parser.getNumberOfSyntaxErrors() is 0:
             print("Compiled successfully!")
 

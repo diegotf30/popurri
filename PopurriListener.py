@@ -4,65 +4,142 @@ from parser.PopurriParser import PopurriParser
 
 # This class defines a complete listener for a parse tree produced by PopurriParser.
 class PopurriListener(ParseTreeListener):
+    '''
+    -Esta clase nos permite simular la creacion de tabla de variables
+    -[Tal vez podamos usar esta clase para simular la semantica basica de expresiones]
+    -Cada funcion 'enter' representa el estado cuando se inicia una  regla
+    -Cada funcion 'exit' representa el estado cuando se acaba una regla
+    -[global_dir] es el directorio global [module, declarations, classes, functions]
+    -[local_dir] es el directorio local de una clase [declarations, functions]
+    -[var_dir] es el directorio de variables de una funcion [declarations]
+    '''
+def __init__(self, mem_slots=None, mem_size=None):
+        '''
+        *- [global_dir] es el directorio global [declarations, classes, functions]
+        '''
+        self.mem_slots = mem_slots
+        self.mem_ptr_dict = {
+            INT: 0,
+            FLOAT: mem_size,
+            STRING: mem_size * 2,
+            BOOL: mem_size * 3
+        }
+        self.global_dir_ptr = 0
+        self.curr_level_global = True
 
-    # Enter a parse tree produced by PopurriParser#program.
-    def enterProgram(self, ctx:PopurriParser.ProgramContext):
+    def getSymbolFromStr(self, symbol_str=None):
+        symbolTable = ['', 'int', 'float', 'string', 'bool']
+        if symbol_str is None:
+            return None
+        return symbolTable.index(str(symbol_str))
+
+    def getGlobalPtrFromId(self, id=None):
+        for iterator in range(len(self.global_dir)):
+            if id is self.global_dir[iterator]['id']:
+                return iterator
+        return None
+
+    def enterModule(self, ctx):
+        '''
+        [Module] no afecta ningun aspecto del compilador o lenguaje, por lo que se ignora
+        '''
+        print('module')
         pass
 
-    # Exit a parse tree produced by PopurriParser#program.
-    def exitProgram(self, ctx:PopurriParser.ProgramContext):
+    def exitModule(self, ctx):
+        '''
+        [Module] no afecta ningun aspecto del compilador o lenguaje, por lo que se ignora
+        '''
+        print('module exit')
         pass
 
-
-    # Enter a parse tree produced by PopurriParser#module.
-    def enterModule(self, ctx:PopurriParser.ModuleContext):
+    def enterProgram(self, ctx):
+        '''
+        [Program] marca el inicio de las reglas de la gramatica. Aqui inicia la fase de compilacion.
+        '''
+        # Inicializa las direcciones globales [no es necesario hacerlo explicito]
+        self.global_dir = [
+            {
+                'id': 'global',
+                'declarations': [],
+                'classes': [],
+                'functions': [],
+                'statements': [],
+            },
+        ]
+        print('program')
         pass
 
-    # Exit a parse tree produced by PopurriParser#module.
-    def exitModule(self, ctx:PopurriParser.ModuleContext):
+    def exitProgram(self, ctx):
+        '''
+        [Program] marca el final de las reglas de la gramatia. Aqui termina la fase de compilacion.
+        '''
+        # Libera la memoria del compilador [Elimina las entradas de la tabla de direccines globales]
+        self.global_dir.clear()
+        self.mem_slots = []
         pass
 
-
-    # Enter a parse tree produced by PopurriParser#declarations.
-    def enterDeclarations(self, ctx:PopurriParser.DeclarationsContext):
+    def enterDeclarations(self, ctx):
         pass
 
-    # Exit a parse tree produced by PopurriParser#declarations.
-    def exitDeclarations(self, ctx:PopurriParser.DeclarationsContext):
+    def exitDeclarations(self, ctx):
         pass
 
+    def enterDeclaration(self, ctx):
 
-    # Enter a parse tree produced by PopurriParser#declaration.
-    def enterDeclaration(self, ctx:PopurriParser.DeclarationContext):
-        print(ctx.ID())
+        print(ctx.TYPE())
+        # Checks if var is already created in mem_slots
+        for slot in self.mem_slots:
+            if slot[0] is ctx.ID():
+                raise 'ERROR VAR ALREADY CREATED'
+
+        # Creates var
+        symbol_token = self.getSymbolFromStr(ctx.TYPE())
+        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (ctx.ID(), 0)
+        self.global_dir[self.global_dir_ptr]['declarations'].append(
+            self.mem_ptr_dict[symbol_token])
+
+        # increments the ptr for ctx.TYPE()in mem_ptr_dict
+        self.mem_ptr_dict[symbol_token] += 1
+
+        # Check if everything is correct[Debugging]
+        print(self.global_dir, self.mem_ptr_dict)
+        print('declaration')
+
+    def exitDeclaration(self, ctx):
         pass
 
-    # Exit a parse tree produced by PopurriParser#declaration.
-    def exitDeclaration(self, ctx:PopurriParser.DeclarationContext):
-        print(ctx.ID())
+    def enterClassDeclaration(self, ctx):
+        print('class')
+
+        created_class = {
+            'type': 'class',
+            'id': None,
+            'class_parent': None,
+            'node_parent': 0,
+            'attributes': [],
+            'functions': [],
+        }
+        created_class['id'] = str(ctx.ID())
+
+        if ctx.parent() is not None:
+            created_class['class_parent'] = self.getGlobalPtrFromId(
+                ctx.parent())
+            if created_class['class_parent'] is None:
+                print('Error')
+
+        self.global_dir.append(created_class)
+        self.global_dir_ptr = len(self.global_dir) - 1
+        self.global_dir[created_class['node_parent']
+                        ]['classes'].append(self.global_dir_ptr)
+        print(self.global_dir, self.mem_ptr_dict, self.global_dir_ptr)
+
+    def exitClassDeclaration(self, ctx):
+        self.global_dir_ptr = 0
         pass
 
-
-    # Enter a parse tree produced by PopurriParser#function.
-    def enterFunction(self, ctx:PopurriParser.FunctionContext):
-        pass
-
-    # Exit a parse tree produced by PopurriParser#function.
-    def exitFunction(self, ctx:PopurriParser.FunctionContext):
-        pass
-
-
-    # Enter a parse tree produced by PopurriParser#classDeclaration.
-    def enterClassDeclaration(self, ctx:PopurriParser.ClassDeclarationContext):
-        pass
-
-    # Exit a parse tree produced by PopurriParser#classDeclaration.
-    def exitClassDeclaration(self, ctx:PopurriParser.ClassDeclarationContext):
-        pass
-
-
-    # Enter a parse tree produced by PopurriParser#parent.
-    def enterParent(self, ctx:PopurriParser.ParentContext):
+    def enterParent(self, ctx):
+        self.global_dir[self.global_dir_ptr]['parent'] = str(ctx.ID())
         pass
 
     # Exit a parse tree produced by PopurriParser#parent.
@@ -250,6 +327,51 @@ class PopurriListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PopurriParser#boolOp.
+    def enterBoolOp(self, ctx:PopurriParser.BoolOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#boolOp.
+    def exitBoolOp(self, ctx:PopurriParser.BoolOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#cmpOp.
+    def enterCmpOp(self, ctx:PopurriParser.CmpOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#cmpOp.
+    def exitCmpOp(self, ctx:PopurriParser.CmpOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#addOp.
+    def enterAddOp(self, ctx:PopurriParser.AddOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#addOp.
+    def exitAddOp(self, ctx:PopurriParser.AddOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#multDivOp.
+    def enterMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#multDivOp.
+    def exitMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#assignOp.
+    def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#assignOp.
+    def exitAssignOp(self, ctx:PopurriParser.AssignOpContext):
+        pass
+
+
     # Enter a parse tree produced by PopurriParser#constant.
     def enterConstant(self, ctx:PopurriParser.ConstantContext):
         pass
@@ -311,5 +433,3 @@ class PopurriListener(ParseTreeListener):
     # Exit a parse tree produced by PopurriParser#funcParams.
     def exitFuncParams(self, ctx:PopurriParser.FuncParamsContext):
         pass
-
-
