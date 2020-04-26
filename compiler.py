@@ -27,9 +27,8 @@ class Compiler(object):
 
         tree = parser.program()
         walker = ParseTreeWalker()
-        #walker.walk(PopurriListener(), tree)
-        walker.walk(PopurriRuleHandler(
-            mem_size=self.mem_size, mem_slots=[(None, None)] * self.mem_size * 4), tree)
+        listener = PopurriListener(mem_size=self.mem_size, mem_slots=[(None, None)] * self.mem_size * 4)
+        walker.walk(listener, tree)
         if parser.getNumberOfSyntaxErrors() is 0:
             print("Compiled successfully!")
 
