@@ -39,6 +39,13 @@ class PopurriRuleHandler(PopurriListener):
                 return iterator
         return None
 
+    def getGlobalPtrFromClassName(self, class_name=None):
+        for iterator in range(len(self.global_dir)):
+            if self.global_dir[iterator]['type'] == 'template_class':
+                if self.global_dir[iterator]['class_name'] == str(class_name):
+                    return iterator
+        return None
+
     def enterModule(self, ctx):
         '''
         [Module] no afecta ningun aspecto del compilador o lenguaje, por lo que se ignora
@@ -86,49 +93,66 @@ class PopurriRuleHandler(PopurriListener):
         pass
 
     def enterDeclaration(self, ctx):
-
         # Checks if var is already created in mem_slots
         for slot in self.mem_slots:
             if slot[0] is ctx.ID():
                 raise 'ERROR VAR ALREADY CREATED'
 
         # Creates var
-        symbol_token = self.getSymbolFromStr(ctx.TYPE())
-        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (str(ctx.ID()), 0)
-        self.global_dir[self.global_dir_ptr]['declarations'].append(
-            self.mem_ptr_dict[symbol_token])
 
-        # increments the ptr for ctx.TYPE()in mem_ptr_dict
-        self.mem_ptr_dict[symbol_token] += 1
+        # if var has data_type : INT, FLOAT, STRING, BOOL, [Arrays are not yet implemented]
+        if ctx.TYPE() is not None:
+            symbol_token = self.getSymbolFromStr(ctx.TYPE())
+            self.mem_slots[self.mem_ptr_dict[symbol_token]] = (
+                str(ctx.ID()), 0)
+            self.global_dir[self.global_dir_ptr]['declarations'].append(
+                self.mem_ptr_dict[symbol_token])
+            # increments the ptr for ctx.TYPE()in mem_ptr_dict
+            self.mem_ptr_dict[symbol_token] += 1
+
+        # if var is an object of ID
+        else:
+            object_class_template_ptr = self.getGlobalPtrFromClassName(ctx.ID()[
+                                                                       1])
+
+            if object_class_template_ptr is None:
+                print('ERROR')
+            else:
+                object_class = self.global_dir[object_class_template_ptr]
+                object_class['id'] = ctx.ID()[0]
+                self.global_dir.append(object_class)
+                self.global_dir_ptr = len(self.global_dir) - 1
+                self.global_dir[object_class['node_parent']
+                                ]['classes'].append(self.global_dir_ptr)
 
         # Check if everything is correct[Debugging]
         print(self.global_dir, self.mem_ptr_dict)
         print('declaration')
 
     def exitDeclaration(self, ctx):
+        self.global_dir_ptr = 0
         pass
 
     def enterClassDeclaration(self, ctx):
         print('class')
 
         created_class = {
-            'type': 'class',
+            'type': 'template_class',
+            'class_name': None,
             'id': None,
             'class_parent': None,
             'node_parent': 0,
             'attributes': [],
             'functions': [],
         }
-        created_class['id'] = str(ctx.ID())
+        created_class['class_name'] = str(ctx.ID())
 
         self.global_dir.append(created_class)
-        self.global_dir_ptr = len(self.global_dir) - 1
-        self.global_dir[created_class['node_parent']
-                        ]['classes'].append(self.global_dir_ptr)
+
         print(self.global_dir, self.mem_ptr_dict, self.global_dir_ptr)
 
     def exitClassDeclaration(self, ctx):
-        self.global_dir_ptr = 0
+        pass
 
     def enterParent(self, ctx):
         if ctx.ID() is not None:
@@ -185,6 +209,7 @@ class PopurriRuleHandler(PopurriListener):
     def exitIndexation(self, ctx):
         pass
 
+    # HOLD
     def enterAttribute(self, ctx):
         # Checks if var is already created in mem_slots
         for slot in self.mem_slots:

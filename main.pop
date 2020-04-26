@@ -1,26 +1,6 @@
 module main
-
-class Parent {
-	var hola : int
-	var b : float = 10 // default 
-	func init(int x, float y) {
-		a = x
-		b = y
-    }
-
-	func talk() {
-        print("parent")
-    }
-
-    func shout() {
-        print("PARENT")
-    }
+class testClass {
+private var hola : int
 }
+var a : int
 
-class Parent -> Child {
-	var c : string
-
-	func talk() {
-	    print("child")
-    }
-}
