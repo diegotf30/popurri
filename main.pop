@@ -1,19 +1,12 @@
 module main
 
-var a = 25
-var b : double
-var arr : [int]
-var arr2 = ["hola", "gaytan"]
-var parent : Parent
-var child : Child
-
 
 class Parent {
 	var a : int
-	var b : double = 10 // default 
-	func init(int a, double b) {
-		self.a = a
-		self.b = b
+	var b : float = 10 // default 
+	func init(int x, float y) {
+		a = x
+		b = y
     }
 
 	func talk() {
@@ -29,17 +22,23 @@ class Parent -> Child {
 	var c : string
 
 	func talk() {
-	    print(“child”)
+	    print("child")
     }
 }
+
+var a = 25
+var b : double
+var arr : [int]
+var arr2 = ["hola", "gaytan"]
+var parent : Parent
+var child : Child
 
 func sum(int a, int b) int {
 	return a + b
 }
 
 func createParent() Parent {
-	var p : Parent
-	return p
+	return 10
 }
 
 arr = [1, 2, 3, 4]

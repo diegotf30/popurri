@@ -2,8 +2,8 @@ import popurri_tokens as p_t  # probablemente ni usemos esto
 import error_tokens as e  # probablemente si usemos esto
 
 from parser.PopurriLexer import PopurriLexer
-from parser.PopurriListener import PopurriListener
 from parser.PopurriParser import PopurriParser
+from PopurriListener import PopurriListener
 from antlr4 import *
 import sys
 
@@ -25,7 +25,7 @@ class Compiler(object):
 
         tree = parser.program()
         walker = ParseTreeWalker()
-        walker.walk(PopurriRuleHandler(), tree)
+        walker.walk(PopurriListener(), tree)
         if parser.getNumberOfSyntaxErrors() is 0:
             print("Compiled successfully!")
 

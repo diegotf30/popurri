@@ -8,31 +8,31 @@ MULTDIVOP : '*' | '/' | '%';
 ASSIGNOP : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
 // Terminals
-WS : [ \t\r]+ -> skip;
-COMMENT : '//' .*? -> skip;
-ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
+WS : [ \t\r\n]+ -> skip;
+COMMENT : '//' .*? '\n' -> skip;
 CONST_BOOL : 'true' | 'false';
 CONST_I : [1-9][0-9]*;
 CONST_F : [0-9]* '.' [0-9]+;
 CONST_STR : '\'' .*? '\'' | '"' .*? '"';
-TYPE :  'int' | 'float' | 'string' | '[' ('float' | 'int') ']';
+TYPE :  'int' | 'float' | 'string' | 'bool' | '[' ('float' | 'int' | 'bool') ']';
+ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
 
-program : module declarations* classDeclaration* function* statement*;
-module : 'module' ID '\n';
+program : module classDeclaration* declarations* function* statement*;
+module : 'module' ID ;
 
-declarations : 'var' declaration (',' declaration)* '\n';
+declarations : 'var' declaration (',' declaration)* ;
 declaration : ID (':' (TYPE | ID))? ('=' cond)?;
 
-function : 'func' ID '(' funcParams ')' TYPE '{' statement* '}' '\n';
+function : 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}' ;
 
-classDeclaration : 'class' parent? ID '{' (accessType? (attributes | function) '\n')+ '}' '\n';
+classDeclaration : 'class' parent? ID '{' (accessType? (attributes | function))+ '}' ;
 parent : ID '->';
 accessType : 'public' | 'protected' | 'private';
 attributes : 'var' attribute (',' attribute)* ;
 attribute : ID (':' TYPE)? ('=' cond)?;
 
 // Statements
-statement : (whileLoop | forLoop | branch | returnStmt | assignment | funcCall | printStmt | inputStmt | 'break') '\n';
+statement : whileLoop | forLoop | branch | returnStmt | assignment | funcCall | printStmt | inputStmt | 'break';
 	whileLoop : 'while' cond '{' statement* '}';
 	forLoop : 'for' ID 'in' iterable '{' statement* '}';
 	branch : ifStmt elseIf* elseStmt?;
