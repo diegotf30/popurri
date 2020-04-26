@@ -1,0 +1,14 @@
+module functions
+
+func a() {
+    // Emtpy
+}
+
+func b(int a, float b) float {
+    return a + b
+}
+
+func c(string d) {
+    print("ola", d)
+}
+
