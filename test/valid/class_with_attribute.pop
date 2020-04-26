@@ -1,5 +1,5 @@
 module main
-class testClass {
+class ASHJDALSHDparent -> child {
 private var hola : int
 }
 var a : int
