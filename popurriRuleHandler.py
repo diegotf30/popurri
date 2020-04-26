@@ -87,7 +87,6 @@ class PopurriRuleHandler(PopurriListener):
 
     def enterDeclaration(self, ctx):
 
-        print(ctx.TYPE())
         # Checks if var is already created in mem_slots
         for slot in self.mem_slots:
             if slot[0] is ctx.ID():
@@ -122,12 +121,6 @@ class PopurriRuleHandler(PopurriListener):
         }
         created_class['id'] = str(ctx.ID())
 
-        if ctx.parent() is not None:
-            created_class['class_parent'] = self.getGlobalPtrFromId(
-                ctx.parent())
-            if created_class['class_parent'] is None:
-                print('Error')
-
         self.global_dir.append(created_class)
         self.global_dir_ptr = len(self.global_dir) - 1
         self.global_dir[created_class['node_parent']
@@ -139,7 +132,14 @@ class PopurriRuleHandler(PopurriListener):
         pass
 
     def enterParent(self, ctx):
-        self.global_dir[self.global_dir_ptr]['parent'] = str(ctx.ID())
+        if ctx.ID() is not None:
+            self.global_dir[self.global_dir_ptr]['class_parent'] = self.getGlobalPtrFromId(
+                str(ctx.ID()))
+            if self.global_dir[self.global_dir_ptr]['class_parent'] is None:
+                print('Error')
+
+        self.global_dir[self.global_dir_ptr]['class_parent'] = str(ctx.ID())
+        print(self.global_dir, self.mem_ptr_dict, self.global_dir_ptr)
         pass
 
     def exitParent(self, ctx):

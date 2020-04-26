@@ -1,8 +1,11 @@
 # Generated from Popurri.g4 by ANTLR 4.7.1
 from antlr4 import *
 from parser.PopurriParser import PopurriParser
+from popurri_tokens import *
 
 # This class defines a complete listener for a parse tree produced by PopurriParser.
+
+
 class PopurriListener(ParseTreeListener):
     '''
     -Esta clase nos permite simular la creacion de tabla de variables
@@ -13,7 +16,8 @@ class PopurriListener(ParseTreeListener):
     -[local_dir] es el directorio local de una clase [declarations, functions]
     -[var_dir] es el directorio de variables de una funcion [declarations]
     '''
-def __init__(self, mem_slots=None, mem_size=None):
+
+    def __init__(self, mem_slots=None, mem_size=None):
         '''
         *- [global_dir] es el directorio global [declarations, classes, functions]
         '''
@@ -87,7 +91,8 @@ def __init__(self, mem_slots=None, mem_size=None):
 
     def enterDeclaration(self, ctx):
 
-        print(ctx.TYPE())
+        print("type: {} ".format(ctx.TYPE()))
+        print("Hola: {}".format(ctx.ID()[1]))
         # Checks if var is already created in mem_slots
         for slot in self.mem_slots:
             if slot[0] is ctx.ID():
@@ -143,293 +148,261 @@ def __init__(self, mem_slots=None, mem_size=None):
         pass
 
     # Exit a parse tree produced by PopurriParser#parent.
-    def exitParent(self, ctx:PopurriParser.ParentContext):
+    def exitParent(self, ctx: PopurriParser.ParentContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#accessType.
-    def enterAccessType(self, ctx:PopurriParser.AccessTypeContext):
+    def enterAccessType(self, ctx: PopurriParser.AccessTypeContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#accessType.
-    def exitAccessType(self, ctx:PopurriParser.AccessTypeContext):
+    def exitAccessType(self, ctx: PopurriParser.AccessTypeContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#attributes.
-    def enterAttributes(self, ctx:PopurriParser.AttributesContext):
+    def enterAttributes(self, ctx: PopurriParser.AttributesContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#attributes.
-    def exitAttributes(self, ctx:PopurriParser.AttributesContext):
+    def exitAttributes(self, ctx: PopurriParser.AttributesContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#attribute.
-    def enterAttribute(self, ctx:PopurriParser.AttributeContext):
+    def enterAttribute(self, ctx: PopurriParser.AttributeContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#attribute.
-    def exitAttribute(self, ctx:PopurriParser.AttributeContext):
+    def exitAttribute(self, ctx: PopurriParser.AttributeContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#statement.
-    def enterStatement(self, ctx:PopurriParser.StatementContext):
+    def enterStatement(self, ctx: PopurriParser.StatementContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#statement.
-    def exitStatement(self, ctx:PopurriParser.StatementContext):
+    def exitStatement(self, ctx: PopurriParser.StatementContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#whileLoop.
-    def enterWhileLoop(self, ctx:PopurriParser.WhileLoopContext):
+    def enterWhileLoop(self, ctx: PopurriParser.WhileLoopContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#whileLoop.
-    def exitWhileLoop(self, ctx:PopurriParser.WhileLoopContext):
+    def exitWhileLoop(self, ctx: PopurriParser.WhileLoopContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#forLoop.
-    def enterForLoop(self, ctx:PopurriParser.ForLoopContext):
+    def enterForLoop(self, ctx: PopurriParser.ForLoopContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#forLoop.
-    def exitForLoop(self, ctx:PopurriParser.ForLoopContext):
+    def exitForLoop(self, ctx: PopurriParser.ForLoopContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#branch.
-    def enterBranch(self, ctx:PopurriParser.BranchContext):
+    def enterBranch(self, ctx: PopurriParser.BranchContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#branch.
-    def exitBranch(self, ctx:PopurriParser.BranchContext):
+    def exitBranch(self, ctx: PopurriParser.BranchContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#ifStmt.
-    def enterIfStmt(self, ctx:PopurriParser.IfStmtContext):
+    def enterIfStmt(self, ctx: PopurriParser.IfStmtContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#ifStmt.
-    def exitIfStmt(self, ctx:PopurriParser.IfStmtContext):
+    def exitIfStmt(self, ctx: PopurriParser.IfStmtContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#elseIf.
-    def enterElseIf(self, ctx:PopurriParser.ElseIfContext):
+    def enterElseIf(self, ctx: PopurriParser.ElseIfContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#elseIf.
-    def exitElseIf(self, ctx:PopurriParser.ElseIfContext):
+    def exitElseIf(self, ctx: PopurriParser.ElseIfContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#elseStmt.
-    def enterElseStmt(self, ctx:PopurriParser.ElseStmtContext):
+    def enterElseStmt(self, ctx: PopurriParser.ElseStmtContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#elseStmt.
-    def exitElseStmt(self, ctx:PopurriParser.ElseStmtContext):
+    def exitElseStmt(self, ctx: PopurriParser.ElseStmtContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#returnStmt.
-    def enterReturnStmt(self, ctx:PopurriParser.ReturnStmtContext):
+    def enterReturnStmt(self, ctx: PopurriParser.ReturnStmtContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#returnStmt.
-    def exitReturnStmt(self, ctx:PopurriParser.ReturnStmtContext):
+    def exitReturnStmt(self, ctx: PopurriParser.ReturnStmtContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#cond.
-    def enterCond(self, ctx:PopurriParser.CondContext):
+    def enterCond(self, ctx: PopurriParser.CondContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#cond.
-    def exitCond(self, ctx:PopurriParser.CondContext):
+    def exitCond(self, ctx: PopurriParser.CondContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#cmp.
-    def enterCmp(self, ctx:PopurriParser.CmpContext):
+    def enterCmp(self, ctx: PopurriParser.CmpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#cmp.
-    def exitCmp(self, ctx:PopurriParser.CmpContext):
+    def exitCmp(self, ctx: PopurriParser.CmpContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#exp.
-    def enterExp(self, ctx:PopurriParser.ExpContext):
+    def enterExp(self, ctx: PopurriParser.ExpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#exp.
-    def exitExp(self, ctx:PopurriParser.ExpContext):
+    def exitExp(self, ctx: PopurriParser.ExpContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#add.
-    def enterAdd(self, ctx:PopurriParser.AddContext):
+    def enterAdd(self, ctx: PopurriParser.AddContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#add.
-    def exitAdd(self, ctx:PopurriParser.AddContext):
+    def exitAdd(self, ctx: PopurriParser.AddContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#multModDiv.
-    def enterMultModDiv(self, ctx:PopurriParser.MultModDivContext):
+    def enterMultModDiv(self, ctx: PopurriParser.MultModDivContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#multModDiv.
-    def exitMultModDiv(self, ctx:PopurriParser.MultModDivContext):
+    def exitMultModDiv(self, ctx: PopurriParser.MultModDivContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#val.
-    def enterVal(self, ctx:PopurriParser.ValContext):
+    def enterVal(self, ctx: PopurriParser.ValContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#val.
-    def exitVal(self, ctx:PopurriParser.ValContext):
+    def exitVal(self, ctx: PopurriParser.ValContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#indexation.
-    def enterIndexation(self, ctx:PopurriParser.IndexationContext):
+    def enterIndexation(self, ctx: PopurriParser.IndexationContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#indexation.
-    def exitIndexation(self, ctx:PopurriParser.IndexationContext):
+    def exitIndexation(self, ctx: PopurriParser.IndexationContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#assignment.
-    def enterAssignment(self, ctx:PopurriParser.AssignmentContext):
+    def enterAssignment(self, ctx: PopurriParser.AssignmentContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#assignment.
-    def exitAssignment(self, ctx:PopurriParser.AssignmentContext):
+    def exitAssignment(self, ctx: PopurriParser.AssignmentContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#funcCall.
-    def enterFuncCall(self, ctx:PopurriParser.FuncCallContext):
+    def enterFuncCall(self, ctx: PopurriParser.FuncCallContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#funcCall.
-    def exitFuncCall(self, ctx:PopurriParser.FuncCallContext):
+    def exitFuncCall(self, ctx: PopurriParser.FuncCallContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#boolOp.
-    def enterBoolOp(self, ctx:PopurriParser.BoolOpContext):
+    def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#boolOp.
-    def exitBoolOp(self, ctx:PopurriParser.BoolOpContext):
+    def exitBoolOp(self, ctx: PopurriParser.BoolOpContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#cmpOp.
-    def enterCmpOp(self, ctx:PopurriParser.CmpOpContext):
+    def enterCmpOp(self, ctx: PopurriParser.CmpOpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#cmpOp.
-    def exitCmpOp(self, ctx:PopurriParser.CmpOpContext):
+    def exitCmpOp(self, ctx: PopurriParser.CmpOpContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#addOp.
-    def enterAddOp(self, ctx:PopurriParser.AddOpContext):
+    def enterAddOp(self, ctx: PopurriParser.AddOpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#addOp.
-    def exitAddOp(self, ctx:PopurriParser.AddOpContext):
+    def exitAddOp(self, ctx: PopurriParser.AddOpContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#multDivOp.
-    def enterMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+    def enterMultDivOp(self, ctx: PopurriParser.MultDivOpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#multDivOp.
-    def exitMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+    def exitMultDivOp(self, ctx: PopurriParser.MultDivOpContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#assignOp.
-    def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
+    def enterAssignOp(self, ctx: PopurriParser.AssignOpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#assignOp.
-    def exitAssignOp(self, ctx:PopurriParser.AssignOpContext):
+    def exitAssignOp(self, ctx: PopurriParser.AssignOpContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#constant.
-    def enterConstant(self, ctx:PopurriParser.ConstantContext):
+    def enterConstant(self, ctx: PopurriParser.ConstantContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#constant.
-    def exitConstant(self, ctx:PopurriParser.ConstantContext):
+    def exitConstant(self, ctx: PopurriParser.ConstantContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#const_arr.
-    def enterConst_arr(self, ctx:PopurriParser.Const_arrContext):
+    def enterConst_arr(self, ctx: PopurriParser.Const_arrContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#const_arr.
-    def exitConst_arr(self, ctx:PopurriParser.Const_arrContext):
+    def exitConst_arr(self, ctx: PopurriParser.Const_arrContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#iterable.
-    def enterIterable(self, ctx:PopurriParser.IterableContext):
+    def enterIterable(self, ctx: PopurriParser.IterableContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#iterable.
-    def exitIterable(self, ctx:PopurriParser.IterableContext):
+    def exitIterable(self, ctx: PopurriParser.IterableContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#printStmt.
-    def enterPrintStmt(self, ctx:PopurriParser.PrintStmtContext):
+    def enterPrintStmt(self, ctx: PopurriParser.PrintStmtContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#printStmt.
-    def exitPrintStmt(self, ctx:PopurriParser.PrintStmtContext):
+    def exitPrintStmt(self, ctx: PopurriParser.PrintStmtContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#inputStmt.
-    def enterInputStmt(self, ctx:PopurriParser.InputStmtContext):
+    def enterInputStmt(self, ctx: PopurriParser.InputStmtContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#inputStmt.
-    def exitInputStmt(self, ctx:PopurriParser.InputStmtContext):
+    def exitInputStmt(self, ctx: PopurriParser.InputStmtContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#condParam.
-    def enterCondParam(self, ctx:PopurriParser.CondParamContext):
+    def enterCondParam(self, ctx: PopurriParser.CondParamContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#condParam.
-    def exitCondParam(self, ctx:PopurriParser.CondParamContext):
+    def exitCondParam(self, ctx: PopurriParser.CondParamContext):
         pass
 
-
     # Enter a parse tree produced by PopurriParser#funcParams.
-    def enterFuncParams(self, ctx:PopurriParser.FuncParamsContext):
+    def enterFuncParams(self, ctx: PopurriParser.FuncParamsContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#funcParams.
-    def exitFuncParams(self, ctx:PopurriParser.FuncParamsContext):
+    def exitFuncParams(self, ctx: PopurriParser.FuncParamsContext):
         pass

@@ -1,8 +1,7 @@
 module main
 
-
 class Parent {
-	var a : int
+	var hola : int
 	var b : float = 10 // default 
 	func init(int x, float y) {
 		a = x
@@ -25,40 +24,3 @@ class Parent -> Child {
 	    print("child")
     }
 }
-
-var a = 25
-var b : double
-var arr : [int]
-var arr2 = ["hola", "gaytan"]
-var parent : Parent
-var child : Child
-
-func sum(int a, int b) int {
-	return a + b
-}
-
-func createParent() Parent {
-	return 10
-}
-
-arr = [1, 2, 3, 4]
-print(a) // 25
-print(arr) // [“hola”, “gaytan”]
-
-for i in arr {
-	//adopta el estilo de python, reduciendo la cantidad de tokens
-}
-
-for i in [0 to 10] {
-	//iterador que va de [0] -[10], dando [1] paso a la vez
-}
-
-for c in "hola" {
-	//adopta el estilo de python      
-}
-
-parent.talk()  // parent
-parent.shout() // PARENT
-
-child.talk()  // child
-child.shout() // PARENT (inherited from parent)

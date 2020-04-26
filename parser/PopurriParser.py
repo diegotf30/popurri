@@ -1,9 +1,13 @@
-# Generated from Popurri.g4 by ANTLR 4.7.1
+# Generated from parser/Popurri.g4 by ANTLR 4.8
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
-from typing.io import TextIO
 import sys
+if sys.version_info[1] > 5:
+	from typing import TextIO
+else:
+	from typing.io import TextIO
+
 
 def serializedATN():
     with StringIO() as buf:
@@ -349,9 +353,10 @@ class PopurriParser ( Parser ):
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.7.1")
+        self.checkVersion("4.8")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
+
 
 
 
@@ -464,6 +469,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ModuleContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -504,6 +510,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class DeclarationsContext(ParserRuleContext):
 
@@ -562,6 +569,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class DeclarationContext(ParserRuleContext):
 
@@ -637,6 +645,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class FunctionContext(ParserRuleContext):
 
@@ -735,6 +744,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ClassDeclarationContext(ParserRuleContext):
 
@@ -847,6 +857,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ParentContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -887,6 +898,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class AccessTypeContext(ParserRuleContext):
 
@@ -930,6 +942,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class AttributesContext(ParserRuleContext):
 
@@ -988,6 +1001,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class AttributeContext(ParserRuleContext):
 
@@ -1055,6 +1069,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class StatementContext(ParserRuleContext):
 
@@ -1179,6 +1194,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class WhileLoopContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1242,6 +1258,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ForLoopContext(ParserRuleContext):
 
@@ -1314,6 +1331,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class BranchContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1384,6 +1402,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class IfStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1447,6 +1466,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ElseIfContext(ParserRuleContext):
 
@@ -1512,6 +1532,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ElseStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1576,6 +1597,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ReturnStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1617,6 +1639,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class CondContext(ParserRuleContext):
 
@@ -1679,6 +1702,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class CmpContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1736,6 +1760,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ExpContext(ParserRuleContext):
 
@@ -1795,6 +1820,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AddContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1853,6 +1879,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class MultModDivContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1906,6 +1933,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ValContext(ParserRuleContext):
 
@@ -2018,6 +2046,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class IndexationContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2067,6 +2096,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class AssignmentContext(ParserRuleContext):
 
@@ -2131,6 +2161,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class FuncCallContext(ParserRuleContext):
 
@@ -2201,6 +2232,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class BoolOpContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2243,6 +2275,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class CmpOpContext(ParserRuleContext):
 
@@ -2320,6 +2353,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AddOpContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2362,6 +2396,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class MultDivOpContext(ParserRuleContext):
 
@@ -2406,6 +2441,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AssignOpContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2448,6 +2484,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ConstantContext(ParserRuleContext):
 
@@ -2534,6 +2571,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class Const_arrContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2618,6 +2656,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class IterableContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2682,6 +2721,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class PrintStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2728,6 +2768,7 @@ class PopurriParser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class InputStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2772,6 +2813,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class CondParamContext(ParserRuleContext):
 
@@ -2828,6 +2870,7 @@ class PopurriParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class FuncParamsContext(ParserRuleContext):
 
