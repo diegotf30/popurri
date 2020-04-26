@@ -94,7 +94,7 @@ class PopurriRuleHandler(PopurriListener):
 
         # Creates var
         symbol_token = self.getSymbolFromStr(ctx.TYPE())
-        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (ctx.ID(), 0)
+        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (str(ctx.ID()), 0)
         self.global_dir[self.global_dir_ptr]['declarations'].append(
             self.mem_ptr_dict[symbol_token])
 
@@ -129,7 +129,6 @@ class PopurriRuleHandler(PopurriListener):
 
     def exitClassDeclaration(self, ctx):
         self.global_dir_ptr = 0
-        pass
 
     def enterParent(self, ctx):
         if ctx.ID() is not None:
@@ -140,7 +139,6 @@ class PopurriRuleHandler(PopurriListener):
 
         self.global_dir[self.global_dir_ptr]['class_parent'] = str(ctx.ID())
         print(self.global_dir, self.mem_ptr_dict, self.global_dir_ptr)
-        pass
 
     def exitParent(self, ctx):
         pass
@@ -195,7 +193,7 @@ class PopurriRuleHandler(PopurriListener):
 
         # Creates var
         symbol_token = self.getSymbolFromStr(ctx.TYPE())
-        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (ctx.ID(), 0)
+        self.mem_slots[self.mem_ptr_dict[symbol_token]] = (str(ctx.ID()), 0)
         self.global_dir[self.global_dir_ptr]['attributes'].append(
             self.mem_ptr_dict[symbol_token])
 
@@ -204,17 +202,10 @@ class PopurriRuleHandler(PopurriListener):
 
         # Check if everything is correct[Debugging]
         print(self.global_dir, self.mem_ptr_dict)
+        print(self.mem_slots[:10])
         print('attribute')
 
     def exitAttribute(self, ctx):
-        pass
-
-    def enterType(self, ctx):
-        print()
-        pass
-
-    def exitType(self, ctx):
-        print('type')
         pass
 
     def enterIterable(self, ctx):
@@ -266,6 +257,7 @@ class PopurriRuleHandler(PopurriListener):
         pass
 
     def enterCond(self, ctx):
+
         pass
 
     def exitCond(self, ctx):
