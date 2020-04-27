@@ -136,6 +136,7 @@ class PopurriListener(ParseTreeListener):
     def enterClassDeclaration(self, ctx:PopurriParser.ClassDeclarationContext):
         klass = Object(id=str(ctx.ID()))
         if ctx.parent() is not None:
+            # TODO: implement inheritance of attrs & functions
             klass.parent_id = str(ctx.parent().ID())
 
         self.memory["classes"].append(klass)
@@ -163,7 +164,6 @@ class PopurriListener(ParseTreeListener):
     def exitAttributes(self, ctx:PopurriParser.AttributesContext):
         pass
 
-    # HOLD
     def enterAttribute(self, ctx:PopurriParser.AttributeContext):
         print('attribute')
 
