@@ -5,22 +5,27 @@ import json
 
 def pprint(*args):
     for arg in args:
-        print(json.dumps(arg.__dict__, indent=2))
+        print(json.dumps(arg, indent=2, default=vars))
 
 class Variable():
     def __init__(self, id, type=None, value=None, context="global"):
-        self.id = id
-        self.type = type
+        self.id = str(id)
+        self.type = str(type)
         self.value = value
-        self.context = context
+        self.context = str(context)
 
 class Object():
-    attributes = []
-    fuctions = []
+    def __init__(self, id, parent_id=None, attributes=[], functions=[]):
+        self.id = str(id)
+        self.parent_id = str(parent_id)
+        self.attributes = attributes
+        self.functions = functions
 
-    def __init__(self, id, parent_id=None):
-        self.id = id
-        self.parent_id = parent_id 
+class Function():
+    def __init__(self, id, params=None, return_type="void"):
+        self.id = str(id)
+        self.params = params
+        self.return_type = str(return_type)
 
 class PopurriListener(ParseTreeListener):
     '''
@@ -32,9 +37,8 @@ class PopurriListener(ParseTreeListener):
     memory = {
         "vars": [],
         "classes": [],
-        "functions": []
+        "funcs": []
     }
-
 
     def enterProgram(self, ctx:PopurriParser.ProgramContext):
         '''
@@ -74,40 +78,67 @@ class PopurriListener(ParseTreeListener):
         if any(var.id is str(ctx.ID()) for var in self.memory["vars"]):
             raise 'ERROR VAR ALREADY CREATED'
 
-        new_variable = ""
+        var = ""
         # var has data_type : INT, FLOAT, STRING, BOOL
         # TODO: Arrays are not yet implemented
         if ctx.TYPE() is not None:
-            new_variable = Variable(
-                id=str(ctx.ID()[0]),
-                type=str(ctx.TYPE())
+            var = Variable(
+                id=ctx.ID(0),
+                type=ctx.TYPE()
             )
         # var is type object
         else:
-            new_variable = Variable(
-                id=str(ctx.ID()[0]),
-                type=str(ctx.ID()[1])
+            var = Variable(
+                id=ctx.ID(0),
+                type=ctx.ID(1)
             )
 
-        self.memory["vars"].append(new_variable)
-        pprint(new_variable)
+        self.memory["vars"].append(var)
+        pprint(var)
         print('declaration')
 
     def exitDeclaration(self, ctx:PopurriParser.DeclarationContext):
         pass
 
     def enterFunction(self, ctx:PopurriParser.FunctionContext):
+        if any(func.id is str(ctx.ID(0)) for func in self.memory["funcs"]):
+            raise f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}'
+
+        func = Function(
+            id=ctx.ID(0)
+        )
+        # Function has params
+        if ctx.funcParams() is not None:
+            no_params = len(ctx.funcParams().ID())
+            params = []
+            for i in range(no_params):
+                params.append(Variable(
+                    id=ctx.funcParams().ID(i),
+                    type=ctx.funcParams().TYPE(i),
+                    context=func.id
+                ))
+            func.params = params
+
+        # Function has primitive return type
+        if ctx.TYPE() is not None:
+            func.return_type = str(ctx.TYPE())
+        # Function returns object
+        elif len(ctx.ID()) > 1:
+            func.return_type = str(ctx.ID(1))
+
+        self.memory["funcs"].append(func)
+        pprint(func)
         pass
 
     def exitFunction(self, ctx:PopurriParser.FunctionContext):
         pass
 
     def enterClassDeclaration(self, ctx:PopurriParser.ClassDeclarationContext):
-        new_class = Object(id=str(ctx.ID()))
+        klass = Object(id=str(ctx.ID()))
         if ctx.parent() is not None:
-            new_class.parent_id = str(ctx.parent().ID())
+            klass.parent_id = str(ctx.parent().ID())
 
-        self.memory["classes"].append(new_class)
+        self.memory["classes"].append(klass)
         print('class')
         pass
 
