@@ -4,4 +4,12 @@ Diego Enrique Treviño Ferrer A00819313
 
 *|* Semana 1 : 
 
--Se realizo el avance del analizador lexico y sintactico. [In progress]
+- Diego:
+
+* Pasé los diagramas de sintaxis a una gramática legible por ANTLR4 y con ello generé las clases PopurriParser y PopurriLexer utilizando antlr4
+
+* Cree el cubo semántico de tipos donde tiene toda posible combinación de operador y tipos
+
+* Generé un archivo para correr archivos de prueba (test.py)
+
+* Hice "refactor" al código de mi compañero para hacer mejor uso de la clase PopurriParser
