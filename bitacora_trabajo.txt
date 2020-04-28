@@ -13,3 +13,14 @@ Diego Enrique Treviño Ferrer A00819313
 * Generé un archivo para correr archivos de prueba (test.py)
 
 * Hice "refactor" al código de mi compañero para hacer mejor uso de la clase PopurriParser
+
+- Daniel:
+
+* Se creo la tabla de variables para clases y contexto global. Ademas de ayudar a mi companero a hacer la tabla de variables para funciones.
+
+* El archivo compilador que contiene clase compilador, el cual ejecuta el analizador lexico, sintactico y finalmente hace las correspondientes llamadas al analizador semantico y creacion de tabla de variables.
+
+* Se creo la arquitectura inicial de la tabla de variables, pensando en el concepto de direcciones virtuales para todos los tipos: INT, FLOAT, STRING, BOOL. 
+
+* Se creo un archivo de constantes (popurri_tokens) a utilizar en el transcurso del desarrollo del compilador.
+
