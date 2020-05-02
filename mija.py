@@ -14,7 +14,7 @@ TYPE      :  'int' | 'float' | 'string' | 'bool' | '[float]' | '[int]' | '[bool]
 
 # Operations between user-defined classes are NOT allowed
 
-# This semantic cube should be accesed using .get(), since it only describes valid operations
+# This semantic cube should be accesed using .get(), since it only describxes valid operations
 # So the get() function handles an unvalid combination of types
 bailes = {
     #### boolOp ####

@@ -1,0 +1,9 @@
+module main
+class myparent -> mychild {
+    private var hola : int
+    func a() {
+        print("ola")
+    }
+    var a : float
+    protected var b : string
+}
