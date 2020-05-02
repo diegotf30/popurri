@@ -102,6 +102,8 @@ class PopurriListener(ParseTreeListener):
     -Cada funcion 'enter' representa el estado cuando se inicia una  regla
     -Cada funcion 'exit' representa el estado cuando se acaba una regla
     '''
+
+    # quads
     memory = {
         "vars": [],
         "classes": [],
