@@ -114,16 +114,16 @@ class PopurriListener(ParseTreeListener):
 
     def __init__(self):
         # Crea el unico objeto global
-        self.global_obj = Global()
+        self.global_ctx = Global()
 
         # Crea el directorio de funciones/procedimientos
-        self.funcs_table_obj = FuncTable(self.global_obj.id)
+        self.funcs_table_obj = FuncTable(self.global_ctx.id)
 
     def enterProgram(self, ctx: PopurriParser.ProgramContext):
         '''
         [Program] marca el inicio de las reglas de la gramatica. Aqui inicia la fase de compilacion.
         '''
-        self.funcs_table_obj.insertProc(self.global_obj)
+        self.funcs_table_obj.insertProc(self.global_ctx)
         print('program')
         pass
 
@@ -219,7 +219,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitFunction(self, ctx: PopurriParser.FunctionContext):
-        self.funcs_table_obj.changeKeyPtr(self.global_obj.id)
+        self.funcs_table_obj.changeKeyPtr(self.global_ctx.id)
 
     def enterClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
         if any(id is str(ctx.ID()) for id, _ in self.funcs_table_obj.func_table.items()):
@@ -237,7 +237,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
-        self.funcs_table_obj.changeKeyPtr(self.global_obj.id)
+        self.funcs_table_obj.changeKeyPtr(self.global_ctx.id)
         pass
 
     def enterParent(self, ctx: PopurriParser.ParentContext):
@@ -266,7 +266,6 @@ class PopurriListener(ParseTreeListener):
             var = Variable(
                 id=ctx.ID(),
                 type=ctx.TYPE(),
-                access_type=ctx.accessType()
             )
         # var is type object
         else:
