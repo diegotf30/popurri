@@ -113,13 +113,13 @@ class PopurriListener(ParseTreeListener):
         self.global_ctx = Global()
 
         # Crea el directorio de funciones/procedimientos
-        self.funcs_table_obj = FuncTable(self.global_ctx.id)
+        self.funcs_table = FuncTable(self.global_ctx.id)
 
     def enterProgram(self, ctx: PopurriParser.ProgramContext):
         '''
         [Program] marca el inicio de las reglas de la gramatica. Aqui inicia la fase de compilacion.
         '''
-        self.funcs_table_obj.insertProc(self.global_ctx)
+        self.funcs_table.insertProc(self.global_ctx)
         print('program')
         pass
 
@@ -128,9 +128,9 @@ class PopurriListener(ParseTreeListener):
         [Program] marca el final de las reglas de la gramatica. Aqui termina la fase de compilacion.
         '''
         print('start of func_table')
-        print(self.funcs_table_obj.func_table)
+        print(self.funcs_table.func_table)
 
-        for key, obj in self.funcs_table_obj.func_table.items():
+        for key, obj in self.funcs_table.func_table.items():
             print(key)
             pprint(obj)
 
@@ -156,7 +156,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterDeclaration(self, ctx: PopurriParser.DeclarationContext):
         # Checks if var is already created in mem_slots
-        if any(var.id is str(ctx.ID()) for var in self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].attributes):
+        if any(var.id is str(ctx.ID()) for var in self.funcs_table.func_table[self.funcs_table.dir_key_ptr].attributes):
             raise 'ERROR VAR ALREADY CREATED'
 
         var = ""
@@ -174,7 +174,7 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.ID(1)
             )
 
-        self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].insertAttribute(
+        self.funcs_table.func_table[self.funcs_table.dir_key_ptr].insertAttribute(
             var)
 
         pprint(var)
@@ -184,7 +184,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterFunction(self, ctx: PopurriParser.FunctionContext):
-        if any(id is str(ctx.ID(0)) for id, _ in self.funcs_table_obj.func_table.items()):
+        if any(id is str(ctx.ID(0)) for id, _ in self.funcs_table.func_table.items()):
             raise f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}'
 
         func = Function(
@@ -209,16 +209,16 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) > 1:
             func.return_type = str(ctx.ID(1))
 
-        self.funcs_table_obj.insertProc(func)
-        self.funcs_table_obj.changeKeyPtr(func.id)
+        self.funcs_table.insertProc(func)
+        self.funcs_table.changeKeyPtr(func.id)
         pprint(func)
         pass
 
     def exitFunction(self, ctx: PopurriParser.FunctionContext):
-        self.funcs_table_obj.changeKeyPtr(self.global_ctx.id)
+        self.funcs_table.changeKeyPtr(self.global_ctx.id)
 
     def enterClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
-        if any(id is str(ctx.ID()) for id, _ in self.funcs_table_obj.func_table.items()):
+        if any(id is str(ctx.ID()) for id, _ in self.funcs_table.func_table.items()):
             raise f'ERROR RE-DEFINITION OF {str(ctx.ID())}'
 
         klass = Object(id=str(ctx.ID()))
@@ -226,14 +226,14 @@ class PopurriListener(ParseTreeListener):
             # TODO: implement inheritance of attrs & functions
             klass.parent_id = str(ctx.parent().ID())
 
-        self.funcs_table_obj.insertProc(klass)
-        self.funcs_table_obj.changeKeyPtr(klass.id)
+        self.funcs_table.insertProc(klass)
+        self.funcs_table.changeKeyPtr(klass.id)
         pprint(klass)
         print('class')
         pass
 
     def exitClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
-        self.funcs_table_obj.changeKeyPtr(self.global_ctx.id)
+        self.funcs_table.changeKeyPtr(self.global_ctx.id)
         pass
 
     def enterParent(self, ctx: PopurriParser.ParentContext):
@@ -255,7 +255,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterAttribute(self, ctx: PopurriParser.AttributeContext):
-        if any(var.id is str(ctx.ID()) for var in self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].attributes):
+        if any(var.id is str(ctx.ID()) for var in self.funcs_table.func_table[self.funcs_table.dir_key_ptr].attributes):
             raise 'ERROR VAR ALREADY CREATED'
 
         if ctx.TYPE() is not None:
@@ -270,7 +270,7 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.ID(1)
             )
 
-        self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].insertAttribute(
+        self.funcs_table.func_table[self.funcs_table.dir_key_ptr].insertAttribute(
             var)
 
         print('attribute')
