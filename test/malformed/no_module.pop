@@ -1,0 +1,5 @@
+var a, x, y
+
+func a() {
+    print("hello")
+}
