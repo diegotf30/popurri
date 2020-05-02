@@ -55,6 +55,15 @@ bailes = {
     "is not": {
         # Any
     },
+    #### AssignOp ####
+    "=": {
+        ("int", "int"): "int",
+        ("int", "float"): "int",
+        ("float", "int"): "float",
+        ("float", "float"): "float",
+        # "a" + "bc" = "abc"
+        ("string", "string"): "string"
+    },
     #### addOp ####
     "+": {
         ("int", "int"): "int",
