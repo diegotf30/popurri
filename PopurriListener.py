@@ -89,14 +89,10 @@ class Function():
     [return_type] es el tipo de dato que regresara la funcion al terminar su ejecucion. Void es el tipo predeterminado.
     '''
 
-    def __init__(self, id, attributes=None, params=None, return_type="void"):
+    def __init__(self, id, params=None, return_type="void"):
         self.id = str(id)
         self.params = params
-        self.attributes = attributes
         self.return_type = str(return_type)
-
-    def insertAttribute(self, attribute):
-        self.attributes.append(attribute)
 
 
 class PopurriListener(ParseTreeListener):
