@@ -13,8 +13,8 @@ ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
 program : module classDeclaration* declarations* function* statement*;
 module : 'module' ID ;
 
-declarations : 'var' declaration (',' declaration)* ;
-declaration : ID (':' (TYPE | ID))? ('=' cond)?;
+declarations :  declaration (',' declaration)* ;
+declaration : 'var' ID (':' (TYPE | ID))? ('=' cond)?;
 
 function : 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}' ;
 
