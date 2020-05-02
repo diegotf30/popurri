@@ -9,20 +9,56 @@ def pprint(*args):
         print(json.dumps(arg, indent=2, default=vars))
 
 
+def getTypeByToken():
+    pass
+
+
+class FuncTable():
+    '''
+    Esta es una tabla de procedimientos
+    '''
+
+    def __init__(self, default_key_ptr):
+
+        # Apunta al inicio de nuestra tabla global [global]
+        self.dir_key_ptr = default_key_ptr
+
+        self.func_table = {}
+
+    def insertProc(self, proc_obj):
+        self.func_table[proc_obj.id] = proc_obj
+
+    def changeKeyPtr(self, func_table_id):
+        self.dir_key_ptr = func_table_id
+
+
+class Global():
+
+    def __init__(self, global_id="global"):
+        self.id = global_id
+        self.attributes = []
+
+    def insertAttribute(self, variable_obj):
+        self.attributes.append(variable_obj)
+
+
 class Variable():
     '''
     Esto nos permite simular la creacion de variables. Inicializandolas con atributos predeterminados.
     [id] es el identificador con el que se podra localizar la actual variable. Ej. var edad : int. Donde edad es el ID.
+    [address] es la direccion virtual en el que la variable se encuentra alocada.
     [type] es el tipo de dato con el que la variable estara relacionada. Ej. var edad : int. Donde int es el tipo de dato.
     [value] es el valor inicial que tendra la variable. Ej. var edad = 25. Donde 25 es el valor inicial.
     [context] es el scope en donde la variable estara guardada. Esto permite crear variables unicas dentro de un scope.
     '''
 
-    def __init__(self, id, type=None, value=None, context="global"):
+    def __init__(self, id, access_type="public", address=None, type=None, value=None, context="global"):
+        self.access_type = access_type
         self.id = str(id)
         self.type = str(type)
         self.value = value
         self.context = str(context)
+        self.address = address
 
 
 class Object():
@@ -41,6 +77,9 @@ class Object():
         self.attributes = attributes
         self.functions = functions
 
+    def insertAttribute(self, attribute):
+        self.attributes.append(attribute)
+
 
 class Function():
     '''
@@ -50,10 +89,14 @@ class Function():
     [return_type] es el tipo de dato que regresara la funcion al terminar su ejecucion. Void es el tipo predeterminado.
     '''
 
-    def __init__(self, id, params=None, return_type="void"):
+    def __init__(self, id, attributes=None, params=None, return_type="void"):
         self.id = str(id)
         self.params = params
+        self.attributes = attributes
         self.return_type = str(return_type)
+
+    def insertAttribute(self, attribute):
+        self.attributes.append(attribute)
 
 
 class PopurriListener(ParseTreeListener):
@@ -69,10 +112,18 @@ class PopurriListener(ParseTreeListener):
         "funcs": []
     }
 
+    def __init__(self):
+        # Crea el unico objeto global
+        self.global_obj = Global()
+
+        # Crea el directorio de funciones/procedimientos
+        self.funcs_table_obj = FuncTable(self.global_obj.id)
+
     def enterProgram(self, ctx: PopurriParser.ProgramContext):
         '''
         [Program] marca el inicio de las reglas de la gramatica. Aqui inicia la fase de compilacion.
         '''
+        self.funcs_table_obj.insertProc(self.global_obj)
         print('program')
         pass
 
@@ -80,7 +131,12 @@ class PopurriListener(ParseTreeListener):
         '''
         [Program] marca el final de las reglas de la gramatica. Aqui termina la fase de compilacion.
         '''
-        pass
+        print('start of func_table')
+        print(self.funcs_table_obj.func_table)
+
+        for key, obj in self.funcs_table_obj.func_table.items():
+            print(key)
+            pprint(obj)
 
     def enterModule(self, ctx: PopurriParser.ModuleContext):
         '''
@@ -104,7 +160,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterDeclaration(self, ctx: PopurriParser.DeclarationContext):
         # Checks if var is already created in mem_slots
-        if any(var.id is str(ctx.ID()) for var in self.memory["vars"]):
+        if any(var.id is str(ctx.ID()) for var in self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].attributes):
             raise 'ERROR VAR ALREADY CREATED'
 
         var = ""
@@ -122,7 +178,9 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.ID(1)
             )
 
-        self.memory["vars"].append(var)
+        self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].insertAttribute(
+            var)
+
         pprint(var)
         print('declaration')
 
@@ -130,7 +188,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterFunction(self, ctx: PopurriParser.FunctionContext):
-        if any(func.id is str(ctx.ID(0)) for func in self.memory["funcs"]):
+        if any(id is str(ctx.ID(0)) for id, _ in self.funcs_table_obj.func_table.items()):
             raise f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}'
 
         func = Function(
@@ -155,24 +213,31 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) > 1:
             func.return_type = str(ctx.ID(1))
 
-        self.memory["funcs"].append(func)
+        self.funcs_table_obj.insertProc(func)
+        self.funcs_table_obj.changeKeyPtr(func.id)
         pprint(func)
         pass
 
     def exitFunction(self, ctx: PopurriParser.FunctionContext):
-        pass
+        self.funcs_table_obj.changeKeyPtr(self.global_obj.id)
 
     def enterClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
+        if any(id is str(ctx.ID()) for id, _ in self.funcs_table_obj.func_table.items()):
+            raise f'ERROR RE-DEFINITION OF {str(ctx.ID())}'
+
         klass = Object(id=str(ctx.ID()))
         if ctx.parent() is not None:
             # TODO: implement inheritance of attrs & functions
             klass.parent_id = str(ctx.parent().ID())
 
-        self.memory["classes"].append(klass)
+        self.funcs_table_obj.insertProc(klass)
+        self.funcs_table_obj.changeKeyPtr(klass.id)
+        pprint(klass)
         print('class')
         pass
 
     def exitClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
+        self.funcs_table_obj.changeKeyPtr(self.global_obj.id)
         pass
 
     def enterParent(self, ctx: PopurriParser.ParentContext):
@@ -194,7 +259,27 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterAttribute(self, ctx: PopurriParser.AttributeContext):
+        if any(var.id is str(ctx.ID()) for var in self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].attributes):
+            raise 'ERROR VAR ALREADY CREATED'
+
+        if ctx.TYPE() is not None:
+            var = Variable(
+                id=ctx.ID(),
+                type=ctx.TYPE(),
+                access_type=ctx.accessType()
+            )
+        # var is type object
+        else:
+            var = Variable(
+                id=ctx.ID(0),
+                type=ctx.ID(1)
+            )
+
+        self.funcs_table_obj.func_table[self.funcs_table_obj.dir_key_ptr].insertAttribute(
+            var)
+
         print('attribute')
+        pass
 
     def exitAttribute(self, ctx: PopurriParser.AttributeContext):
         pass
