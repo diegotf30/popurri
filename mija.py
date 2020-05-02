@@ -64,7 +64,21 @@ bailes = {
         # "a" + "bc" = "abc"
         ("string", "string"): "string"
     },
+    "+=": {
+        ("int", "int"): "int",
+        ("int", "float"): "float",
+        ("float", "int"): "float",
+        ("float", "float"): "float",
+        # "a" + "bc" = "abc"
+        ("string", "string"): "string"
+    },
     "-": {
+        ("int", "int"): "int",
+        ("int", "float"): "float",
+        ("float", "int"): "float",
+        ("float", "float"): "float"
+    },
+    "-=": {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
@@ -80,14 +94,36 @@ bailes = {
         ("string", "int"): "string",
         ("int", "string"): "string"
     },
+    "*=": {
+        ("int", "int"): "int",
+        ("int", "float"): "float",
+        ("float", "int"): "float",
+        ("float", "float"): "float",
+        # "a" * 3 = "aaa"
+        ("string", "int"): "string",
+        ("int", "string"): "string"
+    },
     "/": {
-        # 3 / 10 = 0.33333 
+        # 3 / 10 = 0.33333
+        ("int", "int"): "float",
+        ("int", "float"): "float",
+        ("float", "int"): "float",
+        ("float", "float"): "float"
+    },
+    "/=": {
+        # 3 / 10 = 0.33333
         ("int", "int"): "float",
         ("int", "float"): "float",
         ("float", "int"): "float",
         ("float", "float"): "float"
     },
     "%": {
+        ("int", "int"): "int",
+        ("int", "float"): "float",
+        ("float", "int"): "float",
+        ("float", "float"): "float"
+    },
+    "%=": {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
