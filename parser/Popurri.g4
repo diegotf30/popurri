@@ -9,14 +9,15 @@ CONST_F : [0-9]* '.' [0-9]+;
 CONST_STR : '\'' .*? '\'' | '"' .*? '"';
 TYPE :  'int' | 'float' | 'string' | 'bool' | '[' ('float' | 'int' | 'bool') ']';
 ACCESS_TYPE : 'public' | 'protected' | 'private';
-ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
 
 // Operators
 BOOL_OP : 'and' | 'or';
-CMP_OP : '<' | '<=' | '>' | '>=' | 'is' | 'is' 'not';
+CMP_OP : '<' | '<=' | '>' | '>=' | 'is' | 'is not';
 ADD_OP : '+' | '-';
 MULT_DIV_OP : '*' | '/' | '%';
-ASSIGN_OP : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
+ASSIGN_OP : '+=' | '-=' | '*=' | '/=' | '%=';
+
+ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
 
 program : module classDeclaration* declarations* function* statement*;
 module : 'module' ID ;
@@ -42,15 +43,15 @@ statement : assignment | whileLoop | forLoop | branch | returnStmt | funcCall | 
 		elseStmt : 'else' cond '{' statement* '}';
 	returnStmt : 'return' cond;
 
-	cond : ( cmp BOOL_OP | 'not' )? cmp;
-	cmp : exp (CMP_OP exp)?;
-	exp : add (ADD_OP add)?;
-	add : multModDiv (MULT_DIV_OP multModDiv)?;
-	multModDiv : val ('**' val)?;
+	cond : (cmp BOOL_OP?)+ ;
+	cmp : (exp CMP_OP?)+;
+	exp : (add ADD_OP?)+;
+	add : (multModDiv MULT_DIV_OP?)+;
+	multModDiv : (val '**'?)+;
 	val : '(' cond ')' | ADD_OP? (ID ('.' ID)? | constant | indexation);
 	indexation : iterable '[' exp ']';
 
-	assignment : (ID '.')? ID ASSIGN_OP cond;
+	assignment : (ID '.')? ID (ASSIGN_OP | '=') cond;
 	funcCall : (ID '.')? ID '(' condParam? ')';
 
 constant : CONST_BOOL | CONST_I | CONST_F | CONST_STR | const_arr | 'none';
