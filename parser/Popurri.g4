@@ -15,13 +15,6 @@ TYPE:
 	| '[' ('float' | 'int' | 'bool') ']';
 ACCESS_TYPE: 'public' | 'protected' | 'private';
 
-// Operators
-BOOL_OP: 'and' | 'or';
-CMP_OP: '<' | '<=' | '>' | '>=' | 'is' | 'is not';
-ADD_OP: '+' | '-';
-MULT_DIV_OP: '*' | '/' | '%';
-ASSIGN_OP: '+=' | '-=' | '*=' | '/=' | '%=';
-
 ID: [_a-zA-Z][_a-zA-Z0-9]* [!?]?;
 
 program:
@@ -61,17 +54,24 @@ elseIf: 'else if' cond '{' statement* '}';
 elseStmt: 'else' cond '{' statement* '}';
 returnStmt: 'return' cond;
 
-cond: (cmp BOOL_OP?)+;
-cmp: (exp CMP_OP?)+;
-exp: (add ADD_OP?)+;
-add: (multModDiv MULT_DIV_OP?)+;
+cond: (cmp boolOp?)+;
+cmp: (exp cmpOp?)+;
+exp: (add addOp?)+;
+add: (multModDiv multDivOp?)+;
 multModDiv: (val '**'?)+;
 val:
 	'(' cond ')'
-	| ADD_OP? (ID ('.' ID)? | constant | indexation);
+	ID ('.' ID)? | constant | indexation; // TODO addOp?
 indexation: iterable '[' exp ']';
 
-assignment: (ID '.')? ID (ASSIGN_OP | '=') cond;
+// Operators
+boolOp: 'and' | 'or';
+cmpOp: '<' | '<=' | '>' | '>=' | 'is' | 'is not';
+addOp: '+' | '-';
+multDivOp: '*' | '/' | '%';
+assignOp: '+=' | '-=' | '*=' | '/=' | '%=';
+
+assignment: (ID '.')? ID (assignOp | '=') cond;
 funcCall: (ID '.')? ID '(' condParam? ')';
 
 constant:

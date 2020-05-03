@@ -1,4 +1,5 @@
 from antlr4 import *
+from parser.PopurriParser import PopurriParser
 from popurri_tokens import *
 import json
 
@@ -37,9 +38,7 @@ class QuadWrapper():
         self.quads.append(quad.__str__())
 
     def topOperator(self):
-        top_element = self.operator_stack.pop()
-        self.insertOperator(top_element)
-        return top_element
+        return self.operator_stack[-1] if len(self.operator_stack) > 0 else None
 
     def insertOperator(self, operator):
         self.operator_stack.append(operator)
@@ -406,60 +405,54 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCond(self, ctx):
-
-        print('hola2')
         print(f'quads_stack = {self.quadWrapper.quads}',
               f'address_stack = {self.quadWrapper.address_stack}',
               f'operator_stack = {self.quadWrapper.operator_stack}',
               f'jump_stack = {self.quadWrapper.jump_stack}')
-        print('hola2')
-
         pass
 
     def enterCmp(self, ctx):
-        print(ctx.CMP_OP())
-        if ctx.CMP_OP() is not None:
-            for el in ctx.CMP_OP():
-                self.quadWrapper.insertOperator(
-                    self.quadWrapper.getTokenCode(str(el)))
+        pass
 
     def exitCmp(self, ctx):
         pass
 
     def enterExp(self, ctx):
-        print(ctx.ADD_OP())
-        if ctx.ADD_OP() is not None:
-            for el in ctx.ADD_OP():
-                self.quadWrapper.insertOperator(
-                    self.quadWrapper.getTokenCode(str(el)))
+        print("enter exp")
+        pass
 
     def exitExp(self, ctx):
-        print(ctx.ADD_OP())
-        if ctx.ADD_OP() is not None:
-            for el in ctx.ADD_OP():
-                self.quadWrapper.insertOperator(
-                    self.quadWrapper.getTokenCode(str(el)))
-
-        print('hola3')
-        print(self.quadWrapper.operator_stack)
+        print("exit exp")
+        if self.quadWrapper.operator_stack and self.quadWrapper.topOperator() in ['*', '/', '%']:
+            temp = f'temp_{self.counter}'
+            self.counter += 1
+            self.quadWrapper.insertQuad(Quadruple(
+                self.quadWrapper.operator_stack.pop(),
+                self.quadWrapper.address_stack.pop(),
+                self.quadWrapper.address_stack.pop(),
+                temp
+            ))
+            print('\t',self.quadWrapper.quads[-1])
+            self.quadWrapper.insertAddress(temp)
         pass
 
     def enterAdd(self, ctx):
-        # if len(self.quadWrapper.operator_stack) != 0:
-        #     while len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.topOperator() in [MULT, DIV, MOD] and len(self.quadWrapper.address_stack) >= 2:
-        #         temp = f'temp_{self.counter}'
-        #         self.counter += 1
-        #         self.quadWrapper.insertQuad(Quadruple(self.quadWrapper.operator_stack.pop(
-        #         ), self.quadWrapper.address_stack.pop(), self.quadWrapper.address_stack.pop(), temp))
-        #         self.quadWrapper.insertAddress(temp)
-
-        # if ctx.MULT_DIV_OP() is not None:
-        #     for el in ctx.MULT_DIV_OP():
-        #         self.quadWrapper.insertOperator(
-        #             self.quadWrapper.getTokenCode(str(el)))
+        print("enter add")
         pass
 
     def exitAdd(self, ctx):
+        print("exit add")
+        if self.quadWrapper.operator_stack and self.quadWrapper.topOperator() in ['+', '-']:
+            temp = f'temp_{self.counter}'
+            self.counter += 1
+            self.quadWrapper.insertQuad(Quadruple(
+                op=self.quadWrapper.operator_stack.pop(),
+                r=self.quadWrapper.address_stack.pop(),
+                l=self.quadWrapper.address_stack.pop(),
+                res=temp
+            ))
+            print('\t',self.quadWrapper.quads[-1])
+            self.quadWrapper.insertAddress(temp)
 
         # current_operators = []
         # current_addresses = []
@@ -508,13 +501,14 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterVal(self, ctx):
+        print("enter val")
         if len(ctx.ID()) > 0:  # es un objeto
-            self.quadWrapper.insertAddress(str(ctx.ID()))
+            self.quadWrapper.insertAddress(str(ctx.ID(0)))
+            print("\tadd", str(ctx.ID(0)))
         elif ctx.constant() is not None:
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
-
-    def exitVal(self, ctx):
-        pass
+            print("\tadd", self.getConstant(ctx.constant()))
+        # TODO implement arrays
 
     def getConstant(self, ctx):
         if ctx.CONST_BOOL() is not None:
@@ -528,6 +522,56 @@ class PopurriListener(ParseTreeListener):
         else:
             return 'none'
         # TODO: add arrays
+
+    def exitVal(self, ctx):
+        pass
+    
+    def enterBoolOp(self, ctx:PopurriParser.BoolOpContext):
+        self.quadWrapper.operator_stack.append(ctx.getText())
+        print(self.quadWrapper.operator_stack)
+        pass
+
+    def exitBoolOp(self, ctx:PopurriParser.BoolOpContext):
+        pass
+
+
+    def enterCmpOp(self, ctx:PopurriParser.CmpOpContext):
+        self.quadWrapper.operator_stack.append(ctx.getText())
+        print(self.quadWrapper.operator_stack)
+        pass
+
+    def exitCmpOp(self, ctx:PopurriParser.CmpOpContext):
+        pass
+
+    def enterAddOp(self, ctx:PopurriParser.AddOpContext):
+        print("enter add op")
+        self.quadWrapper.operator_stack.append(ctx.getText())
+        print('\t',self.quadWrapper.operator_stack)
+        pass
+
+    def exitAddOp(self, ctx:PopurriParser.AddOpContext):
+        print("exit add op")
+        pass
+
+    def enterMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+        print("enter mult op")
+        self.quadWrapper.operator_stack.append(ctx.getText())
+        print('\t',self.quadWrapper.operator_stack)
+        pass
+
+    def exitMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+        print("exit mult op")
+        pass
+
+
+    def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
+        self.quadWrapper.operator_stack.append(ctx.getText())
+        print('\t',self.quadWrapper.operator_stack)
+        pass
+
+    def exitAssignOp(self, ctx:PopurriParser.AssignOpContext):
+        pass
+
 
     def enterIndexation(self, ctx):
         pass
@@ -545,36 +589,6 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitFuncCall(self, ctx):
-        pass
-
-    def enterBoolOp(self, ctx):
-        pass
-
-    def exitBoolOp(self, ctx):
-        pass
-
-    def enterCmpOp(self, ctx):
-        pass
-
-    def exitCmpOp(self, ctx):
-        pass
-
-    def enterAddOp(self, ctx):
-        pass
-
-    def exitAddOp(self, ctx):
-        pass
-
-    def enterMultDivOp(self, ctx):
-        pass
-
-    def exitMultDivOp(self, ctx):
-        pass
-
-    def enterAssignOp(self, ctx):
-        pass
-
-    def exitAssignOp(self, ctx):
         pass
 
     def enterConstant(self, ctx):

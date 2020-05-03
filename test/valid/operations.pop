@@ -2,4 +2,4 @@ module main
 
 var a : int
 
-a = 1 - 1
+a = A + B * C / D - E
