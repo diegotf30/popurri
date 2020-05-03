@@ -406,18 +406,34 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCond(self, ctx):
+
+        print('hola2')
+        print(f'quads_stack = {self.quadWrapper.quads}',
+              f'address_stack = {self.quadWrapper.address_stack}',
+              f'operator_stack = {self.quadWrapper.operator_stack}',
+              f'jump_stack = {self.quadWrapper.jump_stack}')
+        print('hola2')
+
         pass
 
     def enterCmp(self, ctx):
+
         pass
 
     def exitCmp(self, ctx):
         pass
 
     def enterExp(self, ctx):
+        if ctx.ADD_OP() is not None:
+            for el in ctx.ADD_OP():
+                self.quadWrapper.insertOperator(
+                    self.quadWrapper.getTokenCode(str(el)))
         pass
 
     def exitExp(self, ctx):
+
+        print('hola3')
+        print(self.quadWrapper.operator_stack)
         pass
 
     def enterAdd(self, ctx):
@@ -435,15 +451,37 @@ class PopurriListener(ParseTreeListener):
                     self.quadWrapper.getTokenCode(str(el)))
 
     def exitAdd(self, ctx):
-        if len(self.quadWrapper.operator_stack) != 0:
-            while len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.topOperator() in [MULT, DIV, MOD] and len(self.quadWrapper.address_stack) >= 2:
-                temp = f'temp_{self.counter}'
-                self.counter += 1
-                right = self.quadWrapper.address_stack.pop()
-                left = self.quadWrapper.address_stack.pop()
-                self.quadWrapper.insertQuad(Quadruple(self.quadWrapper.operator_stack.pop(
-                ), left, right, temp))
-                self.quadWrapper.insertAddress(temp)
+
+        current_operators = []
+        current_addresses = []
+
+        new_operator_stack = self.quadWrapper.operator_stack
+
+        for op in self.quadWrapper.operator_stack:
+            if op in [MULT, DIV, MOD]:
+                current_operators.append(op)
+                new_operator_stack = new_operator_stack[:len(
+                    new_operator_stack) - 1]
+            else:
+                break
+
+        current_addresses = self.quadWrapper.address_stack[len(
+            self.quadWrapper.address_stack) - (len(current_operators) + 1):][::-1]
+
+        self.quadWrapper.address_stack = self.quadWrapper.address_stack[:len(
+            self.quadWrapper.address_stack) - (len(current_operators) + 1)]
+
+        print('hola')
+        print(current_operators, current_addresses,
+              new_operator_stack)
+
+        for op in current_operators:
+            temp = f'temp_{self.counter}'
+            self.counter += 1
+            left = current_addresses.pop()
+            right = current_addresses.pop()
+            self.quadWrapper.insertQuad(Quadruple(op, left, right, temp))
+            current_addresses.append(temp)
 
     def enterMultModDiv(self, ctx):
         if self.quadWrapper.topOperator() == POWER:
