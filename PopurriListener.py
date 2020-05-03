@@ -18,7 +18,7 @@ class QuadWrapper():
     '''
     operator_codes = ['', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
                       '%', '%=', '**', 'is', 'is not', '>', '>=', '<',
-                      '<=', 'and', 'or']
+                      '<=', 'and', 'or', '=', 'print']
 
     def __init__(self):
         self.quads = []
@@ -59,6 +59,10 @@ class QuadWrapper():
         return self.operator_codes.index(element) + 1
 
     def handleQuadruple(self, operators, tmp_count):
+        if self.topOperator() is ')':
+            self.operator_stack.pop()
+            self.operator_stack.pop()
+
         if self.topOperator() in operators:
             tmp = f'temp_{tmp_count + 1}'
             self.insertQuad(Quadruple(
@@ -426,23 +430,41 @@ class PopurriListener(ParseTreeListener):
     def exitReturnStmt(self, ctx):
         pass
 
+    def exitCond(self, ctx):
+        open_par = 0
+        close_par = 0
+        for op in self.quadWrapper.operator_stack[::-1]:
+            if op is '(':
+                open_par += 1
+            elif op is ')':
+                close_par += 1
+
+        print(open_par, close_par)
+
+        if open_par > close_par:
+            self.quadWrapper.insertOperator(')')
+
     def exitCmp(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(['and', 'or'], self.counter)
+        created_quad = self.quadWrapper.handleQuadruple(
+            ['and', 'or'], self.counter)
         if created_quad:
             self.counter += 1
 
     def exitExp(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(['<', '<=', '>', '>=', 'is', 'is not'], self.counter)
+        created_quad = self.quadWrapper.handleQuadruple(
+            ['<', '<=', '>', '>=', 'is', 'is not'], self.counter)
         if created_quad:
             self.counter += 1
 
     def exitAdd(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(['+', '-'], self.counter)
+        created_quad = self.quadWrapper.handleQuadruple(
+            ['+', '-'], self.counter)
         if created_quad:
             self.counter += 1
 
     def exitMultModDiv(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(['*', '/', '%'], self.counter)
+        created_quad = self.quadWrapper.handleQuadruple(
+            ['*', '/', '%'], self.counter)
         if created_quad:
             self.counter += 1
 
@@ -461,30 +483,35 @@ class PopurriListener(ParseTreeListener):
         # TODO: add arrays
 
     def enterVal(self, ctx):
-        if len(ctx.ID()) > 0:  # es un objeto
+        if ctx.cond() is not None:
+            self.quadWrapper.insertOperator('(')
+        elif len(ctx.ID()) > 0:  # es un objeto
             self.quadWrapper.insertAddress(str(ctx.ID(0)))
         elif ctx.constant() is not None:
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
+
+        print(self.quadWrapper.operator_stack)
         # TODO implement arrays
+        # TODO implement parenthesis expressions
 
     def exitVal(self, ctx):
         created_quad = self.quadWrapper.handleQuadruple(['**'], self.counter)
         if created_quad:
             self.counter += 1
-    
-    def enterBoolOp(self, ctx:PopurriParser.BoolOpContext):
+
+    def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
-    def enterCmpOp(self, ctx:PopurriParser.CmpOpContext):
+    def enterCmpOp(self, ctx: PopurriParser.CmpOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
-    def enterAddOp(self, ctx:PopurriParser.AddOpContext):
+    def enterAddOp(self, ctx: PopurriParser.AddOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
-    def enterMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
+    def enterMultDivOp(self, ctx: PopurriParser.MultDivOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
-    def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
+    def enterAssignOp(self, ctx: PopurriParser.AssignOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
     def enterIndexation(self, ctx):
@@ -498,9 +525,10 @@ class PopurriListener(ParseTreeListener):
 
     def exitAssignment(self, ctx):
         if self.quadWrapper.topOperator() in ['=', '+=', '-=', '*=', '/=', '%=']:
-            res = str(ctx.ID(0)) # TODO objects
+            res = str(ctx.ID(0))  # TODO objects
             self.quadWrapper.insertQuad(Quadruple(
-                op=self.quadWrapper.popOperator(),
+                op=self.quadWrapper.getTokenCode(
+                    self.quadWrapper.popOperator()),
                 l=self.quadWrapper.popAddress(),
                 r=None,
                 res=res
