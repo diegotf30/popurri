@@ -8,21 +8,22 @@ CONST_I : [1-9][0-9]* | '0';
 CONST_F : [0-9]* '.' [0-9]+;
 CONST_STR : '\'' .*? '\'' | '"' .*? '"';
 TYPE :  'int' | 'float' | 'string' | 'bool' | '[' ('float' | 'int' | 'bool') ']';
+ACCESS_TYPE : 'public' | 'protected' | 'private';
 ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
 
 program : module classDeclaration* declarations* function* statement*;
 module : 'module' ID ;
 
-declarations :  declaration (',' declaration)* ;
-declaration : 'var' ID (':' (TYPE | ID))? ('=' cond)?;
+declarations : 'var' declaration (',' declaration)* ;
+declaration : ID (':' (TYPE | ID))? ('=' cond)?;
 
 function : 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}' ;
 
-classDeclaration : 'class' parent? ID '{' (accessType? (attributes | function))+ '}' ;
+classDeclaration : 'class' parent? ID '{' (attributes | method)+ '}' ;
 parent : ID '->';
-accessType : 'public' | 'protected' | 'private';
-attributes : 'var' attribute (',' attribute)* ;
+attributes : ACCESS_TYPE? 'var' attribute (',' attribute)* ;
 attribute : ID (':' TYPE)? ('=' cond)?;
+method : ACCESS_TYPE? function;
 
 // Statements
 statement : assignment | whileLoop | forLoop | branch | returnStmt | funcCall | printStmt | inputStmt | 'break';

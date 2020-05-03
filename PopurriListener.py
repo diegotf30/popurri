@@ -1,64 +1,75 @@
 from antlr4 import *
-from parser.PopurriParser import PopurriParser
 from popurri_tokens import *
 import json
-
 
 def pprint(*args):
     for arg in args:
         print(json.dumps(arg, indent=2, default=vars))
 
+class Cuadruple():
 
-def getTypeByToken():
-    pass
+    def __init__(self, op, l, r, res):
+        self.op = op
+        # Arguments
+        self.l = l
+        self.r = r
+        # Where result of op(l, r) is stored
+        self.res = res
 
 
-class FuncTable():
+class GlobalContext():
     '''
     Esta es una tabla de procedimientos
     '''
 
-    def __init__(self, default_key_ptr):
+    def __init__(self):
+        self.variables = {}
+        self.functions = {}
 
-        # Apunta al inicio de nuestra tabla global [global]
-        self.dir_key_ptr = default_key_ptr
+    def addVariable(self, var, context="global"):
+        if context in self.variables:
+            self.variables[context][var.id] = var
+        else:
+            self.variables[context] = {
+                var.id: var
+            }
 
-        self.func_table = {}
+    def addFunction(self, func, context="global"):
+        if context in self.functions:
+            self.functions[context][func.id] = func
+        else:
+            self.functions[context] = {
+                func.id: func
+            }
 
-    def insertProc(self, proc_obj):
-        self.func_table[proc_obj.id] = proc_obj
+    def varExistsInContext(self, var_id, ctx_id):
+        if ctx_id not in self.variables:
+            return False
 
-    def changeKeyPtr(self, func_table_id):
-        self.dir_key_ptr = func_table_id
+        return self.variables[ctx_id].get(str(var_id), False)
 
+    def functionExistsInContext(self, func_id, ctx_id):
+        if ctx_id not in self.functions:
+            return False
 
-class Global():
+        return self.functions[ctx_id].get(str(func_id), False)
 
-    def __init__(self, global_id="global"):
-        self.id = global_id
-        self.attributes = []
-
-    def insertAttribute(self, variable_obj):
-        self.attributes.append(variable_obj)
-
+    def classExists(self, id):
+        return str(id) in self.variables or str(id) in self.functions
 
 class Variable():
     '''
     Esto nos permite simular la creacion de variables. Inicializandolas con atributos predeterminados.
     [id] es el identificador con el que se podra localizar la actual variable. Ej. var edad : int. Donde edad es el ID.
-    [address] es la direccion virtual en el que la variable se encuentra alocada.
     [type] es el tipo de dato con el que la variable estara relacionada. Ej. var edad : int. Donde int es el tipo de dato.
     [value] es el valor inicial que tendra la variable. Ej. var edad = 25. Donde 25 es el valor inicial.
-    [context] es el scope en donde la variable estara guardada. Esto permite crear variables unicas dentro de un scope.
     '''
 
-    def __init__(self, id, access_type="public", address=None, type=None, value=None, context="global"):
+    def __init__(self, id, access_type="public", type=None, value=None):
         self.access_type = access_type
         self.id = str(id)
         self.type = str(type)
         self.value = value
-        self.context = str(context)
-        self.address = address
 
 
 class Object():
@@ -67,31 +78,22 @@ class Object():
     [id] es el identificador con el que se podra localizar la clase actual. Ej. class Humano {}. Donde Humano es el identificador.
     [parent_id] es el identificador del cual la clase actual heredara todas las propiedades. Ej. class Humano -> Persona. Donde Humano es el identificador
     padre.
-    [attributes] son todas las variables con las que la clase actual cuenta en su cuerpo. Es una lista de variables.
-    [functions] son todas las funciones con las que la clase actual cuenta en su cuerpo. Es una lista de funciones.
     '''
 
-    def __init__(self, id, parent_id=None, attributes=[], functions=[]):
+    def __init__(self, id, parent_id=None):
         self.id = str(id)
         self.parent_id = str(parent_id)
-        self.attributes = attributes
-        self.functions = functions
-
-    def insertAttribute(self, attribute):
-        self.attributes.append(attribute)
 
 
 class Function():
     '''
     Esto nos permite simular la creacion de funciones. Inicializandolas con atributos predeterminados.
     [id] es el identificador con el que se podra localizar la funcion actual. Ej. func habla() {}. Donde habla es el identificador.
-    [params] son los parametros que se le enviaran a la funcion actual. Es una lista de parametros.
     [return_type] es el tipo de dato que regresara la funcion al terminar su ejecucion. Void es el tipo predeterminado.
     '''
 
-    def __init__(self, id, params=None, return_type="void"):
+    def __init__(self, id, return_type="void"):
         self.id = str(id)
-        self.params = params
         self.return_type = str(return_type)
 
 
@@ -102,62 +104,44 @@ class PopurriListener(ParseTreeListener):
     -Cada funcion 'enter' representa el estado cuando se inicia una  regla
     -Cada funcion 'exit' representa el estado cuando se acaba una regla
     '''
-    memory = {
-        "vars": [],
-        "classes": [],
-        "funcs": []
-    }
-
     def __init__(self):
-        # Crea el unico objeto global
-        self.global_ctx = Global()
+        self.global_ctx = GlobalContext()
 
-        # Crea el directorio de funciones/procedimientos
-        self.funcs_table = FuncTable(self.global_ctx.id)
-
-    def enterProgram(self, ctx: PopurriParser.ProgramContext):
+    def enterProgram(self, ctx):
         '''
         [Program] marca el inicio de las reglas de la gramatica. Aqui inicia la fase de compilacion.
         '''
-        self.funcs_table.insertProc(self.global_ctx)
-        print('program')
         pass
 
-    def exitProgram(self, ctx: PopurriParser.ProgramContext):
+    def exitProgram(self, ctx):
         '''
         [Program] marca el final de las reglas de la gramatica. Aqui termina la fase de compilacion.
         '''
-        print('start of func_table')
-        print(self.funcs_table.func_table)
+        #pprint(self.global_ctx.variables, self.global_ctx.functions)
+        pass
 
-        for key, obj in self.funcs_table.func_table.items():
-            print(key)
-            pprint(obj)
-
-    def enterModule(self, ctx: PopurriParser.ModuleContext):
+    def enterModule(self, ctx):
         '''
         [Module] no afecta ningun aspecto del compilador o lenguaje, por lo que se ignora
         '''
-        print('module')
         pass
 
-    def exitModule(self, ctx: PopurriParser.ModuleContext):
+    def exitModule(self, ctx):
         '''
         [Module] no afecta ningun aspecto del compilador o lenguaje, por lo que se ignora
         '''
-        print('module exit')
         pass
 
-    def enterDeclarations(self, ctx: PopurriParser.DeclarationsContext):
+    def enterDeclarations(self, ctx):
         pass
 
-    def exitDeclarations(self, ctx: PopurriParser.DeclarationsContext):
+    def exitDeclarations(self, ctx):
         pass
 
-    def enterDeclaration(self, ctx: PopurriParser.DeclarationContext):
-        # Checks if var is already created in mem_slots
-        if any(var.id is str(ctx.ID()) for var in self.funcs_table.func_table[self.funcs_table.dir_key_ptr].attributes):
-            raise 'ERROR VAR ALREADY CREATED'
+    def enterDeclaration(self, ctx):
+        # Checks if global is already declared
+        if self.global_ctx.varExistsInContext(ctx.ID(0), "global"):
+            raise f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED'
 
         var = ""
         # var has data_type : INT, FLOAT, STRING, BOOL
@@ -174,17 +158,13 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.ID(1)
             )
 
-        self.funcs_table.func_table[self.funcs_table.dir_key_ptr].insertAttribute(
-            var)
+        self.global_ctx.addVariable(var)
 
-        pprint(var)
-        print('declaration')
-
-    def exitDeclaration(self, ctx: PopurriParser.DeclarationContext):
+    def exitDeclaration(self, ctx):
         pass
 
-    def enterFunction(self, ctx: PopurriParser.FunctionContext):
-        if any(id is str(ctx.ID(0)) for id, _ in self.funcs_table.func_table.items()):
+    def enterFunction(self, ctx):
+        if self.global_ctx.functionExistsInContext(ctx.ID(0), "global"):
             raise f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}'
 
         func = Function(
@@ -193,14 +173,12 @@ class PopurriListener(ParseTreeListener):
         # Function has params
         if ctx.funcParams() is not None:
             no_params = len(ctx.funcParams().ID())
-            params = []
             for i in range(no_params):
-                params.append(Variable(
+                param = Variable(
                     id=ctx.funcParams().ID(i),
                     type=ctx.funcParams().TYPE(i),
-                    context=func.id
-                ))
-            func.params = params
+                )
+                self.global_ctx.addVariable(param, func.id)
 
         # Function has primitive return type
         if ctx.TYPE() is not None:
@@ -209,246 +187,235 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) > 1:
             func.return_type = str(ctx.ID(1))
 
-        self.funcs_table.insertProc(func)
-        self.funcs_table.changeKeyPtr(func.id)
-        pprint(func)
+        self.global_ctx.addFunction(func)
         pass
 
-    def exitFunction(self, ctx: PopurriParser.FunctionContext):
-        self.funcs_table.changeKeyPtr(self.global_ctx.id)
+    def exitFunction(self, ctx):
+        pass
 
-    def enterClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
-        if any(id is str(ctx.ID()) for id, _ in self.funcs_table.func_table.items()):
-            raise f'ERROR RE-DEFINITION OF {str(ctx.ID())}'
+    def enterClassDeclaration(self, ctx):
+        class_name = str(ctx.ID())
+        if self.global_ctx.classExists(class_name):
+            raise f'ERROR RE-DEFINITION OF {class_name}'
 
-        klass = Object(id=str(ctx.ID()))
+        klass = Object(
+            id=class_name
+        )
         if ctx.parent() is not None:
             # TODO: implement inheritance of attrs & functions
             klass.parent_id = str(ctx.parent().ID())
 
-        self.funcs_table.insertProc(klass)
-        self.funcs_table.changeKeyPtr(klass.id)
-        pprint(klass)
-        print('class')
-        pass
+        for declarations in ctx.attributes():
+            access_type = declarations.ACCESS_TYPE()
+            if access_type is None:
+                access_type = 'public'
 
-    def exitClassDeclaration(self, ctx: PopurriParser.ClassDeclarationContext):
-        self.funcs_table.changeKeyPtr(self.global_ctx.id)
+            for attr in declarations.attribute():
+                var = Variable(
+                    id=attr.ID(),
+                    type=attr.TYPE(),
+                    access_type=access_type
+                )
+                self.global_ctx.addVariable(var, klass.id)
         pass
 
-    def enterParent(self, ctx: PopurriParser.ParentContext):
+    def exitClassDeclaration(self, ctx):
         pass
 
-    def exitParent(self, ctx: PopurriParser.ParentContext):
+    def enterParent(self, ctx):
         pass
 
-    def enterAccessType(self, ctx: PopurriParser.AccessTypeContext):
+    def exitParent(self, ctx):
         pass
 
-    def exitAccessType(self, ctx: PopurriParser.AccessTypeContext):
+    def enterAttributes(self, ctx):
         pass
 
-    def enterAttributes(self, ctx: PopurriParser.AttributesContext):
+    def exitAttributes(self, ctx):
         pass
 
-    def exitAttributes(self, ctx: PopurriParser.AttributesContext):
+    def enterAttribute(self, ctx):
         pass
-
-    def enterAttribute(self, ctx: PopurriParser.AttributeContext):
-        if any(var.id is str(ctx.ID()) for var in self.funcs_table.func_table[self.funcs_table.dir_key_ptr].attributes):
-            raise 'ERROR VAR ALREADY CREATED'
 
-        if ctx.TYPE() is not None:
-            var = Variable(
-                id=ctx.ID(),
-                type=ctx.TYPE(),
-            )
-        # var is type object
-        else:
-            var = Variable(
-                id=ctx.ID(0),
-                type=ctx.ID(1)
-            )
-
-        self.funcs_table.func_table[self.funcs_table.dir_key_ptr].insertAttribute(
-            var)
+    def exitAttribute(self, ctx):
+        pass
 
-        print('attribute')
+    def enterMethod(self, ctx):
         pass
 
-    def exitAttribute(self, ctx: PopurriParser.AttributeContext):
+    def exitMethod(self, ctx):
         pass
 
-    def enterStatement(self, ctx: PopurriParser.StatementContext):
+    def enterStatement(self, ctx):
         pass
 
-    def exitStatement(self, ctx: PopurriParser.StatementContext):
+    def exitStatement(self, ctx):
         pass
 
-    def enterWhileLoop(self, ctx: PopurriParser.WhileLoopContext):
+    def enterWhileLoop(self, ctx):
         pass
 
-    def exitWhileLoop(self, ctx: PopurriParser.WhileLoopContext):
+    def exitWhileLoop(self, ctx):
         pass
 
-    def enterForLoop(self, ctx: PopurriParser.ForLoopContext):
+    def enterForLoop(self, ctx):
         pass
 
-    def exitForLoop(self, ctx: PopurriParser.ForLoopContext):
+    def exitForLoop(self, ctx):
         pass
 
-    def enterBranch(self, ctx: PopurriParser.BranchContext):
+    def enterBranch(self, ctx):
         pass
 
-    def exitBranch(self, ctx: PopurriParser.BranchContext):
+    def exitBranch(self, ctx):
         pass
 
-    def enterIfStmt(self, ctx: PopurriParser.IfStmtContext):
+    def enterIfStmt(self, ctx):
         pass
 
-    def exitIfStmt(self, ctx: PopurriParser.IfStmtContext):
+    def exitIfStmt(self, ctx):
         pass
 
-    def enterElseIf(self, ctx: PopurriParser.ElseIfContext):
+    def enterElseIf(self, ctx):
         pass
 
-    def exitElseIf(self, ctx: PopurriParser.ElseIfContext):
+    def exitElseIf(self, ctx):
         pass
 
-    def enterElseStmt(self, ctx: PopurriParser.ElseStmtContext):
+    def enterElseStmt(self, ctx):
         pass
 
-    def exitElseStmt(self, ctx: PopurriParser.ElseStmtContext):
+    def exitElseStmt(self, ctx):
         pass
 
-    def enterReturnStmt(self, ctx: PopurriParser.ReturnStmtContext):
+    def enterReturnStmt(self, ctx):
         pass
 
-    def exitReturnStmt(self, ctx: PopurriParser.ReturnStmtContext):
+    def exitReturnStmt(self, ctx):
         pass
 
-    def enterCond(self, ctx: PopurriParser.CondContext):
+    def enterCond(self, ctx):
         pass
 
-    def exitCond(self, ctx: PopurriParser.CondContext):
+    def exitCond(self, ctx):
         pass
 
-    def enterCmp(self, ctx: PopurriParser.CmpContext):
+    def enterCmp(self, ctx):
         pass
 
-    def exitCmp(self, ctx: PopurriParser.CmpContext):
+    def exitCmp(self, ctx):
         pass
 
-    def enterExp(self, ctx: PopurriParser.ExpContext):
+    def enterExp(self, ctx):
         pass
 
-    def exitExp(self, ctx: PopurriParser.ExpContext):
+    def exitExp(self, ctx):
         pass
 
-    def enterAdd(self, ctx: PopurriParser.AddContext):
+    def enterAdd(self, ctx):
         pass
 
-    def exitAdd(self, ctx: PopurriParser.AddContext):
+    def exitAdd(self, ctx):
         pass
 
-    def enterMultModDiv(self, ctx: PopurriParser.MultModDivContext):
+    def enterMultModDiv(self, ctx):
         pass
 
-    def exitMultModDiv(self, ctx: PopurriParser.MultModDivContext):
+    def exitMultModDiv(self, ctx):
         pass
 
-    def enterVal(self, ctx: PopurriParser.ValContext):
+    def enterVal(self, ctx):
         pass
 
-    def exitVal(self, ctx: PopurriParser.ValContext):
+    def exitVal(self, ctx):
         pass
 
-    def enterIndexation(self, ctx: PopurriParser.IndexationContext):
+    def enterIndexation(self, ctx):
         pass
 
-    def exitIndexation(self, ctx: PopurriParser.IndexationContext):
+    def exitIndexation(self, ctx):
         pass
 
-    def enterAssignment(self, ctx: PopurriParser.AssignmentContext):
+    def enterAssignment(self, ctx):
         pass
 
-    def exitAssignment(self, ctx: PopurriParser.AssignmentContext):
+    def exitAssignment(self, ctx):
         pass
 
-    def enterFuncCall(self, ctx: PopurriParser.FuncCallContext):
+    def enterFuncCall(self, ctx):
         pass
 
-    def exitFuncCall(self, ctx: PopurriParser.FuncCallContext):
+    def exitFuncCall(self, ctx):
         pass
 
-    def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
+    def enterBoolOp(self, ctx):
         pass
 
-    def exitBoolOp(self, ctx: PopurriParser.BoolOpContext):
+    def exitBoolOp(self, ctx):
         pass
 
-    def enterCmpOp(self, ctx: PopurriParser.CmpOpContext):
+    def enterCmpOp(self, ctx):
         pass
 
-    def exitCmpOp(self, ctx: PopurriParser.CmpOpContext):
+    def exitCmpOp(self, ctx):
         pass
 
-    def enterAddOp(self, ctx: PopurriParser.AddOpContext):
+    def enterAddOp(self, ctx):
         pass
 
-    def exitAddOp(self, ctx: PopurriParser.AddOpContext):
+    def exitAddOp(self, ctx):
         pass
 
-    def enterMultDivOp(self, ctx: PopurriParser.MultDivOpContext):
+    def enterMultDivOp(self, ctx):
         pass
 
-    def exitMultDivOp(self, ctx: PopurriParser.MultDivOpContext):
+    def exitMultDivOp(self, ctx):
         pass
 
-    def enterAssignOp(self, ctx: PopurriParser.AssignOpContext):
+    def enterAssignOp(self, ctx):
         pass
 
-    def exitAssignOp(self, ctx: PopurriParser.AssignOpContext):
+    def exitAssignOp(self, ctx):
         pass
 
-    def enterConstant(self, ctx: PopurriParser.ConstantContext):
+    def enterConstant(self, ctx):
         pass
 
-    def exitConstant(self, ctx: PopurriParser.ConstantContext):
+    def exitConstant(self, ctx):
         pass
 
-    def enterConst_arr(self, ctx: PopurriParser.Const_arrContext):
+    def enterConst_arr(self, ctx):
         pass
 
-    def exitConst_arr(self, ctx: PopurriParser.Const_arrContext):
+    def exitConst_arr(self, ctx):
         pass
 
-    def enterIterable(self, ctx: PopurriParser.IterableContext):
+    def enterIterable(self, ctx):
         pass
 
-    def exitIterable(self, ctx: PopurriParser.IterableContext):
+    def exitIterable(self, ctx):
         pass
 
-    def enterPrintStmt(self, ctx: PopurriParser.PrintStmtContext):
+    def enterPrintStmt(self, ctx):
         pass
 
-    def exitPrintStmt(self, ctx: PopurriParser.PrintStmtContext):
+    def exitPrintStmt(self, ctx):
         pass
 
-    def enterInputStmt(self, ctx: PopurriParser.InputStmtContext):
+    def enterInputStmt(self, ctx):
         pass
 
-    def exitInputStmt(self, ctx: PopurriParser.InputStmtContext):
+    def exitInputStmt(self, ctx):
         pass
 
-    def enterCondParam(self, ctx: PopurriParser.CondParamContext):
+    def enterCondParam(self, ctx):
         pass
 
-    def exitCondParam(self, ctx: PopurriParser.CondParamContext):
+    def exitCondParam(self, ctx):
         pass
 
-    def enterFuncParams(self, ctx: PopurriParser.FuncParamsContext):
+    def enterFuncParams(self, ctx):
         pass
 
-    def exitFuncParams(self, ctx: PopurriParser.FuncParamsContext):
+    def exitFuncParams(self, ctx):
         pass
