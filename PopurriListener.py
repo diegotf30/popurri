@@ -59,7 +59,11 @@ class GlobalContext():
         return self.functions[ctx_id].get(str(func_id), False)
 
     def classExists(self, id):
-        return str(id) in self.variables or str(id) in self.functions
+        id = str(id)
+        if 'class' not in id:
+            id = 'class ' + id
+
+        return id in self.variables or id in self.functions
 
 
 class Variable():
@@ -206,6 +210,10 @@ class PopurriListener(ParseTreeListener):
     def exitFunction(self, ctx):
         pass
 
+    def getAccessType(self, ctx):
+        ty = ctx.ACCESS_TYPE()
+        return 'public' if ty is None else ty
+
     def enterClassDeclaration(self, ctx):
         class_name = str(ctx.ID())
         if self.global_ctx.classExists(class_name):
@@ -215,21 +223,32 @@ class PopurriListener(ParseTreeListener):
             id=class_name
         )
         if ctx.parent() is not None:
-            # TODO: implement inheritance of attrs & functions
-            klass.parent_id = str(ctx.parent().ID())
+            klass.parent_id = 'class ' + str(ctx.parent().ID())
+            if not self.global_ctx.classExists(klass.parent_id):
+                raise 'ERROR PARENT CLASS MUST BE DEFINED BEFORE CHILD CLASS'
+
+            # Inherit attributes
+            for attribute in self.global_ctx.variables[klass.parent_id].values():
+                if attribute.access_type != 'private':
+                    self.global_ctx.addVariable(attribute, 'class ' + klass.id)
+
+            # Inherit functions
+            for func in self.global_ctx.functions[klass.parent_id].values():
+                if func.access_type != 'private':
+                    self.global_ctx.addFunction(func, 'class ' + klass.id)
 
         # Parse class attributes
         for declarations in ctx.attributes():
-            access_type = declarations.ACCESS_TYPE()
-            if access_type is None:
-                access_type = 'public'
+            access_type = self.getAccessType(declarations)
 
             for attr in declarations.attribute():
+                # if attribute inherited, do nothing
+                if self.global_ctx.varExistsInContext(attr.ID(), klass.parent_id):
+                    continue
                 # Checks if attribute is already declared within class
-                if self.global_ctx.varExistsInContext(attr.ID(), 'class ' + klass.id):
-                    raise f'ERROR VAR {str(attr.ID())} ALREADY DEFINED'
+                elif self.global_ctx.varExistsInContext(attr.ID(), 'class ' + klass.id):
+                    raise f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED'
 
-                # TODO: check if inherited
                 var = Variable(
                     id=attr.ID(),
                     type=attr.TYPE(),
@@ -237,21 +256,21 @@ class PopurriListener(ParseTreeListener):
                 )
                 self.global_ctx.addVariable(var, 'class ' + klass.id)
 
-        # Parse class functions
+        # Parse class methods
         for method in ctx.method():
+            # if attribute inherited, do nothing
+            if self.global_ctx.functionExistsInContext(attr.ID(), klass.parent_id):
+                continue
             # Checks if attribute is already declared within class
-            if self.global_ctx.functionExistsInContext(method.ID(0), 'class ' + klass.id):
-                raise f'ERROR VAR {str(attr.ID())} ALREADY DEFINED'
+            elif self.global_ctx.functionExistsInContext(method.ID(0), 'class ' + klass.id):
+                raise f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED'
 
-            access_type = method.ACCESS_TYPE()
-            if access_type is None:
-                access_type = 'public'
+            access_type = self.getAccessType(method)
 
-            # TODO: check if inherited
             method = self.createFunction(method)
             method.access_type = str(access_type)
 
-            self.global_ctx.addFunction(method, klass.id)
+            self.global_ctx.addFunction(method, 'class ' + klass.id)
 
         pass
 

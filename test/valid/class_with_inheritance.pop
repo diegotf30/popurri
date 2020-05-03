@@ -2,15 +2,16 @@ module main
 
 class A {
     var a : int
-    func a() {
+    protected var b : float
+    private var c : string
+    protected func func1() {
         print("ola")
     }
-    var b : float
 }
 
 class A -> B {
-    var a : int
-    func c(int a, float b) float {
+    var a : int, e : string
+    func func2(int a, float b) float {
         return 3.0
     }
 }
