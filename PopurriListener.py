@@ -149,6 +149,7 @@ class PopurriListener(ParseTreeListener):
 
     def __init__(self):
         self.global_ctx = GlobalContext()
+        self.quadWrapper = QuadWrapper()
 
     def enterProgram(self, ctx):
         '''
@@ -412,6 +413,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterVal(self, ctx):
+
         pass
 
     def exitVal(self, ctx):
