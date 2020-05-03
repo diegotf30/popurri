@@ -8,22 +8,54 @@ def pprint(*args):
         print(json.dumps(arg, indent=2, default=vars))
 
 
-class Cuadruple():
+class QuadWrapper():
+    '''
+    Si tienes un mejor nombre para esta clase, go ahead.
+    '''
+
+    def __init__(self):
+        self.quads = []
+        self.quads_ptr = 0
+        self.operator_stack = []
+        self.address_stack = []
+        self.jump_stack = []
+
+    def getNextJump(self):
+        return self.jump_stack.pop()
+
+    def insertAddress(self, address):
+        self.address_stack.append(address)
+
+    def getNextAddress(self):
+        return self.address_stack.pop()
+
+    def insertQuad(self, quad):
+        self.quads_ptr += 1
+        self.quads.append(quad)
+
+    def insertOperator(self, operator):
+        self.operator_stack.append(operator)
+
+    def insertJump(self, jump):
+        self.jump_stack.append(jump)
+
+
+class Quadruple():
 
     def __init__(self, op, l, r, res):
         self.op = op
-        # Arguments
+        # Arguments (In some cases one of both of them would be -1 indicating there is no value)
         self.l = l
         self.r = r
         # Where result of op(l, r) is stored
+        # This is an address rather than a value
         self.res = res
-
-# antes FuncTable
 
 
 class GlobalContext():
     '''
     Esta es una tabla de procedimientos
+    Antes FuncTable
     '''
 
     def __init__(self):
