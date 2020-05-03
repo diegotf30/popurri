@@ -1,5 +1,5 @@
 module main
-class myparent -> mychild {
+class mychild {
     private var hola : int
     func a() {
         print("ola")

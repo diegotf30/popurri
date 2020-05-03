@@ -1,0 +1,16 @@
+module main
+
+class A {
+    var a : int
+    func a() {
+        print("ola")
+    }
+    var b : float
+}
+
+class A -> B {
+    var a : int
+    func c(int a, float b) float {
+        return 3.0
+    }
+}

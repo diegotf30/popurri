@@ -66,7 +66,7 @@ class Variable():
     '''
 
     def __init__(self, id, access_type="public", type=None, value=None):
-        self.access_type = access_type
+        self.access_type = str(access_type)
         self.id = str(id)
         self.type = str(type)
         self.value = value
@@ -92,9 +92,10 @@ class Function():
     [return_type] es el tipo de dato que regresara la funcion al terminar su ejecucion. Void es el tipo predeterminado.
     '''
 
-    def __init__(self, id, return_type="void"):
+    def __init__(self, id, return_type="void", access_type="public"):
         self.id = str(id)
         self.return_type = str(return_type)
+        self.access_type = str(access_type)
 
 
 class PopurriListener(ParseTreeListener):
@@ -117,7 +118,10 @@ class PopurriListener(ParseTreeListener):
         '''
         [Program] marca el final de las reglas de la gramatica. Aqui termina la fase de compilacion.
         '''
-        #pprint(self.global_ctx.variables, self.global_ctx.functions)
+        print("--VARIABLES--")
+        pprint(self.global_ctx.variables)
+        print("--FUNCTIONS--")
+        pprint(self.global_ctx.functions)
         pass
 
     def enterModule(self, ctx):
@@ -143,7 +147,7 @@ class PopurriListener(ParseTreeListener):
         if self.global_ctx.varExistsInContext(ctx.ID(0), "global"):
             raise f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED'
 
-        var = ""
+        var = None
         # var has data_type : INT, FLOAT, STRING, BOOL
         # TODO: Arrays are not yet implemented
         if ctx.TYPE() is not None:
@@ -163,10 +167,7 @@ class PopurriListener(ParseTreeListener):
     def exitDeclaration(self, ctx):
         pass
 
-    def enterFunction(self, ctx):
-        if self.global_ctx.functionExistsInContext(ctx.ID(0), "global"):
-            raise f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}'
-
+    def createFunction(self, ctx):
         func = Function(
             id=ctx.ID(0)
         )
@@ -187,7 +188,13 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) > 1:
             func.return_type = str(ctx.ID(1))
 
-        self.global_ctx.addFunction(func)
+        return func
+
+    def enterFunction(self, ctx):
+        if self.global_ctx.functionExistsInContext(ctx.ID(0), "global"):
+            raise f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}'
+
+        self.global_ctx.addFunction(self.createFunction(ctx))
         pass
 
     def exitFunction(self, ctx):
@@ -205,18 +212,41 @@ class PopurriListener(ParseTreeListener):
             # TODO: implement inheritance of attrs & functions
             klass.parent_id = str(ctx.parent().ID())
 
+        # Parse class attributes
         for declarations in ctx.attributes():
             access_type = declarations.ACCESS_TYPE()
             if access_type is None:
                 access_type = 'public'
 
             for attr in declarations.attribute():
+                # Checks if attribute is already declared within class
+                if self.global_ctx.varExistsInContext(attr.ID(), 'class ' + klass.id):
+                    raise f'ERROR VAR {str(attr.ID())} ALREADY DEFINED'
+
+                # TODO: check if inherited
                 var = Variable(
                     id=attr.ID(),
                     type=attr.TYPE(),
                     access_type=access_type
                 )
-                self.global_ctx.addVariable(var, klass.id)
+                self.global_ctx.addVariable(var, 'class ' + klass.id)
+
+        # Parse class functions
+        for method in ctx.method():
+            # Checks if attribute is already declared within class
+            if self.global_ctx.functionExistsInContext(method.ID(0), 'class ' + klass.id):
+                raise f'ERROR VAR {str(attr.ID())} ALREADY DEFINED'
+
+            access_type = method.ACCESS_TYPE()
+            if access_type is None:
+                access_type = 'public'
+
+            # TODO: check if inherited
+            method = self.createFunction(method)
+            method.access_type = str(access_type)
+
+            self.global_ctx.addFunction(method, klass.id)
+
         pass
 
     def exitClassDeclaration(self, ctx):
