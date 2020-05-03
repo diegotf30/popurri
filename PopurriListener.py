@@ -417,93 +417,100 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterCmp(self, ctx):
-
-        pass
+        print(ctx.CMP_OP())
+        if ctx.CMP_OP() is not None:
+            for el in ctx.CMP_OP():
+                self.quadWrapper.insertOperator(
+                    self.quadWrapper.getTokenCode(str(el)))
 
     def exitCmp(self, ctx):
         pass
 
     def enterExp(self, ctx):
+        print(ctx.ADD_OP())
         if ctx.ADD_OP() is not None:
             for el in ctx.ADD_OP():
                 self.quadWrapper.insertOperator(
                     self.quadWrapper.getTokenCode(str(el)))
-        pass
 
     def exitExp(self, ctx):
+        print(ctx.ADD_OP())
+        if ctx.ADD_OP() is not None:
+            for el in ctx.ADD_OP():
+                self.quadWrapper.insertOperator(
+                    self.quadWrapper.getTokenCode(str(el)))
 
         print('hola3')
         print(self.quadWrapper.operator_stack)
         pass
 
     def enterAdd(self, ctx):
-        if len(self.quadWrapper.operator_stack) != 0:
-            while len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.topOperator() in [MULT, DIV, MOD] and len(self.quadWrapper.address_stack) >= 2:
-                temp = f'temp_{self.counter}'
-                self.counter += 1
-                self.quadWrapper.insertQuad(Quadruple(self.quadWrapper.operator_stack.pop(
-                ), self.quadWrapper.address_stack.pop(), self.quadWrapper.address_stack.pop(), temp))
-                self.quadWrapper.insertAddress(temp)
+        # if len(self.quadWrapper.operator_stack) != 0:
+        #     while len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.topOperator() in [MULT, DIV, MOD] and len(self.quadWrapper.address_stack) >= 2:
+        #         temp = f'temp_{self.counter}'
+        #         self.counter += 1
+        #         self.quadWrapper.insertQuad(Quadruple(self.quadWrapper.operator_stack.pop(
+        #         ), self.quadWrapper.address_stack.pop(), self.quadWrapper.address_stack.pop(), temp))
+        #         self.quadWrapper.insertAddress(temp)
 
-        if ctx.MULT_DIV_OP() is not None:
-            for el in ctx.MULT_DIV_OP():
-                self.quadWrapper.insertOperator(
-                    self.quadWrapper.getTokenCode(str(el)))
+        # if ctx.MULT_DIV_OP() is not None:
+        #     for el in ctx.MULT_DIV_OP():
+        #         self.quadWrapper.insertOperator(
+        #             self.quadWrapper.getTokenCode(str(el)))
+        pass
 
     def exitAdd(self, ctx):
 
-        current_operators = []
-        current_addresses = []
+        # current_operators = []
+        # current_addresses = []
 
-        new_operator_stack = self.quadWrapper.operator_stack
+        # new_operator_stack = self.quadWrapper.operator_stack
 
-        for op in self.quadWrapper.operator_stack:
-            if op in [MULT, DIV, MOD]:
-                current_operators.append(op)
-                new_operator_stack = new_operator_stack[:len(
-                    new_operator_stack) - 1]
-            else:
-                break
+        # for op in self.quadWrapper.operator_stack:
+        #     if op in [MULT, DIV, MOD]:
+        #         current_operators.append(op)
+        #         new_operator_stack = new_operator_stack[:len(
+        #             new_operator_stack) - 1]
+        #     else:
+        #         break
 
-        current_addresses = self.quadWrapper.address_stack[len(
-            self.quadWrapper.address_stack) - (len(current_operators) + 1):][::-1]
+        # current_addresses = self.quadWrapper.address_stack[len(
+        #     self.quadWrapper.address_stack) - (len(current_operators) + 1):][::-1]
 
-        self.quadWrapper.address_stack = self.quadWrapper.address_stack[:len(
-            self.quadWrapper.address_stack) - (len(current_operators) + 1)]
+        # self.quadWrapper.address_stack = self.quadWrapper.address_stack[:len(
+        #     self.quadWrapper.address_stack) - (len(current_operators) + 1)]
 
-        print('hola')
-        print(current_operators, current_addresses,
-              new_operator_stack)
+        # print('hola')
+        # print(current_operators, current_addresses,
+        #       new_operator_stack)
 
-        for op in current_operators:
-            temp = f'temp_{self.counter}'
-            self.counter += 1
-            left = current_addresses.pop()
-            right = current_addresses.pop()
-            self.quadWrapper.insertQuad(Quadruple(op, left, right, temp))
-            current_addresses.append(temp)
+        # for op in current_operators:
+        #     temp = f'temp_{self.counter}'
+        #     self.counter += 1
+        #     left = current_addresses.pop()
+        #     right = current_addresses.pop()
+        #     self.quadWrapper.insertQuad(Quadruple(op, left, right, temp))
+        #     current_addresses.append(temp)
+        pass
 
     def enterMultModDiv(self, ctx):
-        if self.quadWrapper.topOperator() == POWER:
-            temp = f'temp_{self.counter}'
-            self.counter += 1
-            new_quad = Quadruple(self.quadWrapper.operator_stack.pop(
-            ), self.quadWrapper.address_stack.pop(), self.quadWrapper.address_stack.pop(), temp)
-            self.quadWrapper.insertAddress(temp)
-            self.quadWrapper.insertQuad(new_quad)
-            self.quadWrapper.insertOperator(POWER)
+        # if self.quadWrapper.topOperator() == POWER:
+        #     temp = f'temp_{self.counter}'
+        #     self.counter += 1
+        #     new_quad = Quadruple(self.quadWrapper.operator_stack.pop(
+        #     ), self.quadWrapper.address_stack.pop(), self.quadWrapper.address_stack.pop(), temp)
+        #     self.quadWrapper.insertAddress(temp)
+        #     self.quadWrapper.insertQuad(new_quad)
+        #     self.quadWrapper.insertOperator(POWER)
+        pass
 
     def exitMultModDiv(self, ctx):
         pass
 
     def enterVal(self, ctx):
-        if len(ctx.ID()) > 0:
-            print(ctx.ID())
-            print('ID selected')
+        if len(ctx.ID()) > 0:  # es un objeto
             self.quadWrapper.insertAddress(str(ctx.ID()))
         elif ctx.constant() is not None:
-            print('CONS selected')
-            print(ctx.constant())
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
 
     def exitVal(self, ctx):
