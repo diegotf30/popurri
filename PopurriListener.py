@@ -2,9 +2,11 @@ from antlr4 import *
 from popurri_tokens import *
 import json
 
+
 def pprint(*args):
     for arg in args:
         print(json.dumps(arg, indent=2, default=vars))
+
 
 class Cuadruple():
 
@@ -15,6 +17,8 @@ class Cuadruple():
         self.r = r
         # Where result of op(l, r) is stored
         self.res = res
+
+# antes FuncTable
 
 
 class GlobalContext():
@@ -56,6 +60,7 @@ class GlobalContext():
 
     def classExists(self, id):
         return str(id) in self.variables or str(id) in self.functions
+
 
 class Variable():
     '''
@@ -105,6 +110,7 @@ class PopurriListener(ParseTreeListener):
     -Cada funcion 'enter' representa el estado cuando se inicia una  regla
     -Cada funcion 'exit' representa el estado cuando se acaba una regla
     '''
+
     def __init__(self):
         self.global_ctx = GlobalContext()
 
