@@ -1,12 +1,15 @@
 from antlr4 import *
 from parser.PopurriParser import PopurriParser
 from popurri_tokens import *
+import jsbeautifier as js
 import json
 
 
 def pprint(*args):
+    opts = js.default_options()
+    opts.indent_size = 2
     for arg in args:
-        print(json.dumps(arg, indent=2, default=vars))
+        print(js.beautify(json.dumps(arg, default=vars), opts))
 
 
 class QuadWrapper():
@@ -28,7 +31,7 @@ class QuadWrapper():
         return self.jump_stack.pop()
 
     def insertAddress(self, address):
-        self.address_stack.append(address)
+        self.address_stack.append(str(address))
 
     def getNextAddress(self):
         return self.address_stack.pop()
@@ -40,6 +43,12 @@ class QuadWrapper():
     def topOperator(self):
         return self.operator_stack[-1] if len(self.operator_stack) > 0 else None
 
+    def popOperator(self):
+        return self.operator_stack.pop() if len(self.operator_stack) > 0 else None
+
+    def popAddress(self):
+        return self.address_stack.pop() if len(self.address_stack) > 0 else None
+
     def insertOperator(self, operator):
         self.operator_stack.append(operator)
 
@@ -48,6 +57,18 @@ class QuadWrapper():
 
     def getTokenCode(self, element):
         return self.operator_codes.index(element) + 1
+
+    def handleQuadruple(self, operators, tmp_count):
+        if self.topOperator() in operators:
+            tmp = f'temp_{tmp_count + 1}'
+            self.insertQuad(Quadruple(
+                op=self.popOperator(),
+                r=self.popAddress(),
+                l=self.popAddress(),
+                res=tmp
+            ))
+            self.insertAddress(tmp)
+            return True
 
 
 class Quadruple():
@@ -163,7 +184,7 @@ class PopurriListener(ParseTreeListener):
     def __init__(self):
         self.global_ctx = GlobalContext()
         self.quadWrapper = QuadWrapper()
-        self.counter = 0
+        self.counter = 1
 
     def enterProgram(self, ctx):
         '''
@@ -180,10 +201,14 @@ class PopurriListener(ParseTreeListener):
         print("--FUNCTIONS--")
         pprint(self.global_ctx.functions)
 
-        print(f'quads_stack = {self.quadWrapper.quads}',
-              f'address_stack = {self.quadWrapper.address_stack}',
-              f'operator_stack = {self.quadWrapper.operator_stack}',
-              f'jump_stack = {self.quadWrapper.jump_stack}')
+        print('quads_stack = ', end='')
+        pprint(self.quadWrapper.quads)
+        print('address_stack = ', end='')
+        pprint(self.quadWrapper.address_stack)
+        print('operator_stack = ', end='')
+        pprint(self.quadWrapper.operator_stack)
+        print('jump_stack = ', end='')
+        pprint(self.quadWrapper.jump_stack)
         pass
 
     def enterModule(self, ctx):
@@ -401,115 +426,27 @@ class PopurriListener(ParseTreeListener):
     def exitReturnStmt(self, ctx):
         pass
 
-    def enterCond(self, ctx):
-        pass
-
-    def exitCond(self, ctx):
-        print(f'quads_stack = {self.quadWrapper.quads}',
-              f'address_stack = {self.quadWrapper.address_stack}',
-              f'operator_stack = {self.quadWrapper.operator_stack}',
-              f'jump_stack = {self.quadWrapper.jump_stack}')
-        pass
-
-    def enterCmp(self, ctx):
-        pass
-
     def exitCmp(self, ctx):
-        pass
-
-    def enterExp(self, ctx):
-        print("enter exp")
-        pass
+        created_quad = self.quadWrapper.handleQuadruple(['and', 'or'], self.counter)
+        if created_quad:
+            self.counter += 1
 
     def exitExp(self, ctx):
-        print("exit exp")
-        if self.quadWrapper.operator_stack and self.quadWrapper.topOperator() in ['*', '/', '%']:
-            temp = f'temp_{self.counter}'
+        created_quad = self.quadWrapper.handleQuadruple(['<', '<=', '>', '>=', 'is', 'is not'], self.counter)
+        if created_quad:
             self.counter += 1
-            self.quadWrapper.insertQuad(Quadruple(
-                self.quadWrapper.operator_stack.pop(),
-                self.quadWrapper.address_stack.pop(),
-                self.quadWrapper.address_stack.pop(),
-                temp
-            ))
-            print('\t',self.quadWrapper.quads[-1])
-            self.quadWrapper.insertAddress(temp)
-        pass
-
-    def enterAdd(self, ctx):
-        print("enter add")
-        pass
 
     def exitAdd(self, ctx):
-        print("exit add")
-        if self.quadWrapper.operator_stack and self.quadWrapper.topOperator() in ['+', '-']:
-            temp = f'temp_{self.counter}'
+        created_quad = self.quadWrapper.handleQuadruple(['+', '-'], self.counter)
+        if created_quad:
             self.counter += 1
-            self.quadWrapper.insertQuad(Quadruple(
-                op=self.quadWrapper.operator_stack.pop(),
-                r=self.quadWrapper.address_stack.pop(),
-                l=self.quadWrapper.address_stack.pop(),
-                res=temp
-            ))
-            print('\t',self.quadWrapper.quads[-1])
-            self.quadWrapper.insertAddress(temp)
-
-        # current_operators = []
-        # current_addresses = []
-
-        # new_operator_stack = self.quadWrapper.operator_stack
-
-        # for op in self.quadWrapper.operator_stack:
-        #     if op in [MULT, DIV, MOD]:
-        #         current_operators.append(op)
-        #         new_operator_stack = new_operator_stack[:len(
-        #             new_operator_stack) - 1]
-        #     else:
-        #         break
-
-        # current_addresses = self.quadWrapper.address_stack[len(
-        #     self.quadWrapper.address_stack) - (len(current_operators) + 1):][::-1]
-
-        # self.quadWrapper.address_stack = self.quadWrapper.address_stack[:len(
-        #     self.quadWrapper.address_stack) - (len(current_operators) + 1)]
-
-        # print('hola')
-        # print(current_operators, current_addresses,
-        #       new_operator_stack)
-
-        # for op in current_operators:
-        #     temp = f'temp_{self.counter}'
-        #     self.counter += 1
-        #     left = current_addresses.pop()
-        #     right = current_addresses.pop()
-        #     self.quadWrapper.insertQuad(Quadruple(op, left, right, temp))
-        #     current_addresses.append(temp)
-        pass
-
-    def enterMultModDiv(self, ctx):
-        # if self.quadWrapper.topOperator() == POWER:
-        #     temp = f'temp_{self.counter}'
-        #     self.counter += 1
-        #     new_quad = Quadruple(self.quadWrapper.operator_stack.pop(
-        #     ), self.quadWrapper.address_stack.pop(), self.quadWrapper.address_stack.pop(), temp)
-        #     self.quadWrapper.insertAddress(temp)
-        #     self.quadWrapper.insertQuad(new_quad)
-        #     self.quadWrapper.insertOperator(POWER)
-        pass
 
     def exitMultModDiv(self, ctx):
-        pass
+        created_quad = self.quadWrapper.handleQuadruple(['*', '/', '%'], self.counter)
+        if created_quad:
+            self.counter += 1
 
-    def enterVal(self, ctx):
-        print("enter val")
-        if len(ctx.ID()) > 0:  # es un objeto
-            self.quadWrapper.insertAddress(str(ctx.ID(0)))
-            print("\tadd", str(ctx.ID(0)))
-        elif ctx.constant() is not None:
-            self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
-            print("\tadd", self.getConstant(ctx.constant()))
-        # TODO implement arrays
-
+    # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
         if ctx.CONST_BOOL() is not None:
             return str(ctx.CONST_BOOL())
@@ -523,55 +460,32 @@ class PopurriListener(ParseTreeListener):
             return 'none'
         # TODO: add arrays
 
+    def enterVal(self, ctx):
+        if len(ctx.ID()) > 0:  # es un objeto
+            self.quadWrapper.insertAddress(str(ctx.ID(0)))
+        elif ctx.constant() is not None:
+            self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
+        # TODO implement arrays
+
     def exitVal(self, ctx):
-        pass
+        created_quad = self.quadWrapper.handleQuadruple(['**'], self.counter)
+        if created_quad:
+            self.counter += 1
     
     def enterBoolOp(self, ctx:PopurriParser.BoolOpContext):
-        self.quadWrapper.operator_stack.append(ctx.getText())
-        print(self.quadWrapper.operator_stack)
-        pass
-
-    def exitBoolOp(self, ctx:PopurriParser.BoolOpContext):
-        pass
-
+        self.quadWrapper.insertOperator(ctx.getText())
 
     def enterCmpOp(self, ctx:PopurriParser.CmpOpContext):
-        self.quadWrapper.operator_stack.append(ctx.getText())
-        print(self.quadWrapper.operator_stack)
-        pass
-
-    def exitCmpOp(self, ctx:PopurriParser.CmpOpContext):
-        pass
+        self.quadWrapper.insertOperator(ctx.getText())
 
     def enterAddOp(self, ctx:PopurriParser.AddOpContext):
-        print("enter add op")
-        self.quadWrapper.operator_stack.append(ctx.getText())
-        print('\t',self.quadWrapper.operator_stack)
-        pass
-
-    def exitAddOp(self, ctx:PopurriParser.AddOpContext):
-        print("exit add op")
-        pass
+        self.quadWrapper.insertOperator(ctx.getText())
 
     def enterMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
-        print("enter mult op")
-        self.quadWrapper.operator_stack.append(ctx.getText())
-        print('\t',self.quadWrapper.operator_stack)
-        pass
-
-    def exitMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
-        print("exit mult op")
-        pass
-
+        self.quadWrapper.insertOperator(ctx.getText())
 
     def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
-        self.quadWrapper.operator_stack.append(ctx.getText())
-        print('\t',self.quadWrapper.operator_stack)
-        pass
-
-    def exitAssignOp(self, ctx:PopurriParser.AssignOpContext):
-        pass
-
+        self.quadWrapper.insertOperator(ctx.getText())
 
     def enterIndexation(self, ctx):
         pass
@@ -583,6 +497,14 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitAssignment(self, ctx):
+        if self.quadWrapper.topOperator() in ['=', '+=', '-=', '*=', '/=', '%=']:
+            res = str(ctx.ID(0)) # TODO objects
+            self.quadWrapper.insertQuad(Quadruple(
+                op=self.quadWrapper.popOperator(),
+                l=self.quadWrapper.popAddress(),
+                r=None,
+                res=res
+            ))
         pass
 
     def enterFuncCall(self, ctx):

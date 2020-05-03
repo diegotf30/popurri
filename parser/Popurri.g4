@@ -60,8 +60,10 @@ exp: (add addOp?)+;
 add: (multModDiv multDivOp?)+;
 multModDiv: (val '**'?)+;
 val:
-	'(' cond ')'
-	ID ('.' ID)? | constant | indexation; // TODO addOp?
+	'(' cond ')' |
+	ID ('.' ID)? |
+	constant |
+	indexation; // TODO "addOp?"
 indexation: iterable '[' exp ']';
 
 // Operators
@@ -69,9 +71,9 @@ boolOp: 'and' | 'or';
 cmpOp: '<' | '<=' | '>' | '>=' | 'is' | 'is not';
 addOp: '+' | '-';
 multDivOp: '*' | '/' | '%';
-assignOp: '+=' | '-=' | '*=' | '/=' | '%=';
+assignOp: '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
-assignment: (ID '.')? ID (assignOp | '=') cond;
+assignment: (ID '.')? ID assignOp cond;
 funcCall: (ID '.')? ID '(' condParam? ')';
 
 constant:
