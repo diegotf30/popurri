@@ -448,19 +448,12 @@ class PopurriListener(ParseTreeListener):
         # self.quadWrapper.insertQuadAt(new_quad, self.quadWrapper.quads_ptr)
         # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
         self.if_cond = False
+
+        # Rellena el GOTOF de este mismo IF con el siguiente cuadruplo
         self.quadWrapper.fillQuad(
-            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
-        pass
+            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr + 1)
 
-    def enterElseIf(self, ctx):
-        # # fills previous jump quad
-        # self.quadWrapper.fillQuad(
-        #     self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
-
-        # # appends current jump into the jump_stack
-        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr)
-        # print(f"ELSE IF IN = {self.quadWrapper.jump_stack}")
-
+        # Anade un GOTO al final del IF
         new_goto_quad = Quadruple(
             'GOTO',
             None,
@@ -470,23 +463,30 @@ class PopurriListener(ParseTreeListener):
 
         self.quadWrapper.insertQuad(new_goto_quad)
         self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+        pass
+
+    def enterElseIf(self, ctx):
+
+        # Anade un GOTO para el IF anterior.
         self.if_cond = True
         pass
 
     def exitElseIf(self, ctx):
-        # print(f"ELSE IF OUT = {self.quadWrapper.jump_stack}")
-        # # appends goto quad in quads
-        # new_quad = Quadruple('gotof',
-        #                      self.quadWrapper.address_stack.pop(),
-        #                      None,
-        #                      None)
-        # self.quadWrapper.insertQuadAt(
-        #     new_quad, self.quadWrapper.topJump() + 1)
 
-        # self.quadWrapper.jump_stack[-1] = self.quadWrapper.topJump() + 1
         self.if_cond = False
         self.quadWrapper.fillQuad(
-            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
+            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr + 1)
+
+        # Anade un GOTO al final del ELSE IF
+        new_goto_quad = Quadruple(
+            'GOTO',
+            None,
+            None,
+            None
+        )
+
+        self.quadWrapper.insertQuad(new_goto_quad)
+        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
         pass
 
     def enterElseStmt(self, ctx):
@@ -499,14 +499,12 @@ class PopurriListener(ParseTreeListener):
 
         self.quadWrapper.insertQuad(new_goto_quad)
         self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
-
-        # self.quadWrapper.fillQuad(
-        #     self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
-        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr)
         pass
 
     def exitElseStmt(self, ctx):
-        new_quad = Quadruple('goto',
+        self.quadWrapper.fillQuad(
+            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
+        new_quad = Quadruple('GOTO',
                              None,
                              None,
                              None)
@@ -521,9 +519,6 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCond(self, ctx):
-        # if len(self.quadWrapper.jump_stack) > 0:
-        #     print(f' jump_stack = {self.quadWrapper.jump_stack}')
-        #     self.quadWrapper.jump_stack[-1] = self.quadWrapper.quads_ptr - 1
 
         if self.if_cond:
             new_quad = Quadruple('GOTOF',

@@ -4,13 +4,12 @@ var a : int
 
 if IF_1 > IF_2 + 2{
     a = 1
-    b = 2
-} // goto
-else if IF_1 > IF_2 + 2{
-    z = w + y
 }
-else if IF_1 > IF_2 + 2{
-    z = 4 + 3
+else if IF_1 > IF_2 + 2 {
+    b = 1
+
 }
+else if IF_1 > IF_2 + 2 {
+    c = 1
 
-
+}
