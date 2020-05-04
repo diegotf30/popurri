@@ -421,7 +421,7 @@ class PopurriListener(ParseTreeListener):
         goto_quad = Quadruple('GOTO')
         self.quadWrapper.insertQuad(goto_quad)
 
-        # Fill while gotof
+        # Fill while gotoF with next quad outside loop
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.quads_ptr + 1,
             at=self.quadWrapper.popJump()
@@ -588,6 +588,9 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertOperator(ctx.getText())
 
     def enterAssignOp(self, ctx: PopurriParser.AssignOpContext):
+        self.quadWrapper.insertOperator(ctx.getText())
+
+    def enterExpOp(self, ctx:PopurriParser.ExpOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
     def enterIndexation(self, ctx):

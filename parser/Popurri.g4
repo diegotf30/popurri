@@ -58,7 +58,7 @@ cond: (cmp boolOp?)+;
 cmp: (exp cmpOp?)+;
 exp: (add addOp?)+;
 add: (multModDiv multDivOp?)+;
-multModDiv: (val '**'?)+;
+multModDiv: (val expOp?)+;
 val:
 	'(' cond ')' |
 	ID ('.' ID)? |
@@ -71,6 +71,7 @@ boolOp: 'and' | 'or';
 cmpOp: '<' | '<=' | '>' | '>=' | 'is' | 'is not';
 addOp: '+' | '-';
 multDivOp: '*' | '/' | '%';
+expOp: '**';
 assignOp: '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
 assignment: (ID '.')? ID assignOp cond;

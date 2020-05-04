@@ -269,6 +269,15 @@ class PopurriListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PopurriParser#expOp.
+    def enterExpOp(self, ctx:PopurriParser.ExpOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#expOp.
+    def exitExpOp(self, ctx:PopurriParser.ExpOpContext):
+        pass
+
+
     # Enter a parse tree produced by PopurriParser#assignOp.
     def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
         pass
