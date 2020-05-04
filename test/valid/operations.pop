@@ -2,4 +2,15 @@ module main
 
 var a : int
 
-a = A + B * C / (D - E + W * Z) * (4 * 5)
+if IF_1 > IF_2 + 2{
+    a = 1
+    b = 2
+} // goto
+else if IF_1 > IF_2 + 2{
+    z = w + y
+}
+else if IF_1 > IF_2 + 2{
+    z = 4 + 3
+}
+
+

@@ -40,8 +40,20 @@ class QuadWrapper():
         self.quads_ptr += 1
         self.quads.append(quad.__str__())
 
+    def insertQuadAt(self, quad, pos):
+        self.quads_ptr += 1
+        self.quads.insert(pos, quad.__str__())
+
+    def fillQuad(self, pos, res):
+        new_quad = list(self.quads[pos][:3])
+        new_quad.append(res)
+        self.quads[pos] = tuple(new_quad)
+
     def topOperator(self):
         return self.operator_stack[-1] if len(self.operator_stack) > 0 else None
+
+    def topJump(self):
+        return self.jump_stack[-1] if len(self.jump_stack) > 0 else None
 
     def popOperator(self):
         return self.operator_stack.pop() if len(self.operator_stack) > 0 else None
@@ -189,6 +201,7 @@ class PopurriListener(ParseTreeListener):
         self.global_ctx = GlobalContext()
         self.quadWrapper = QuadWrapper()
         self.counter = 1
+        self.if_cond = False
 
     def enterProgram(self, ctx):
         '''
@@ -213,6 +226,8 @@ class PopurriListener(ParseTreeListener):
         pprint(self.quadWrapper.operator_stack)
         print('jump_stack = ', end='')
         pprint(self.quadWrapper.jump_stack)
+        print('quad_ptr = ', end='')
+        pprint(self.quadWrapper.quads_ptr)
         pass
 
     def enterModule(self, ctx):
@@ -383,6 +398,8 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterStatement(self, ctx):
+        if self.if_cond:
+            self.if_cond = False
         pass
 
     def exitStatement(self, ctx):
@@ -404,24 +421,97 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitBranch(self, ctx):
+        # print('fill quad in branch')
+        # print(self.quadWrapper.jump_stack)
+        self.quadWrapper.fillQuad(
+            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
+        # print('fill quad in branch')
         pass
 
     def enterIfStmt(self, ctx):
+        # appends next quad into the jump_stack
+        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+        self.if_cond = True
         pass
 
     def exitIfStmt(self, ctx):
+        # new_quad = Quadruple('gotof',
+        #                      self.quadWrapper.address_stack.pop(),
+        #                      None,
+        #                      None)
+        # self.quadWrapper.insertQuadAt(new_quad, self.quadWrapper.topJump())
+
+        # new_quad = Quadruple('goto',
+        #                      None,
+        #                      None,
+        #                      None)
+        # self.quadWrapper.insertQuadAt(new_quad, self.quadWrapper.quads_ptr)
+        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+        self.if_cond = False
+        self.quadWrapper.fillQuad(
+            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
         pass
 
     def enterElseIf(self, ctx):
+        # # fills previous jump quad
+        # self.quadWrapper.fillQuad(
+        #     self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
+
+        # # appends current jump into the jump_stack
+        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr)
+        # print(f"ELSE IF IN = {self.quadWrapper.jump_stack}")
+
+        new_goto_quad = Quadruple(
+            'GOTO',
+            None,
+            None,
+            None
+        )
+
+        self.quadWrapper.insertQuad(new_goto_quad)
+        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+        self.if_cond = True
         pass
 
     def exitElseIf(self, ctx):
+        # print(f"ELSE IF OUT = {self.quadWrapper.jump_stack}")
+        # # appends goto quad in quads
+        # new_quad = Quadruple('gotof',
+        #                      self.quadWrapper.address_stack.pop(),
+        #                      None,
+        #                      None)
+        # self.quadWrapper.insertQuadAt(
+        #     new_quad, self.quadWrapper.topJump() + 1)
+
+        # self.quadWrapper.jump_stack[-1] = self.quadWrapper.topJump() + 1
+        self.if_cond = False
+        self.quadWrapper.fillQuad(
+            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
         pass
 
     def enterElseStmt(self, ctx):
+        new_goto_quad = Quadruple(
+            'GOTO',
+            None,
+            None,
+            None
+        )
+
+        self.quadWrapper.insertQuad(new_goto_quad)
+        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+
+        # self.quadWrapper.fillQuad(
+        #     self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
+        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr)
         pass
 
     def exitElseStmt(self, ctx):
+        new_quad = Quadruple('goto',
+                             None,
+                             None,
+                             None)
+        self.quadWrapper.insertQuadAt(new_quad, self.quadWrapper.quads_ptr)
+        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
         pass
 
     def enterReturnStmt(self, ctx):
@@ -431,6 +521,19 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCond(self, ctx):
+        # if len(self.quadWrapper.jump_stack) > 0:
+        #     print(f' jump_stack = {self.quadWrapper.jump_stack}')
+        #     self.quadWrapper.jump_stack[-1] = self.quadWrapper.quads_ptr - 1
+
+        if self.if_cond:
+            new_quad = Quadruple('GOTOF',
+                                 self.quadWrapper.address_stack.pop(),
+                                 None,
+                                 None)
+            self.quadWrapper.insertQuadAt(
+                new_quad, self.quadWrapper.quads_ptr)
+            self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+
         open_par = 0
         close_par = 0
         for op in self.quadWrapper.operator_stack[::-1]:
