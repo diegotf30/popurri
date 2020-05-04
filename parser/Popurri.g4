@@ -51,7 +51,7 @@ forLoop: 'for' ID 'in' iterable '{' statement* '}';
 branch: ifStmt elseIf* elseStmt?;
 ifStmt: 'if' cond '{' statement* '}';
 elseIf: 'else if' cond '{' statement* '}';
-elseStmt: 'else' cond '{' statement* '}';
+elseStmt: 'else' '{' statement* '}';
 returnStmt: 'return' cond;
 
 cond: (cmp boolOp?)+;

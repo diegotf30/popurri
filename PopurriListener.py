@@ -21,6 +21,7 @@ class QuadWrapper():
                       '<=', 'and', 'or', '=', 'print']
 
     def __init__(self):
+        self.tmp_counter = 0
         self.quads = []
         self.quads_ptr = 0
         self.operator_stack = []
@@ -36,18 +37,17 @@ class QuadWrapper():
     def getNextAddress(self):
         return self.address_stack.pop()
 
-    def insertQuad(self, quad):
+    def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
-        self.quads.append(quad.__str__())
+        if at is not None:
+            self.quads.insert(at, quad.__str__())
+        else:
+            self.quads.append(quad.__str__())
 
-    def insertQuadAt(self, quad, pos):
-        self.quads_ptr += 1
-        self.quads.insert(pos, quad.__str__())
-
-    def fillQuad(self, pos, res):
-        new_quad = list(self.quads[pos][:3])
-        new_quad.append(res)
-        self.quads[pos] = tuple(new_quad)
+    def fillQuadWith(self, filler, at):
+        new_quad = list(self.quads[at])
+        new_quad[3] = filler
+        self.quads[at] = tuple(new_quad)
 
     def topOperator(self):
         return self.operator_stack[-1] if len(self.operator_stack) > 0 else None
@@ -61,22 +61,26 @@ class QuadWrapper():
     def popAddress(self):
         return self.address_stack.pop() if len(self.address_stack) > 0 else None
 
+    def popJump(self):
+        return self.jump_stack.pop() if len(self.jump_stack) > 0 else None
+
     def insertOperator(self, operator):
         self.operator_stack.append(operator)
 
-    def insertJump(self, jump):
-        self.jump_stack.append(jump)
+    def insertJump(self, jump=None):
+        self.jump_stack.append(self.quads_ptr if jump is None else jump)
 
     def getTokenCode(self, element):
         return self.operator_codes.index(element) + 1
 
-    def handleQuadruple(self, operators, tmp_count):
+    def handleQuadruple(self, operators):
         if self.topOperator() is ')':
             self.operator_stack.pop()
             self.operator_stack.pop()
 
         if self.topOperator() in operators:
-            tmp = f'temp_{tmp_count + 1}'
+            self.tmp_counter += 1
+            tmp = f'temp_{self.tmp_counter}'
             self.insertQuad(Quadruple(
                 op=self.popOperator(),
                 r=self.popAddress(),
@@ -89,7 +93,7 @@ class QuadWrapper():
 
 class Quadruple():
 
-    def __init__(self, op, l, r, res):
+    def __init__(self, op, l=None, r=None, res=None):
         self.op = op
         # Arguments (In some cases one of both of them would be -1 indicating there is no value)
         self.l = l
@@ -200,7 +204,6 @@ class PopurriListener(ParseTreeListener):
     def __init__(self):
         self.global_ctx = GlobalContext()
         self.quadWrapper = QuadWrapper()
-        self.counter = 1
         self.if_cond = False
 
     def enterProgram(self, ctx):
@@ -218,8 +221,11 @@ class PopurriListener(ParseTreeListener):
         print("--FUNCTIONS--")
         pprint(self.global_ctx.functions)
 
-        print('quads_stack = ', end='')
-        pprint(self.quadWrapper.quads)
+        print('quads_stack = [')
+        for i, x in enumerate(self.quadWrapper.quads, start=1):
+            print('\t',i, x)
+        print(']')
+
         print('address_stack = ', end='')
         pprint(self.quadWrapper.address_stack)
         print('operator_stack = ', end='')
@@ -418,98 +424,66 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterBranch(self, ctx):
+        self.quadWrapper.insertJump('(')
         pass
 
     def exitBranch(self, ctx):
         # print('fill quad in branch')
         # print(self.quadWrapper.jump_stack)
-        self.quadWrapper.fillQuad(
-            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
-        # print('fill quad in branch')
+        while True:
+            jump = self.quadWrapper.popJump()
+            if jump is '(' or jump is None:
+                break
+
+            self.quadWrapper.fillQuadWith(
+                self.quadWrapper.quads_ptr + 1,
+                at=jump
+            )
+        #print('fill quad in branch')
         pass
 
     def enterIfStmt(self, ctx):
-        # appends next quad into the jump_stack
-        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
         self.if_cond = True
-        pass
 
     def exitIfStmt(self, ctx):
-        # new_quad = Quadruple('gotof',
-        #                      self.quadWrapper.address_stack.pop(),
-        #                      None,
-        #                      None)
-        # self.quadWrapper.insertQuadAt(new_quad, self.quadWrapper.topJump())
-
-        # new_quad = Quadruple('goto',
-        #                      None,
-        #                      None,
-        #                      None)
-        # self.quadWrapper.insertQuadAt(new_quad, self.quadWrapper.quads_ptr)
-        # self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
         self.if_cond = False
 
         # Rellena el GOTOF de este mismo IF con el siguiente cuadruplo
-        self.quadWrapper.fillQuad(
-            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr + 1)
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.quads_ptr + 2,
+            at=self.quadWrapper.popJump()
+        )
 
         # Anade un GOTO al final del IF
-        new_goto_quad = Quadruple(
-            'GOTO',
-            None,
-            None,
-            None
-        )
+        goto_quad = Quadruple('GOTO')
 
-        self.quadWrapper.insertQuad(new_goto_quad)
-        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
-        pass
+        self.quadWrapper.insertJump()
+        self.quadWrapper.insertQuad(goto_quad)
 
     def enterElseIf(self, ctx):
-
-        # Anade un GOTO para el IF anterior.
         self.if_cond = True
-        pass
 
     def exitElseIf(self, ctx):
-
         self.if_cond = False
-        self.quadWrapper.fillQuad(
-            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr + 1)
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.quads_ptr + 2,
+            at=self.quadWrapper.popJump(),
+        )
 
         # Anade un GOTO al final del ELSE IF
-        new_goto_quad = Quadruple(
-            'GOTO',
-            None,
-            None,
-            None
-        )
+        goto_quad = Quadruple('GOTO')
 
-        self.quadWrapper.insertQuad(new_goto_quad)
-        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
-        pass
+        self.quadWrapper.insertJump()
+        self.quadWrapper.insertQuad(goto_quad)
 
     def enterElseStmt(self, ctx):
-        new_goto_quad = Quadruple(
-            'GOTO',
-            None,
-            None,
-            None
-        )
-
-        self.quadWrapper.insertQuad(new_goto_quad)
-        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
         pass
 
     def exitElseStmt(self, ctx):
-        self.quadWrapper.fillQuad(
-            self.quadWrapper.jump_stack.pop(), self.quadWrapper.quads_ptr)
-        new_quad = Quadruple('GOTO',
-                             None,
-                             None,
-                             None)
-        self.quadWrapper.insertQuadAt(new_quad, self.quadWrapper.quads_ptr)
-        self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.quads_ptr + 1,
+            at=self.quadWrapper.popJump()
+        )
         pass
 
     def enterReturnStmt(self, ctx):
@@ -519,15 +493,13 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCond(self, ctx):
-
         if self.if_cond:
-            new_quad = Quadruple('GOTOF',
-                                 self.quadWrapper.address_stack.pop(),
-                                 None,
-                                 None)
-            self.quadWrapper.insertQuadAt(
-                new_quad, self.quadWrapper.quads_ptr)
-            self.quadWrapper.insertJump(self.quadWrapper.quads_ptr - 1)
+            if_quad = Quadruple('GOTOF', l=self.quadWrapper.address_stack.pop())
+            self.quadWrapper.insertJump()
+            self.quadWrapper.insertQuad(
+                if_quad,
+                at=self.quadWrapper.quads_ptr
+            )
 
         open_par = 0
         close_par = 0
@@ -537,34 +509,20 @@ class PopurriListener(ParseTreeListener):
             elif op is ')':
                 close_par += 1
 
-        print(open_par, close_par)
-
         if open_par > close_par:
             self.quadWrapper.insertOperator(')')
 
     def exitCmp(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(
-            ['and', 'or'], self.counter)
-        if created_quad:
-            self.counter += 1
+        self.quadWrapper.handleQuadruple(['and', 'or'])
 
     def exitExp(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(
-            ['<', '<=', '>', '>=', 'is', 'is not'], self.counter)
-        if created_quad:
-            self.counter += 1
+        self.quadWrapper.handleQuadruple(['<', '<=', '>', '>=', 'is', 'is not'])
 
     def exitAdd(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(
-            ['+', '-'], self.counter)
-        if created_quad:
-            self.counter += 1
+        self.quadWrapper.handleQuadruple(['+', '-'])
 
     def exitMultModDiv(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(
-            ['*', '/', '%'], self.counter)
-        if created_quad:
-            self.counter += 1
+        self.quadWrapper.handleQuadruple(['*', '/', '%'])
 
     # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
@@ -593,9 +551,7 @@ class PopurriListener(ParseTreeListener):
         # TODO implement parenthesis expressions
 
     def exitVal(self, ctx):
-        created_quad = self.quadWrapper.handleQuadruple(['**'], self.counter)
-        if created_quad:
-            self.counter += 1
+        self.quadWrapper.handleQuadruple(['**'])
 
     def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
@@ -625,8 +581,7 @@ class PopurriListener(ParseTreeListener):
         if self.quadWrapper.topOperator() in ['=', '+=', '-=', '*=', '/=', '%=']:
             res = str(ctx.ID(0))  # TODO objects
             self.quadWrapper.insertQuad(Quadruple(
-                op=self.quadWrapper.getTokenCode(
-                    self.quadWrapper.popOperator()),
+                op=self.quadWrapper.popOperator(),
                 l=self.quadWrapper.popAddress(),
                 r=None,
                 res=res
