@@ -205,6 +205,7 @@ class PopurriListener(ParseTreeListener):
         self.global_ctx = GlobalContext()
         self.quadWrapper = QuadWrapper()
         self.if_cond = False
+        self.loop_cond = False
 
     def enterProgram(self, ctx):
         '''
@@ -404,18 +405,32 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterStatement(self, ctx):
-        if self.if_cond:
-            self.if_cond = False
+        self.if_cond = False
+        self.loop_cond = False
         pass
 
     def exitStatement(self, ctx):
         pass
 
     def enterWhileLoop(self, ctx):
+        self.loop_cond = True
+        self.quadWrapper.insertJump()
         pass
 
     def exitWhileLoop(self, ctx):
-        pass
+        goto_quad = Quadruple('GOTO')
+        self.quadWrapper.insertQuad(goto_quad)
+
+        # Fill while gotof
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.quads_ptr + 1,
+            at=self.quadWrapper.popJump()
+        )
+        # Fill goto with loop start
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.popJump() + 1,
+            at=self.quadWrapper.quads_ptr - 1
+        )
 
     def enterForLoop(self, ctx):
         pass
@@ -498,6 +513,13 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertJump()
             self.quadWrapper.insertQuad(
                 if_quad,
+                at=self.quadWrapper.quads_ptr
+            )
+        elif self.loop_cond:
+            loop_quad = Quadruple('GOTOF', l=self.quadWrapper.address_stack.pop())
+            self.quadWrapper.insertJump()
+            self.quadWrapper.insertQuad(
+                loop_quad,
                 at=self.quadWrapper.quads_ptr
             )
 

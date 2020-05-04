@@ -1,0 +1,12 @@
+module main
+
+var a : int, b : float
+a = 10
+
+while a > 0 and 15 > 10 + 3 {
+    a -= 1
+    b = a ** 3.14
+    print("hola mundo!")
+}
+
+a = 10
