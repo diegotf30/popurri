@@ -205,7 +205,6 @@ class PopurriListener(ParseTreeListener):
         self.global_ctx = GlobalContext()
         self.quadWrapper = QuadWrapper()
         self.if_cond = False
-        self.loop_cond = False
 
     def enterProgram(self, ctx):
         '''
@@ -406,14 +405,13 @@ class PopurriListener(ParseTreeListener):
 
     def enterStatement(self, ctx):
         self.if_cond = False
-        self.loop_cond = False
         pass
 
     def exitStatement(self, ctx):
         pass
 
     def enterWhileLoop(self, ctx):
-        self.loop_cond = True
+        self.if_cond = True
         self.quadWrapper.insertJump()
         pass
 
@@ -513,13 +511,6 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertJump()
             self.quadWrapper.insertQuad(
                 if_quad,
-                at=self.quadWrapper.quads_ptr
-            )
-        elif self.loop_cond:
-            loop_quad = Quadruple('GOTOF', l=self.quadWrapper.address_stack.pop())
-            self.quadWrapper.insertJump()
-            self.quadWrapper.insertQuad(
-                loop_quad,
                 at=self.quadWrapper.quads_ptr
             )
 
