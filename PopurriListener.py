@@ -90,7 +90,7 @@ class QuadWrapper():
         l_type = self.popType()
         res_type = bailaMijaConElSeñor(op, l_type, r_type)
         if res_type is None:
-            raise Exception(f'Unsupported operand types for {op}: "{l_type}" and "{r_type}"')
+            raise error(ctx, f'Unsupported operand types for {op}: "{l_type}" and "{r_type}"')
         # Push resulting type into stack
         self.insertType(res_type)
 
@@ -173,7 +173,7 @@ class ContextWrapper():
                 func.id: func
             }
 
-    def varExists(self, var_id):
+    def getVariableIfExists(self, var_id):
         for ctx in self.context_stack[::-1]:
             if ctx not in self.variables:
                 continue
@@ -182,9 +182,9 @@ class ContextWrapper():
             if var is not None:
                 return var
 
-        return False
+        return None
 
-    def functionExists(self, func_id):
+    def getFunctionIfExists(self, func_id):
         for ctx in self.context_stack[::-1]:
             if ctx not in self.functions:
                 continue
@@ -193,7 +193,7 @@ class ContextWrapper():
             if var is not None:
                 return var
 
-        return False
+        return None
 
     def varExistsInContext(self, var_id, ctx='global'):
         if ctx not in self.variables:
@@ -322,7 +322,7 @@ class PopurriListener(ParseTreeListener):
     def enterDeclaration(self, ctx):
         # Checks if global is already declared
         if self.ctxWrapper.varExistsInContext(ctx.ID(0), "global"):
-            raise Exception(f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED')
+            raise error(ctx, f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED')
 
         var = None
         # var has data_type : INT, FLOAT, STRING, BOOL
@@ -336,7 +336,7 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) is 2:
             class_name = str(ctx.ID(1))
             if not self.ctxWrapper.classExists(class_name):
-                raise Exception(f'ERROR UNDEFINED CLASS "{class_name}"')
+                raise error(ctx, f'ERROR UNDEFINED CLASS "{class_name}"')
 
             var = Variable(
                 id=ctx.ID(0),
@@ -380,7 +380,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterFunction(self, ctx):
         if self.ctxWrapper.functionExistsInContext(ctx.ID(0), 'global'):
-            raise Exception(f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}')
+            raise error(ctx, f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}')
 
         func = self.createFunction(ctx)
         self.ctxWrapper.addFunction(func)
@@ -398,7 +398,7 @@ class PopurriListener(ParseTreeListener):
     def enterClassDeclaration(self, ctx):
         class_name = str(ctx.ID())
         if self.ctxWrapper.classExists(class_name):
-            raise Exception(f'ERROR RE-DEFINITION OF {class_name}')
+            raise error(ctx, f'ERROR RE-DEFINITION OF {class_name}')
 
         self.ctxWrapper.push('class ' + class_name)
         klass = Object(
@@ -407,7 +407,7 @@ class PopurriListener(ParseTreeListener):
         if ctx.parent() is not None:
             klass.parent_id = 'class ' + str(ctx.parent().ID())
             if not self.ctxWrapper.classExists(klass.parent_id):
-                raise Exception(f'ERROR PARENT CLASS "{klass.parent_id}" MUST BE DEFINED BEFORE CHILD CLASS "{klass.id}"')
+                raise error(ctx, f'ERROR PARENT CLASS "{klass.parent_id}" MUST BE DEFINED BEFORE CHILD CLASS "{klass.id}"')
 
             # Inherit attributes
             for attribute in self.ctxWrapper.variables[klass.parent_id].values():
@@ -429,7 +429,7 @@ class PopurriListener(ParseTreeListener):
                     continue
                 # Checks if attribute is already declared within class
                 elif self.ctxWrapper.varExistsInContext(attr.ID(), 'class ' + klass.id):
-                    raise Exception(f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED')
+                    raise error(ctx, f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED')
 
                 var = Variable(
                     id=attr.ID(),
@@ -447,7 +447,7 @@ class PopurriListener(ParseTreeListener):
                 continue
             # Checks if attribute is already declared within class
             elif self.ctxWrapper.functionExistsInContext(method.ID(0), 'class ' + klass.id):
-                raise Exception(f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED')
+                raise error(ctx, f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED')
 
 
             method = self.createFunction(method) # TODO fix how params are generated in varTable for object methods
@@ -492,7 +492,7 @@ class PopurriListener(ParseTreeListener):
     def enterStatement(self, ctx):
         self.if_cond = False
         if ctx.assignment() is not None:
-            var_id = self.validateIds(ctx.ID())
+            var_id = self.validateIds(ctx)
             self.quadWrapper.insertAddress(var_id)
         pass
 
@@ -586,14 +586,13 @@ class PopurriListener(ParseTreeListener):
         if self.ctxWrapper.top() is 'global':
             raise error(ctx, 'Return statement used outside function body')
 
-        pprint(self.ctxWrapper.context_stack)
         # Return is inside function, verify if not void
         func_id = self.ctxWrapper.pop()
         func_ctx_id = self.ctxWrapper.top()
         func = self.ctxWrapper.getFunction(func_id, context=func_ctx_id)
         if func.return_type is 'void':
             raise error(ctx, f'Return on void function "{func_id}"')
-        self.ctxWrapper.push(func_ctx_id)
+        self.ctxWrapper.push(func_id)
         pass
 
     def exitReturnStmt(self, ctx):
@@ -643,39 +642,31 @@ class PopurriListener(ParseTreeListener):
         # TODO: add arrays
 
     # Helper function to validate id(s) exist in varTable, also pushes var type into type_stack
-    def validateIds(self, ids):
-        ids = [str(id) for id in ids]
+    def validateIds(self, ctx):
+        ids = [str(id) for id in ctx.ID()]
 
         if len(ids) is 2: # class attribute being accessed (i.e. myvar.myattribute)
             class_var = self.ctxWrapper.getVariable(ids[0])
             if class_var is None:
-                raise Exception(f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
+                raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
 
             attribute = self.ctxWrapper.getVariable(ids[1], 'class ' + class_var.type)
             if attribute is None:
-                raise Exception(f'TRYING TO ACCESS UNDEFINED ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+                raise error(ctx, f'TRYING TO ACCESS UNDEFINED ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
 
             if attribute.access_type is not 'public':
-                raise Exception(f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+                raise error(ctx, f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
 
              # Both variable and attribute exist!
             self.quadWrapper.insertType(attribute.type)
             return '.'.join(ids)
         else: # variable being accessed
-            # Check local context first (if applicable)
-            if self.ctxWrapper.top() is not 'global':
-                var = self.ctxWrapper.getVariable(ids[0], self.ctxWrapper.top())
-                if var is not None:
-                    self.quadWrapper.insertType(var.type)
-                    return ids[0]
-
-            # Check global context (if not found or n/a)
-            var = self.ctxWrapper.getVariable(ids[0])
+            var = self.ctxWrapper.getVariableIfExists(ids[0])
             if var is None:
-                raise Exception(f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
+                raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
 
             self.quadWrapper.insertType(var.type)
-            return ids[0]
+            return var.id
 
 
     def enterVal(self, ctx):
@@ -683,7 +674,7 @@ class PopurriListener(ParseTreeListener):
             # Add fake bottom to operator_stack
             self.quadWrapper.insertOperator('(')
         elif len(ctx.ID()) > 0:  # identifier
-            id = self.validateIds(ctx.ID())
+            id = self.validateIds(ctx)
             self.quadWrapper.insertAddress(id)
         elif ctx.constant() is not None: # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
@@ -738,10 +729,10 @@ class PopurriListener(ParseTreeListener):
             if op is not '=':
                 res_type = bailaMijaConElSeñor(op[0], var_type, res_type)
                 if res_type is None:
-                    raise Exception(f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
+                    raise error(ctx, f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
 
             if var_type != res_type:
-                raise Exception(f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
+                raise error(ctx, f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
 
             self.quadWrapper.insertQuad(Quadruple(
                 op=op,
