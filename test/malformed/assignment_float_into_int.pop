@@ -1,5 +1,5 @@
 module main
 
-var a : float
+var a : int
 
 a = 2 * (3 * 4 + 2) * 5.0 / 3 + 32.1 * 15 * 91 / 2.0 ** 3

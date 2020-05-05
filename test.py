@@ -22,8 +22,8 @@ def test_malformed(compiler, files):
                 exit(1)
             else:
                 print("Detected errors!")
-        except:
-            print("Detected errors!")
+        except Exception as e:
+            print("Detected errors!", "Got error:", e)
 
 if __name__ == '__main__':
     compiler = Compiler()

@@ -35,6 +35,7 @@ if __name__ == '__main__':
     compiler = Compiler()
     try:
         compiler.compile(sys.argv[1])
-    except:
+    except Exception as e:
         print('Failed to compile!')
+        print('Got error:', e)
         exit(1)

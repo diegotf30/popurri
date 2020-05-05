@@ -5,12 +5,16 @@ cmpOp     : '<' | '<=' | '>' | '>=' | 'is' | 'is' 'not'
 addOp     : '+' | '-'
 multDivOp : '*' | '/' | '%'
 assignOp  : '=' | '+=' | '-=' | '*=' | '/=' | '%='
+expOp     : '**'
 '''
 
 # Supported Types
 '''
 TYPE      :  'int' | 'float' | 'string' | 'bool' | '[float]' | '[int]' | '[bool]'
 '''
+
+def bailaMijaConElSeñor(baile, mija=None, sr=None):
+    return bailes[baile].get((mija, sr), None)
 
 # Operations between user-defined classes are NOT allowed
 
@@ -88,6 +92,20 @@ bailes = {
         ("float", "float"): "float"
     },
     "%": {
+        ("int", "int"): "int",
+        ("int", "float"): "float",
+        ("float", "int"): "float",
+        ("float", "float"): "float"
+    },
+    #### assignOp ####
+    "=": {
+        ("int", "int"): "int",
+        ("int", "float"): "float",
+        ("float", "int"): "float",
+        ("float", "float"): "float"
+    },
+    #### expOp ####
+    "**": {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",

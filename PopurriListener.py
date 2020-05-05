@@ -1,6 +1,7 @@
 from antlr4 import *
 from parser.PopurriParser import PopurriParser
 from popurri_tokens import *
+from semantic_cube import bailaMijaConElSeñor
 import jsbeautifier as js
 import json
 
@@ -24,18 +25,11 @@ class QuadWrapper():
         self.tmp_counter = 0
         self.quads = []
         self.quads_ptr = 0
+        self.type_stack = []
         self.operator_stack = []
+        self.paren_stack = []
         self.address_stack = []
         self.jump_stack = []
-
-    def getNextJump(self):
-        return self.jump_stack.pop()
-
-    def insertAddress(self, address):
-        self.address_stack.append(str(address))
-
-    def getNextAddress(self):
-        return self.address_stack.pop()
 
     def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
@@ -49,20 +43,38 @@ class QuadWrapper():
         new_quad[3] = filler
         self.quads[at] = tuple(new_quad)
 
+    def topParen(self):
+        return self.paren_stack[-1] if len(self.paren_stack) > 0 else 0
+
     def topOperator(self):
-        return self.operator_stack[-1] if len(self.operator_stack) > 0 else None
+        return self.operator_stack[-1] if len(self.operator_stack) - self.topParen() > 0 else None
 
     def topJump(self):
         return self.jump_stack[-1] if len(self.jump_stack) > 0 else None
 
     def popOperator(self):
-        return self.operator_stack.pop() if len(self.operator_stack) > 0 else None
+        return self.operator_stack.pop() if len(self.operator_stack) - len(self.paren_stack) > 0 else None
 
     def popAddress(self):
         return self.address_stack.pop() if len(self.address_stack) > 0 else None
 
     def popJump(self):
         return self.jump_stack.pop() if len(self.jump_stack) > 0 else None
+
+    def popType(self):
+        return self.type_stack.pop() if len(self.type_stack) > 0 else None
+
+    def popParen(self):
+        return self.paren_stack.pop() if len(self.paren_stack) > 0 else 0
+
+    def insertParen(self):
+        self.paren_stack.append(len(self.operator_stack))
+
+    def insertType(self, type):
+        self.type_stack.append(str(type))
+
+    def insertAddress(self, address):
+        self.address_stack.append(str(address))
 
     def insertOperator(self, operator):
         self.operator_stack.append(operator)
@@ -73,12 +85,20 @@ class QuadWrapper():
     def getTokenCode(self, element):
         return self.operator_codes.index(element) + 1
 
-    def handleQuadruple(self, operators):
-        if self.topOperator() is ')':
-            self.operator_stack.pop()
-            self.operator_stack.pop()
+    def validateTypes(self):
+        op = self.topOperator()
+        r_type = self.popType()
+        l_type = self.popType()
+        res_type = bailaMijaConElSeñor(op, l_type, r_type)
+        if res_type is None:
+            raise Exception(f'Unsupported operand types for {op}: "{l_type}" and "{r_type}"')
+        # Push resulting type into stack
+        self.insertType(res_type)
 
+    def handleQuadruple(self, operators):
         if self.topOperator() in operators:
+            self.validateTypes()
+
             self.tmp_counter += 1
             tmp = f'temp_{self.tmp_counter}'
             self.insertQuad(Quadruple(
@@ -243,6 +263,8 @@ class PopurriListener(ParseTreeListener):
         pprint(self.quadWrapper.address_stack)
         print('operator_stack = ', end='')
         pprint(self.quadWrapper.operator_stack)
+        print('type_stack = ', end='')
+        pprint(self.quadWrapper.type_stack)
         print('jump_stack = ', end='')
         pprint(self.quadWrapper.jump_stack)
         print('quad_ptr = ', end='')
@@ -522,6 +544,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCond(self, ctx):
+        self.quadWrapper.popParen()
         if self.if_cond:
             if_quad = Quadruple('GOTOF', l=self.quadWrapper.address_stack.pop())
             self.quadWrapper.insertJump()
@@ -529,17 +552,6 @@ class PopurriListener(ParseTreeListener):
                 if_quad,
                 at=self.quadWrapper.quads_ptr
             )
-
-        open_par = 0
-        close_par = 0
-        for op in self.quadWrapper.operator_stack[::-1]:
-            if op is '(':
-                open_par += 1
-            elif op is ')':
-                close_par += 1
-
-        if open_par > close_par:
-            self.quadWrapper.insertOperator(')')
 
     def exitCmp(self, ctx):
         self.quadWrapper.handleQuadruple(['and', 'or'])
@@ -556,14 +568,19 @@ class PopurriListener(ParseTreeListener):
     # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
         if ctx.CONST_BOOL() is not None:
+            self.quadWrapper.insertType('bool')
             return str(ctx.CONST_BOOL())
         elif ctx.CONST_I() is not None:
+            self.quadWrapper.insertType('int')
             return str(ctx.CONST_I())
         elif ctx.CONST_F() is not None:
+            self.quadWrapper.insertType('float')
             return str(ctx.CONST_F())
         elif ctx.CONST_STR() is not None:
+            self.quadWrapper.insertType('string')
             return str(ctx.CONST_STR())
         else:
+            self.quadWrapper.insertType('none')
             return 'none'
         # TODO: add arrays
 
@@ -583,30 +600,36 @@ class PopurriListener(ParseTreeListener):
                 raise Exception(f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
 
              # Both variable and attribute exist!
+            self.quadWrapper.insertType(attribute.type)
             return '.'.join(ids)
         else: # variable being accessed
             # Check local context first (if applicable)
             if self.current_ctx is not 'global':
-                if self.global_ctx.varExistsInContext(ids[0], self.current_ctx):
+                var = self.global_ctx.getVariable(ids[0], self.current_ctx)
+                if var is not None:
+                    self.quadWrapper.insertType(var.type)
                     return ids[0]
 
             # Check global context (if not found or n/a)
-            if not self.global_ctx.varExistsInContext(ids[0], 'global'):
+            var = self.global_ctx.getVariable(ids[0])
+            if var is None:
                 raise Exception(f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
+
+            self.quadWrapper.insertType(var.type)
+            return ids[0]
 
 
     def enterVal(self, ctx):
         if ctx.cond() is not None: # nested cond
-            self.quadWrapper.insertOperator('(')
+            # Add fake bottom to operator_stack
+            self.quadWrapper.insertParen()
         elif len(ctx.ID()) > 0:  # identifier
             id = self.validateIds(ctx.ID())
             self.quadWrapper.insertAddress(id)
         elif ctx.constant() is not None: # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
 
-        print(self.quadWrapper.operator_stack)
         # TODO implement arrays
-        # TODO implement parenthesis expressions
 
     def exitVal(self, ctx):
         self.quadWrapper.handleQuadruple(['**'])
@@ -640,12 +663,22 @@ class PopurriListener(ParseTreeListener):
 
     def exitAssignment(self, ctx):
         if self.quadWrapper.topOperator() in ['=', '+=', '-=', '*=', '/=', '%=']:
-            # TODO verify type
-            res = self.validateIds(ctx.ID())
+            var_id = self.validateIds(ctx.ID())
+            var_type = self.quadWrapper.popType()
+            op = self.quadWrapper.popOperator()
+            res_type = self.quadWrapper.popType()
+            if op is not '=':
+                res_type = bailaMijaConElSeñor(op[0], var_type, res_type)
+                if res_type is None:
+                    raise Exception(f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
+
+            if var_type != res_type:
+                raise Exception(f'Type mismatch: cannot put value of type {res_type} into "{var_id}" (type {var_type})')
+
             self.quadWrapper.insertQuad(Quadruple(
-                op=self.quadWrapper.popOperator(),
+                op=op,
                 l=self.quadWrapper.popAddress(),
-                res=res
+                res=var_id
             ))
         pass
 
