@@ -233,24 +233,6 @@ class PopurriListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by PopurriParser#assignment.
-    def enterAssignment(self, ctx:PopurriParser.AssignmentContext):
-        pass
-
-    # Exit a parse tree produced by PopurriParser#assignment.
-    def exitAssignment(self, ctx:PopurriParser.AssignmentContext):
-        pass
-
-
-    # Enter a parse tree produced by PopurriParser#funcCall.
-    def enterFuncCall(self, ctx:PopurriParser.FuncCallContext):
-        pass
-
-    # Exit a parse tree produced by PopurriParser#funcCall.
-    def exitFuncCall(self, ctx:PopurriParser.FuncCallContext):
-        pass
-
-
     # Enter a parse tree produced by PopurriParser#boolOp.
     def enterBoolOp(self, ctx:PopurriParser.BoolOpContext):
         pass
@@ -287,12 +269,39 @@ class PopurriListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PopurriParser#expOp.
+    def enterExpOp(self, ctx:PopurriParser.ExpOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#expOp.
+    def exitExpOp(self, ctx:PopurriParser.ExpOpContext):
+        pass
+
+
     # Enter a parse tree produced by PopurriParser#assignOp.
     def enterAssignOp(self, ctx:PopurriParser.AssignOpContext):
         pass
 
     # Exit a parse tree produced by PopurriParser#assignOp.
     def exitAssignOp(self, ctx:PopurriParser.AssignOpContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#assignment.
+    def enterAssignment(self, ctx:PopurriParser.AssignmentContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#assignment.
+    def exitAssignment(self, ctx:PopurriParser.AssignmentContext):
+        pass
+
+
+    # Enter a parse tree produced by PopurriParser#funcCall.
+    def enterFuncCall(self, ctx:PopurriParser.FuncCallContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#funcCall.
+    def exitFuncCall(self, ctx:PopurriParser.FuncCallContext):
         pass
 
 

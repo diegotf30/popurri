@@ -24,3 +24,17 @@ Diego Enrique Treviño Ferrer A00819313
 
 * Se creo un archivo de constantes (popurri_tokens) a utilizar en el transcurso del desarrollo del compilador.
 
+
+*|* Semana 2 : 
+
+- Diego:
+
+* Agregué los puntos neuralgicos para que la generación de cuadruplos en expresiones (y todas sus sub-reglas)
+
+* Agregué los puntos neuralgicos para que la generación de cuadruplos en while loop
+
+* Arreglé un bug al momento de llenar los brincos en GOTOs para estatuos if, elseif y elseif
+
+* Refactor de funciones para que sean más legibles las llamadas
+
+* Agregué un workflow al repo de Github para que se corran las pruebas cuando se haga push a master y a PR

@@ -1,67 +1,97 @@
 grammar Popurri;
 
 // Terminals
-WS : [ \t\r\n]+ -> skip;
-COMMENT : '//' .*? '\n' -> skip;
-CONST_BOOL : 'true' | 'false';
-CONST_I : [1-9][0-9]* | '0';
-CONST_F : [0-9]* '.' [0-9]+;
-CONST_STR : '\'' .*? '\'' | '"' .*? '"';
-TYPE :  'int' | 'float' | 'string' | 'bool' | '[' ('float' | 'int' | 'bool') ']';
-ACCESS_TYPE : 'public' | 'protected' | 'private';
-ID : [_a-zA-Z][_a-zA-Z0-9]*[!?]?;
+WS: [ \t\r\n]+ -> skip;
+COMMENT: '//' .*? '\n' -> skip;
+CONST_BOOL: 'true' | 'false';
+CONST_I: [1-9][0-9]* | '0';
+CONST_F: [0-9]* '.' [0-9]+;
+CONST_STR: '\'' .*? '\'' | '"' .*? '"';
+TYPE:
+	'int'
+	| 'float'
+	| 'string'
+	| 'bool'
+	| '[' ('float' | 'int' | 'bool') ']';
+ACCESS_TYPE: 'public' | 'protected' | 'private';
 
-program : module classDeclaration* declarations* function* statement*;
-module : 'module' ID ;
+ID: [_a-zA-Z][_a-zA-Z0-9]* [!?]?;
 
-declarations : 'var' declaration (',' declaration)* ;
-declaration : ID (':' (TYPE | ID))? ('=' cond)?;
+program:
+	module classDeclaration* declarations* function* statement*;
+module: 'module' ID;
 
-function : 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}' ;
+declarations: 'var' declaration (',' declaration)*;
+declaration: ID (':' (TYPE | ID))? ('=' cond)?;
 
-classDeclaration : 'class' parent? ID '{' (attributes | method)+ '}' ;
-parent : ID '->';
-attributes : ACCESS_TYPE? 'var' attribute (',' attribute)* ;
-attribute : ID (':' TYPE)? ('=' cond)?;
-method : ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}' ;
+function:
+	'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
+
+classDeclaration:
+	'class' parent? ID '{' (attributes | method)+ '}';
+parent: ID '->';
+attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
+attribute: ID (':' TYPE)? ('=' cond)?;
+method:
+	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
 
 // Statements
-statement : assignment | whileLoop | forLoop | branch | returnStmt | funcCall | printStmt | inputStmt | 'break';
-	whileLoop : 'while' cond '{' statement* '}';
-	forLoop : 'for' ID 'in' iterable '{' statement* '}';
-	branch : ifStmt elseIf* elseStmt?;
-		ifStmt : 'if' cond '{' statement* '}';
-		elseIf : 'else if' cond '{' statement* '}';
-		elseStmt : 'else' cond '{' statement* '}';
-	returnStmt : 'return' cond;
+statement:
+	assignment
+	| whileLoop
+	| forLoop
+	| branch
+	| returnStmt
+	| funcCall
+	| printStmt
+	| inputStmt
+	| 'break';
+whileLoop: 'while' cond '{' statement* '}';
+forLoop: 'for' ID 'in' iterable '{' statement* '}';
+branch: ifStmt elseIf* elseStmt?;
+ifStmt: 'if' cond '{' statement* '}';
+elseIf: 'else if' cond '{' statement* '}';
+elseStmt: 'else' '{' statement* '}';
+returnStmt: 'return' cond;
 
-	cond : ( cmp boolOp | 'not' )? cmp;
-	cmp : exp (cmpOp exp)?;
-	exp : add (addOp add)?;
-	add : multModDiv (multDivOp multModDiv)?;
-	multModDiv : val ('**' val)?;
-	val : '(' cond ')' | addOp? (ID ('.' ID)? | constant | indexation);
-	indexation : iterable '[' exp ']';
-
-	assignment : (ID '.')? ID assignOp cond;
-	funcCall : (ID '.')? ID '(' condParam? ')';
+cond: (cmp boolOp?)+;
+cmp: (exp cmpOp?)+;
+exp: (add addOp?)+;
+add: (multModDiv multDivOp?)+;
+multModDiv: (val expOp?)+;
+val:
+	'(' cond ')' |
+	ID ('.' ID)? |
+	constant |
+	indexation; // TODO "addOp?"
+indexation: iterable '[' exp ']';
 
 // Operators
-boolOp : 'and' | 'or';
-cmpOp : '<' | '<=' | '>' | '>=' | 'is' | 'is' 'not';
-addOp : '+' | '-';
-multDivOp : '*' | '/' | '%';
-assignOp : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
+boolOp: 'and' | 'or';
+cmpOp: '<' | '<=' | '>' | '>=' | 'is' | 'is not';
+addOp: '+' | '-';
+multDivOp: '*' | '/' | '%';
+expOp: '**';
+assignOp: '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
-constant : CONST_BOOL | CONST_I | CONST_F | CONST_STR | const_arr | 'none';
-const_arr : '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
-iterable : CONST_STR | const_arr | ID;
+assignment: (ID '.')? ID assignOp cond;
+funcCall: (ID '.')? ID '(' condParam? ')';
+
+constant:
+	CONST_BOOL
+	| CONST_I
+	| CONST_F
+	| CONST_STR
+	| const_arr
+	| 'none';
+const_arr: '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
+iterable: CONST_STR | const_arr | ID;
 
 // Special functions
-printStmt : 'print' '(' condParam ')';
-inputStmt : 'input' '(' ID ')';
+printStmt: 'print' '(' condParam ')';
+inputStmt: 'input' '(' ID ')';
 
 // Parameters
-condParam : cond (',' cond)*;
-funcParams : TYPE ID(',' TYPE ID)*;
+condParam: cond (',' cond)*;
+funcParams: TYPE ID (',' TYPE ID)*;
 
