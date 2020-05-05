@@ -299,15 +299,22 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.TYPE()
             )
         # var is type object
-        else:
+        elif len(ctx.ID()) is 2:
             class_name = str(ctx.ID(1))
             if not self.global_ctx.classExists(class_name):
-                raise Exception(f'ERROR UNDEFINED CLASS TYPE {class_name}')
+                raise Exception(f'ERROR UNDEFINED CLASS "{class_name}"')
 
             var = Variable(
                 id=ctx.ID(0),
                 type=class_name
             )
+        # Var has no delcared type
+        else:
+            var = Variable(id=ctx.ID(0))
+
+        if ctx.assignment() is not None:
+            self.quadWrapper.insertAddress(var.id)
+            self.quadWrapper.insertType(var.type)
 
         self.global_ctx.addVariable(var)
 
@@ -445,6 +452,9 @@ class PopurriListener(ParseTreeListener):
 
     def enterStatement(self, ctx):
         self.if_cond = False
+        if ctx.assignment() is not None:
+            var_id = self.validateIds(ctx.ID())
+            self.quadWrapper.insertAddress(var_id)
         pass
 
     def exitStatement(self, ctx):
@@ -582,6 +592,7 @@ class PopurriListener(ParseTreeListener):
             return 'none'
         # TODO: add arrays
 
+    # Helper function to validate id(s) exist in varTable, also pushes var type into type_stack
     def validateIds(self, ids):
         ids = [str(id) for id in ids]
 
@@ -661,21 +672,30 @@ class PopurriListener(ParseTreeListener):
 
     def exitAssignment(self, ctx):
         if self.quadWrapper.topOperator() in ['=', '+=', '-=', '*=', '/=', '%=']:
-            var_id = self.validateIds(ctx.ID())
-            var_type = self.quadWrapper.popType()
-            op = self.quadWrapper.popOperator()
+            res_id = self.quadWrapper.popAddress()
+            var_id = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
+            var_type = self.quadWrapper.popType()
+
+            # If var type is undeclared (None), update with resulting type
+            if var_type == 'None':
+                var = self.global_ctx.getVariable(var_id, self.current_ctx)
+                var.type = res_type
+                self.global_ctx.addVariable(var, self.current_ctx)
+                var_type = res_type
+
+            op = self.quadWrapper.popOperator()
             if op is not '=':
                 res_type = bailaMijaConElSeñor(op[0], var_type, res_type)
                 if res_type is None:
                     raise Exception(f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
 
             if var_type != res_type:
-                raise Exception(f'Type mismatch: cannot put value of type {res_type} into "{var_id}" (type {var_type})')
+                raise Exception(f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
 
             self.quadWrapper.insertQuad(Quadruple(
                 op=op,
-                l=self.quadWrapper.popAddress(),
+                l=res_id,
                 res=var_id
             ))
         pass

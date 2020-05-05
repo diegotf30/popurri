@@ -1,0 +1,3 @@
+module main
+
+var i : int = 10 / 2

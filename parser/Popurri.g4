@@ -22,7 +22,7 @@ program:
 module: 'module' ID;
 
 declarations: 'var' declaration (',' declaration)*;
-declaration: ID (':' (TYPE | ID))? ('=' cond)?;
+declaration: ID (':' (TYPE | ID))? assignment?;
 
 function:
 	'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
@@ -31,13 +31,13 @@ classDeclaration:
 	'class' parent? ID '{' (attributes | method)+ '}';
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
-attribute: ID (':' TYPE)? ('=' cond)?;
+attribute: ID (':' TYPE | assignment)?;
 method:
 	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
 
 // Statements
 statement:
-	assignment
+	(ID '.')? ID assignment
 	| whileLoop
 	| forLoop
 	| branch
@@ -74,7 +74,7 @@ multDivOp: '*' | '/' | '%';
 expOp: '**';
 assignOp: '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
-assignment: (ID '.')? ID assignOp cond;
+assignment: assignOp cond;
 funcCall: (ID '.')? ID '(' condParam? ')';
 
 constant:
