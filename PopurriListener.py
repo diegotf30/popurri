@@ -27,7 +27,6 @@ class QuadWrapper():
         self.quads_ptr = 0
         self.type_stack = []
         self.operator_stack = []
-        self.paren_stack = []
         self.address_stack = []
         self.jump_stack = []
 
@@ -43,17 +42,20 @@ class QuadWrapper():
         new_quad[3] = filler
         self.quads[at] = tuple(new_quad)
 
-    def topParen(self):
-        return self.paren_stack[-1] if len(self.paren_stack) > 0 else 0
-
     def topOperator(self):
-        return self.operator_stack[-1] if len(self.operator_stack) - self.topParen() > 0 else None
+        if len(self.operator_stack) is 0 or self.operator_stack[-1] is '(':
+            return None
+
+        return self.operator_stack[-1]
 
     def topJump(self):
         return self.jump_stack[-1] if len(self.jump_stack) > 0 else None
 
     def popOperator(self):
-        return self.operator_stack.pop() if len(self.operator_stack) - len(self.paren_stack) > 0 else None
+        if len(self.operator_stack) is 0 or self.topOperator() is '(':
+            return None
+
+        return self.operator_stack.pop()
 
     def popAddress(self):
         return self.address_stack.pop() if len(self.address_stack) > 0 else None
@@ -63,12 +65,6 @@ class QuadWrapper():
 
     def popType(self):
         return self.type_stack.pop() if len(self.type_stack) > 0 else None
-
-    def popParen(self):
-        return self.paren_stack.pop() if len(self.paren_stack) > 0 else 0
-
-    def insertParen(self):
-        self.paren_stack.append(len(self.operator_stack))
 
     def insertType(self, type):
         self.type_stack.append(str(type))
@@ -544,7 +540,9 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCond(self, ctx):
-        self.quadWrapper.popParen()
+        if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is '(':
+            self.quadWrapper.popOperator()
+
         if self.if_cond:
             if_quad = Quadruple('GOTOF', l=self.quadWrapper.address_stack.pop())
             self.quadWrapper.insertJump()
@@ -622,7 +620,7 @@ class PopurriListener(ParseTreeListener):
     def enterVal(self, ctx):
         if ctx.cond() is not None: # nested cond
             # Add fake bottom to operator_stack
-            self.quadWrapper.insertParen()
+            self.quadWrapper.insertOperator('(')
         elif len(ctx.ID()) > 0:  # identifier
             id = self.validateIds(ctx.ID())
             self.quadWrapper.insertAddress(id)
