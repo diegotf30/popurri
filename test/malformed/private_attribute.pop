@@ -1,0 +1,8 @@
+module main
+class mychild {
+    private var hola : int
+}
+
+var child : mychild
+
+child.hola = 10.5

@@ -15,10 +15,14 @@ def test_valid(compiler, files):
 def test_malformed(compiler, files):
     for test in test_files:
         print("--------TESTING MALFORMED INPUT", basename(test))
-        errors = compiler.compile(test)
-        if errors == 0:
-            exit(1)
-        else:
+        try:
+            errors = compiler.compile(test)
+            if errors == 0:
+                print("Failed to detect errors :/")
+                exit(1)
+            else:
+                print("Detected errors!")
+        except:
             print("Detected errors!")
 
 if __name__ == '__main__':

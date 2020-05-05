@@ -33,4 +33,8 @@ class Compiler(object):
 
 if __name__ == '__main__':
     compiler = Compiler()
-    compiler.compile(sys.argv[1])
+    try:
+        compiler.compile(sys.argv[1])
+    except:
+        print('Failed to compile!')
+        exit(1)
