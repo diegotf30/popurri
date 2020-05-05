@@ -33,8 +33,19 @@ Diego Enrique Treviño Ferrer A00819313
 
 * Agregué los puntos neuralgicos para que la generación de cuadruplos en while loop
 
-* Arreglé un bug al momento de llenar los brincos en GOTOs para estatuos if, elseif y elseif
+* Arreglé un bug al momento de llenar los brincos en GOTOs para estatuos if, elseif y else
 
 * Refactor de funciones para que sean más legibles las llamadas
 
 * Agregué un workflow al repo de Github para que se corran las pruebas cuando se haga push a master y a PR
+
+- Daniel:
+
+* Se corrigieron y agregaron puntos neuralgicos para efectuar la generacion de cuadruplos para las expresiones con parentesis.
+
+* Se agregaron los puntos neuralgicos para generar GOTOS y GOTOSF para el estatuto if, elseif y else. (Sufrian bugs hasta que Diego los arreglo)
+
+* Se creo una clase QuadWrapper que simulaba todo el proceso de generacion de cuadruplos. Imitaba el algoritmo utilizado para el fin anterior.
+
+* Mi companero y yo corregimos unos problemas de los diagramas de sintaxis que evitaban la generacion exitosa de los cuadruplos.
+
