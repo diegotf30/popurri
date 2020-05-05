@@ -31,7 +31,7 @@ classDeclaration:
 	'class' parent? ID '{' (attributes | method)+ '}';
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
-attribute: ID (':' TYPE | assignment)?;
+attribute: ID (':' TYPE)? assignment?;
 method:
 	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
 

@@ -288,7 +288,7 @@ class PopurriListener(ParseTreeListener):
     def enterDeclaration(self, ctx):
         # Checks if global is already declared
         if self.global_ctx.varExistsInContext(ctx.ID(0), "global"):
-            raise f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED'
+            raise Exception(f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED')
 
         var = None
         # var has data_type : INT, FLOAT, STRING, BOOL
@@ -346,7 +346,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterFunction(self, ctx):
         if self.global_ctx.functionExistsInContext(ctx.ID(0), "global"):
-            raise f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}'
+            raise Exception(f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}')
 
         func = self.createFunction(ctx)
         self.global_ctx.addFunction(func)
@@ -364,7 +364,7 @@ class PopurriListener(ParseTreeListener):
     def enterClassDeclaration(self, ctx):
         class_name = str(ctx.ID())
         if self.global_ctx.classExists(class_name):
-            raise f'ERROR RE-DEFINITION OF {class_name}'
+            raise Exception(f'ERROR RE-DEFINITION OF {class_name}')
 
         self.current_ctx = 'class ' + class_name
         klass = Object(
@@ -395,7 +395,7 @@ class PopurriListener(ParseTreeListener):
                     continue
                 # Checks if attribute is already declared within class
                 elif self.global_ctx.varExistsInContext(attr.ID(), 'class ' + klass.id):
-                    raise f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED'
+                    raise Exception(f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED')
 
                 var = Variable(
                     id=attr.ID(),
@@ -411,7 +411,7 @@ class PopurriListener(ParseTreeListener):
                 continue
             # Checks if attribute is already declared within class
             elif self.global_ctx.functionExistsInContext(method.ID(0), 'class ' + klass.id):
-                raise f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED'
+                raise Exception(f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED')
 
             access_type = self.getAccessType(method)
 
@@ -439,7 +439,9 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterAttribute(self, ctx):
-        pass
+        if ctx.assignment() is not None:
+            self.quadWrapper.insertAddress(ctx.ID())
+            self.quadWrapper.insertType(ctx.TYPE())
 
     def exitAttribute(self, ctx):
         pass

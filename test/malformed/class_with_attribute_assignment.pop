@@ -1,0 +1,5 @@
+module main
+
+class  child {
+private var a : int = "uh oh"
+}
