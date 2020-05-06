@@ -84,7 +84,7 @@ class QuadWrapper():
     def getTokenCode(self, element):
         return self.operator_codes.index(element) + 1
 
-    def validateTypes(self):
+    def validateTypes(self, ctx):
         op = self.topOperator()
         r_type = self.popType()
         l_type = self.popType()
@@ -94,9 +94,9 @@ class QuadWrapper():
         # Push resulting type into stack
         self.insertType(res_type)
 
-    def handleQuadruple(self, operators):
+    def handleQuadruple(self, ctx, operators):
         if self.topOperator() in operators:
-            self.validateTypes()
+            self.validateTypes(ctx)
 
             self.tmp_counter += 1
             tmp = f'temp_{self.tmp_counter}'
@@ -156,6 +156,12 @@ class ContextWrapper():
             return self.functions[context].get(str(func_id), None)
         else:
             return None
+
+    def getCurrentFunction(self):
+        func_id = self.pop()
+        func_ctx_id = self.top()
+        self.push(func_id) # Re-push current context
+        return self.getFunction(func_id, context=func_ctx_id)
 
     def addVariable(self, var, context="global"):
         if context in self.variables:
@@ -587,16 +593,21 @@ class PopurriListener(ParseTreeListener):
             raise error(ctx, 'Return statement used outside function body')
 
         # Return is inside function, verify if not void
-        func_id = self.ctxWrapper.pop()
-        func_ctx_id = self.ctxWrapper.top()
-        func = self.ctxWrapper.getFunction(func_id, context=func_ctx_id)
+        func = self.ctxWrapper.getCurrentFunction()
         if func.return_type is 'void':
-            raise error(ctx, f'Return on void function "{func_id}"')
-        self.ctxWrapper.push(func_id)
-        pass
+            raise error(ctx, f'Return on void function "{func.id}"')
 
     def exitReturnStmt(self, ctx):
-        pass
+        # Validate return type matches function return type
+        func = self.ctxWrapper.getCurrentFunction()
+        return_type = self.quadWrapper.popType()
+        if return_type != func.return_type:
+            raise error(ctx, f'Returning value of type {return_type} on function that returns {func.return_type}')
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op='GOTOR',
+            l=self.quadWrapper.popAddress()
+        ))
 
     def exitCond(self, ctx):
         if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is '(':
@@ -611,16 +622,16 @@ class PopurriListener(ParseTreeListener):
             )
 
     def exitCmp(self, ctx):
-        self.quadWrapper.handleQuadruple(['and', 'or'])
+        self.quadWrapper.handleQuadruple(ctx, ['and', 'or'])
 
     def exitExp(self, ctx):
-        self.quadWrapper.handleQuadruple(['<', '<=', '>', '>=', 'is', 'is not'])
+        self.quadWrapper.handleQuadruple(ctx, ['<', '<=', '>', '>=', 'is', 'is not'])
 
     def exitAdd(self, ctx):
-        self.quadWrapper.handleQuadruple(['+', '-'])
+        self.quadWrapper.handleQuadruple(ctx, ['+', '-'])
 
     def exitMultModDiv(self, ctx):
-        self.quadWrapper.handleQuadruple(['*', '/', '%'])
+        self.quadWrapper.handleQuadruple(ctx, ['*', '/', '%'])
 
     # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
@@ -682,7 +693,7 @@ class PopurriListener(ParseTreeListener):
         # TODO implement arrays
 
     def exitVal(self, ctx):
-        self.quadWrapper.handleQuadruple(['**'])
+        self.quadWrapper.handleQuadruple(ctx, ['**'])
 
     def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
