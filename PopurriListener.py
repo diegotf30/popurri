@@ -186,9 +186,9 @@ class ContextWrapper():
 
             var = self.variables[ctx].get(str(var_id), None)
             if var is not None:
-                return var
+                return var, ctx
 
-        return None
+        return None, None
 
     def getFunctionIfExists(self, func_id):
         for ctx in self.context_stack[::-1]:
@@ -672,7 +672,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertType(attribute.type)
             return '.'.join(ids)
         else: # variable being accessed
-            var = self.ctxWrapper.getVariableIfExists(ids[0])
+            var, _ = self.ctxWrapper.getVariableIfExists(ids[0])
             if var is None:
                 raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
 
@@ -731,9 +731,9 @@ class PopurriListener(ParseTreeListener):
 
             # If var type is undeclared (None), update with resulting type
             if var_type == 'None':
-                var = self.ctxWrapper.getVariable(var_id, self.ctxWrapper.top())
+                var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
                 var.type = res_type
-                self.ctxWrapper.addVariable(var, self.ctxWrapper.top())
+                self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
             op = self.quadWrapper.popOperator()
@@ -777,13 +777,32 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterPrintStmt(self, ctx):
+        self.quadWrapper.insertAddress('(')
         pass
 
     def exitPrintStmt(self, ctx):
-        pass
+        print_quads = []
+        while True:
+            address = self.quadWrapper.popAddress()
+            if address is None or address == '(':
+                break
+
+            self.quadWrapper.popType()
+            print_quads.append(Quadruple(
+                op='PRINT',
+                l=address
+            ))
+
+        # Quads are generated in inverse order (due to being in stack), so push them end to start 
+        for quad in print_quads[::-1]:
+            self.quadWrapper.insertQuad(quad)
 
     def enterInputStmt(self, ctx):
-        pass
+        id = self.validateIds(ctx)
+        self.quadWrapper.insertQuad(Quadruple(
+            op='INPUT',
+            res=id
+        ))
 
     def exitInputStmt(self, ctx):
         pass
