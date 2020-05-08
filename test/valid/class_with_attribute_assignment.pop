@@ -3,6 +3,7 @@ module main
 class  child {
 private var a : int = 10
 private var b : float = 10 * 5 / 2
+private var c = "ola"
 
 }
 

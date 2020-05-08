@@ -1,0 +1,11 @@
+module main
+
+class myClass {
+    func classFunc() bool {
+        return true
+    }
+}
+
+func myFunc() string {
+    return "henlo"
+}

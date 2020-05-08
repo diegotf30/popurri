@@ -1,0 +1,9 @@
+module main
+
+var myVar, a
+
+func a() {
+    input(myVar)
+    a = 10
+    print(myVar, 10 * 5, 2, a)
+}

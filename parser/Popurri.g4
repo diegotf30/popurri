@@ -62,6 +62,7 @@ multModDiv: (val expOp?)+;
 val:
 	'(' cond ')' |
 	ID ('.' ID)? |
+	funcCall |
 	constant |
 	indexation; // TODO "addOp?"
 indexation: iterable '[' exp ']';
@@ -89,7 +90,7 @@ iterable: CONST_STR | const_arr | ID;
 
 // Special functions
 printStmt: 'print' '(' condParam ')';
-inputStmt: 'input' '(' ID ')';
+inputStmt: 'input' '(' (ID '.')? ID ')';
 
 // Parameters
 condParam: cond (',' cond)*;
