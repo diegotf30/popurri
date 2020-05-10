@@ -262,6 +262,12 @@ class Function():
         self.id = str(id)
         self.return_type = str(return_type)
         self.access_type = str(access_type)
+        self.quads_range = (-1, -1)
+
+    def updateQuadsRange(self, quad_ptr, pos):
+        quads_range = list(self.quads_range)
+        quads_range[pos] = quad_ptr
+        self.quads_range = tuple(quads_range)
 
 
 class PopurriListener(ParseTreeListener):
@@ -391,11 +397,21 @@ class PopurriListener(ParseTreeListener):
             raise error(ctx, f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}')
 
         func = self.createFunction(ctx)
+        func.updateQuadsRange(self.quadWrapper.quads_ptr + 1, 0)
         self.ctxWrapper.addFunction(func)
         self.ctxWrapper.push(func.id)
+
         pass
 
     def exitFunction(self, ctx):
+        func = self.ctxWrapper.getFunction(self.ctxWrapper.top())
+
+        if func.quads_range[0] >= self.quadWrapper.quads_ptr:
+            func.updateQuadsRange(
+                -1, 0)
+        else:
+            func.updateQuadsRange(
+                self.quadWrapper.quads_ptr, 1)
         self.ctxWrapper.pop()
         pass
 
