@@ -1,5 +1,5 @@
 from antlr4 import *
-from parser.PopurriParser import PopurriParser
+from antlr_parser.PopurriParser import PopurriParser
 from popurri_tokens import *
 from semantic_cube import bailaMijaConElSeñor
 import jsbeautifier as js
@@ -15,6 +15,7 @@ def pprint(*args):
 
 def error(ctx, msg):
     return Exception(f'ERROR ON LINE {ctx.start.line}: {msg}')
+
 
 class QuadWrapper():
     '''
@@ -90,7 +91,8 @@ class QuadWrapper():
         l_type = self.popType()
         res_type = bailaMijaConElSeñor(op, l_type, r_type)
         if res_type is None:
-            raise error(ctx, f'Unsupported operand types for {op}: "{l_type}" and "{r_type}"')
+            raise error(
+                ctx, f'Unsupported operand types for {op}: "{l_type}" and "{r_type}"')
         # Push resulting type into stack
         self.insertType(res_type)
 
@@ -160,7 +162,7 @@ class ContextWrapper():
     def getCurrentFunction(self):
         func_id = self.pop()
         func_ctx_id = self.top()
-        self.push(func_id) # Re-push current context
+        self.push(func_id)  # Re-push current context
         return self.getFunction(func_id, context=func_ctx_id)
 
     def addVariable(self, var, context="global"):
@@ -292,7 +294,7 @@ class PopurriListener(ParseTreeListener):
 
         print('quads_stack = [')
         for i, x in enumerate(self.quadWrapper.quads, start=1):
-            print('\t',i, x)
+            print('\t', i, x)
         print(']')
 
         print('address_stack = ', end='')
@@ -413,7 +415,8 @@ class PopurriListener(ParseTreeListener):
         if ctx.parent() is not None:
             klass.parent_id = 'class ' + str(ctx.parent().ID())
             if not self.ctxWrapper.classExists(klass.parent_id):
-                raise error(ctx, f'ERROR PARENT CLASS "{klass.parent_id}" MUST BE DEFINED BEFORE CHILD CLASS "{klass.id}"')
+                raise error(
+                    ctx, f'ERROR PARENT CLASS "{klass.parent_id}" MUST BE DEFINED BEFORE CHILD CLASS "{klass.id}"')
 
             # Inherit attributes
             for attribute in self.ctxWrapper.variables[klass.parent_id].values():
@@ -435,7 +438,8 @@ class PopurriListener(ParseTreeListener):
                     continue
                 # Checks if attribute is already declared within class
                 elif self.ctxWrapper.varExistsInContext(attr.ID(), 'class ' + klass.id):
-                    raise error(ctx, f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED')
+                    raise error(
+                        ctx, f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED')
 
                 var = Variable(
                     id=attr.ID(),
@@ -453,10 +457,11 @@ class PopurriListener(ParseTreeListener):
                 continue
             # Checks if attribute is already declared within class
             elif self.ctxWrapper.functionExistsInContext(method.ID(0), 'class ' + klass.id):
-                raise error(ctx, f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED')
+                raise error(
+                    ctx, f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED')
 
-
-            method = self.createFunction(method) # TODO fix how params are generated in varTable for object methods
+            # TODO fix how params are generated in varTable for object methods
+            method = self.createFunction(method)
             method.access_type = str(access_type)
 
             self.ctxWrapper.addFunction(method, 'class ' + klass.id)
@@ -602,7 +607,8 @@ class PopurriListener(ParseTreeListener):
         func = self.ctxWrapper.getCurrentFunction()
         return_type = self.quadWrapper.popType()
         if return_type != func.return_type:
-            raise error(ctx, f'Returning value of type {return_type} on function that returns {func.return_type}')
+            raise error(
+                ctx, f'Returning value of type {return_type} on function that returns {func.return_type}')
 
         self.quadWrapper.insertQuad(Quadruple(
             op='GOTOR',
@@ -614,7 +620,8 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.popOperator()
 
         if self.if_cond:
-            if_quad = Quadruple('GOTOF', l=self.quadWrapper.address_stack.pop())
+            if_quad = Quadruple(
+                'GOTOF', l=self.quadWrapper.address_stack.pop())
             self.quadWrapper.insertJump()
             self.quadWrapper.insertQuad(
                 if_quad,
@@ -625,7 +632,8 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.handleQuadruple(ctx, ['and', 'or'])
 
     def exitExp(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['<', '<=', '>', '>=', 'is', 'is not'])
+        self.quadWrapper.handleQuadruple(
+            ctx, ['<', '<=', '>', '>=', 'is', 'is not'])
 
     def exitAdd(self, ctx):
         self.quadWrapper.handleQuadruple(ctx, ['+', '-'])
@@ -656,22 +664,25 @@ class PopurriListener(ParseTreeListener):
     def validateIds(self, ctx):
         ids = [str(id) for id in ctx.ID()]
 
-        if len(ids) is 2: # class attribute being accessed (i.e. myvar.myattribute)
+        if len(ids) is 2:  # class attribute being accessed (i.e. myvar.myattribute)
             class_var = self.ctxWrapper.getVariable(ids[0])
             if class_var is None:
                 raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
 
-            attribute = self.ctxWrapper.getVariable(ids[1], 'class ' + class_var.type)
+            attribute = self.ctxWrapper.getVariable(
+                ids[1], 'class ' + class_var.type)
             if attribute is None:
-                raise error(ctx, f'TRYING TO ACCESS UNDEFINED ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+                raise error(
+                    ctx, f'TRYING TO ACCESS UNDEFINED ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
 
             if attribute.access_type is not 'public':
-                raise error(ctx, f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+                raise error(
+                    ctx, f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
 
              # Both variable and attribute exist!
             self.quadWrapper.insertType(attribute.type)
             return '.'.join(ids)
-        else: # variable being accessed
+        else:  # variable being accessed
             var, _ = self.ctxWrapper.getVariableIfExists(ids[0])
             if var is None:
                 raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
@@ -679,15 +690,14 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertType(var.type)
             return var.id
 
-
     def enterVal(self, ctx):
-        if ctx.cond() is not None: # nested cond
+        if ctx.cond() is not None:  # nested cond
             # Add fake bottom to operator_stack
             self.quadWrapper.insertOperator('(')
         elif len(ctx.ID()) > 0:  # identifier
             id = self.validateIds(ctx)
             self.quadWrapper.insertAddress(id)
-        elif ctx.constant() is not None: # const
+        elif ctx.constant() is not None:  # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
 
         # TODO implement arrays
@@ -710,7 +720,7 @@ class PopurriListener(ParseTreeListener):
     def enterAssignOp(self, ctx: PopurriParser.AssignOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
-    def enterExpOp(self, ctx:PopurriParser.ExpOpContext):
+    def enterExpOp(self, ctx: PopurriParser.ExpOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
     def enterIndexation(self, ctx):
@@ -740,10 +750,12 @@ class PopurriListener(ParseTreeListener):
             if op is not '=':
                 res_type = bailaMijaConElSeñor(op[0], var_type, res_type)
                 if res_type is None:
-                    raise error(ctx, f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
+                    raise error(
+                        ctx, f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
 
             if var_type != res_type:
-                raise error(ctx, f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
+                raise error(
+                    ctx, f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
 
             self.quadWrapper.insertQuad(Quadruple(
                 op=op,
@@ -793,7 +805,7 @@ class PopurriListener(ParseTreeListener):
                 l=address
             ))
 
-        # Quads are generated in inverse order (due to being in stack), so push them end to start 
+        # Quads are generated in inverse order (due to being in stack), so push them end to start
         for quad in print_quads[::-1]:
             self.quadWrapper.insertQuad(quad)
 

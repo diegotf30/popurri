@@ -1,8 +1,8 @@
 import popurri_tokens as p_t  # probablemente ni usemos esto
 import error_tokens as e  # probablemente si usemos esto
 
-from parser.PopurriLexer import PopurriLexer
-from parser.PopurriParser import PopurriParser
+from antlr_parser.PopurriLexer import PopurriLexer
+from antlr_parser.PopurriParser import PopurriParser
 from PopurriListener import PopurriListener
 from antlr4 import *
 import sys
