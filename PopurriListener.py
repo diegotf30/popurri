@@ -1,6 +1,7 @@
 from antlr4 import *
 from antlr_parser.PopurriParser import PopurriParser
 from popurri_tokens import *
+from error_tokens import *
 from semantic_cube import bailaMijaConElSeñor
 import jsbeautifier as js
 import json
@@ -83,7 +84,7 @@ class QuadWrapper():
         self.jump_stack.append(self.quads_ptr if jump is None else jump)
 
     def getTokenCode(self, element):
-        return self.operator_codes.index(element) + 1
+        return self.operator_codes.index(element) + 5
 
     def validateTypes(self, ctx):
         op = self.topOperator()
@@ -336,7 +337,7 @@ class PopurriListener(ParseTreeListener):
     def enterDeclaration(self, ctx):
         # Checks if global is already declared
         if self.ctxWrapper.varExistsInContext(ctx.ID(0), "global"):
-            raise error(ctx, f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED')
+            raise error(ctx, VAR_ALREADY_DEFINED.format(str(ctx.ID(0))))
 
         var = None
         # var has data_type : INT, FLOAT, STRING, BOOL
@@ -350,7 +351,7 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) is 2:
             class_name = str(ctx.ID(1))
             if not self.ctxWrapper.classExists(class_name):
-                raise error(ctx, f'ERROR UNDEFINED CLASS "{class_name}"')
+                raise error(ctx, UNDEFINED_CLASS.format(class_name))
 
             var = Variable(
                 id=ctx.ID(0),
@@ -394,7 +395,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterFunction(self, ctx):
         if self.ctxWrapper.functionExistsInContext(ctx.ID(0), 'global'):
-            raise error(ctx, f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}')
+            raise error(ctx, ALREADY_DEFINED_ERROR.format(str(ctx.ID(0))))
 
         func = self.createFunction(ctx)
         func.updateQuadsRange(self.quadWrapper.quads_ptr + 1, 0)
@@ -422,7 +423,7 @@ class PopurriListener(ParseTreeListener):
     def enterClassDeclaration(self, ctx):
         class_name = str(ctx.ID())
         if self.ctxWrapper.classExists(class_name):
-            raise error(ctx, f'ERROR RE-DEFINITION OF {class_name}')
+            raise error(ctx, ALREADY_DEFINED_ERROR.format(class_name))
 
         self.ctxWrapper.push('class ' + class_name)
         klass = Object(
@@ -432,7 +433,7 @@ class PopurriListener(ParseTreeListener):
             klass.parent_id = 'class ' + str(ctx.parent().ID())
             if not self.ctxWrapper.classExists(klass.parent_id):
                 raise error(
-                    ctx, f'ERROR PARENT CLASS "{klass.parent_id}" MUST BE DEFINED BEFORE CHILD CLASS "{klass.id}"')
+                    ctx, PARENT_NOT_EXIST_ERROR.format(klass.parent_id, klass.id))
 
             # Inherit attributes
             for attribute in self.ctxWrapper.variables[klass.parent_id].values():
@@ -455,7 +456,7 @@ class PopurriListener(ParseTreeListener):
                 # Checks if attribute is already declared within class
                 elif self.ctxWrapper.varExistsInContext(attr.ID(), 'class ' + klass.id):
                     raise error(
-                        ctx, f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED')
+                        ctx, VAR_ALREADY_DEFINED.format(attr.ID()))
 
                 var = Variable(
                     id=attr.ID(),
@@ -474,7 +475,7 @@ class PopurriListener(ParseTreeListener):
             # Checks if attribute is already declared within class
             elif self.ctxWrapper.functionExistsInContext(method.ID(0), 'class ' + klass.id):
                 raise error(
-                    ctx, f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED')
+                    ctx, ALREADY_DEFINED_ERROR.format(str(method.ID(0))))
 
             # TODO fix how params are generated in varTable for object methods
             method = self.createFunction(method)
@@ -579,7 +580,7 @@ class PopurriListener(ParseTreeListener):
         )
 
         # Anade un GOTO al final del IF
-        goto_quad = Quadruple('GOTO')
+        goto_quad = Quadruple(GOTO)
 
         self.quadWrapper.insertJump()
         self.quadWrapper.insertQuad(goto_quad)
@@ -594,7 +595,7 @@ class PopurriListener(ParseTreeListener):
         )
 
         # Anade un GOTO al final del ELSE IF
-        goto_quad = Quadruple('GOTO')
+        goto_quad = Quadruple(GOTO)
 
         self.quadWrapper.insertJump()
         self.quadWrapper.insertQuad(goto_quad)
@@ -627,7 +628,7 @@ class PopurriListener(ParseTreeListener):
                 ctx, f'Returning value of type {return_type} on function that returns {func.return_type}')
 
         self.quadWrapper.insertQuad(Quadruple(
-            op='GOTOR',
+            op=GOTOR,
             l=self.quadWrapper.popAddress()
         ))
 
@@ -637,7 +638,7 @@ class PopurriListener(ParseTreeListener):
 
         if self.if_cond:
             if_quad = Quadruple(
-                'GOTOF', l=self.quadWrapper.address_stack.pop())
+                GOTOF, l=self.quadWrapper.address_stack.pop())
             self.quadWrapper.insertJump()
             self.quadWrapper.insertQuad(
                 if_quad,
@@ -645,17 +646,17 @@ class PopurriListener(ParseTreeListener):
             )
 
     def exitCmp(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['and', 'or'])
+        self.quadWrapper.handleQuadruple(ctx, [ANDOP, OROP])
 
     def exitExp(self, ctx):
         self.quadWrapper.handleQuadruple(
-            ctx, ['<', '<=', '>', '>=', 'is', 'is not'])
+            ctx, [LESSER, LESSEREQ, GREATER, GREATEREQ, ANDOP, NOTEQUAL])
 
     def exitAdd(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['+', '-'])
+        self.quadWrapper.handleQuadruple(ctx, [ADD, SUBS])
 
     def exitMultModDiv(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['*', '/', '%'])
+        self.quadWrapper.handleQuadruple(ctx, [MULT, DIV, MOD])
 
     # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
@@ -719,7 +720,7 @@ class PopurriListener(ParseTreeListener):
         # TODO implement arrays
 
     def exitVal(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['**'])
+        self.quadWrapper.handleQuadruple(ctx, [POWER])
 
     def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
@@ -749,7 +750,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitAssignment(self, ctx):
-        if self.quadWrapper.topOperator() in ['=', '+=', '-=', '*=', '/=', '%=']:
+        if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
             res_id = self.quadWrapper.popAddress()
             var_id = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
@@ -783,14 +784,14 @@ class PopurriListener(ParseTreeListener):
     def enterFuncCall(self, ctx):
         # TODO check if function id exists and replace the id with its address in memory
         self.quadWrapper.insertQuad(Quadruple(
-            op='ERA',
+            op=ERA,
             res=str(ctx.ID(0))
         ))
         pass
 
     def exitFuncCall(self, ctx):
         self.quadWrapper.insertQuad(Quadruple(
-            op='GOSUB',
+            op=GOSUB,
             res=str(ctx.ID(0))
         ))
         pass
@@ -826,7 +827,7 @@ class PopurriListener(ParseTreeListener):
 
             self.quadWrapper.popType()
             print_quads.append(Quadruple(
-                op='PRINT',
+                op=PRINT,
                 l=address
             ))
 
@@ -837,7 +838,7 @@ class PopurriListener(ParseTreeListener):
     def enterInputStmt(self, ctx):
         id = self.validateIds(ctx)
         self.quadWrapper.insertQuad(Quadruple(
-            op='INPUT',
+            op=INPUT,
             res=id
         ))
 

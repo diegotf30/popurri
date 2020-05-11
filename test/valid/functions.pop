@@ -13,4 +13,6 @@ func c(string d) Objeto {
 }
 
 
-c( 1 + 1, 1 + 1)
+c( 1 + 1)
+
+b(2 + 2, 2 + 2)
