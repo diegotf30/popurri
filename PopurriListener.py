@@ -533,7 +533,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitWhileLoop(self, ctx):
-        goto_quad = Quadruple('GOTO')
+        goto_quad = Quadruple(GOTO)
         self.quadWrapper.insertQuad(goto_quad)
 
         # Fill while gotoF with next quad outside loop
