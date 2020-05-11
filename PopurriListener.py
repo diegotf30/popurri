@@ -767,7 +767,7 @@ class PopurriListener(ParseTreeListener):
             op = self.quadWrapper.popOperator()
             if op is not ASSIGN:
                 res_type = bailaMijaConElSeñor(
-                    self.quadWrapper.getTokenCode(op), var_type, res_type)
+                    op - 1, var_type, res_type)
                 if res_type is None:
                     raise error(
                         ctx, f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
