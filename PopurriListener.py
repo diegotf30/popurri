@@ -22,9 +22,9 @@ class QuadWrapper():
     '''
     Si tienes un mejor nombre para esta clase, go ahead.
     '''
-    operator_codes = ['', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
+    operator_codes = ['GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', 'ERA', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
                       '%', '%=', '**', 'is', 'is not', '>', '>=', '<',
-                      '<=', 'and', 'or', '=', 'print']
+                      '<=', 'and', 'or', '=', 'print', 'input', '(', ')']
 
     def __init__(self):
         self.tmp_counter = 0
@@ -48,7 +48,7 @@ class QuadWrapper():
         self.quads[at] = tuple(new_quad)
 
     def topOperator(self):
-        if len(self.operator_stack) is 0 or self.operator_stack[-1] is '(':
+        if len(self.operator_stack) is 0 or self.operator_stack[-1] is OPENPAREN:
             return None
 
         return self.operator_stack[-1]
@@ -57,7 +57,7 @@ class QuadWrapper():
         return self.jump_stack[-1] if len(self.jump_stack) > 0 else None
 
     def popOperator(self):
-        if len(self.operator_stack) is 0 or self.topOperator() is '(':
+        if len(self.operator_stack) is 0 or self.topOperator() is OPENPAREN:
             return None
 
         return self.operator_stack.pop()
@@ -78,13 +78,13 @@ class QuadWrapper():
         self.address_stack.append(str(address))
 
     def insertOperator(self, operator):
-        self.operator_stack.append(operator)
+        self.operator_stack.append(self.getTokenCode(operator))
 
     def insertJump(self, jump=None):
         self.jump_stack.append(self.quads_ptr if jump is None else jump)
 
     def getTokenCode(self, element):
-        return self.operator_codes.index(element) + 5
+        return self.operator_codes.index(element)
 
     def validateTypes(self, ctx):
         op = self.topOperator()
@@ -554,14 +554,14 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterBranch(self, ctx):
-        self.quadWrapper.insertJump('(')
+        self.quadWrapper.insertJump(OPENPAREN)
         pass
 
     def exitBranch(self, ctx):
         self.if_cond = False
         while True:
             jump = self.quadWrapper.popJump()
-            if jump is '(' or jump is None:
+            if jump is OPENPAREN or jump is None:
                 break
 
             self.quadWrapper.fillQuadWith(
@@ -633,7 +633,7 @@ class PopurriListener(ParseTreeListener):
         ))
 
     def exitCond(self, ctx):
-        if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is '(':
+        if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is OPENPAREN:
             self.quadWrapper.popOperator()
 
         if self.if_cond:
@@ -650,7 +650,7 @@ class PopurriListener(ParseTreeListener):
 
     def exitExp(self, ctx):
         self.quadWrapper.handleQuadruple(
-            ctx, [LESSER, LESSEREQ, GREATER, GREATEREQ, ANDOP, NOTEQUAL])
+            ctx, [LESSER, LESSEREQ, GREATER, GREATEREQ, EQUAL, NOTEQUAL])
 
     def exitAdd(self, ctx):
         self.quadWrapper.handleQuadruple(ctx, [ADD, SUBS])
@@ -763,9 +763,11 @@ class PopurriListener(ParseTreeListener):
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
+            # MADE CHANGES HERE {OP[0] -> OP}
             op = self.quadWrapper.popOperator()
-            if op is not '=':
-                res_type = bailaMijaConElSeñor(op[0], var_type, res_type)
+            if op is not ASSIGN:
+                res_type = bailaMijaConElSeñor(
+                    self.quadWrapper.getTokenCode(op), var_type, res_type)
                 if res_type is None:
                     raise error(
                         ctx, f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
