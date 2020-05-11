@@ -781,9 +781,18 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterFuncCall(self, ctx):
+        # TODO check if function id exists and replace the id with its address in memory
+        self.quadWrapper.insertQuad(Quadruple(
+            op='ERA',
+            res=str(ctx.ID(0))
+        ))
         pass
 
     def exitFuncCall(self, ctx):
+        self.quadWrapper.insertQuad(Quadruple(
+            op='GOSUB',
+            res=str(ctx.ID(0))
+        ))
         pass
 
     def enterConstant(self, ctx):

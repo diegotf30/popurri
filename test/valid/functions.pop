@@ -12,3 +12,5 @@ func c(string d) Objeto {
     print("ola", d)
 }
 
+
+c( 1 + 1, 1 + 1)
