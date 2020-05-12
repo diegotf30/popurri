@@ -22,7 +22,7 @@ class QuadWrapper():
     '''
     Si tienes un mejor nombre para esta clase, go ahead.
     '''
-    operator_codes = ['GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', 'ERA', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
+    operator_codes = ['GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', 'ERA', 'PARAM', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
                       '%', '%=', '**', 'is', 'is not', '>', '>=', '<',
                       '<=', 'and', 'or', '=', 'print', 'input', '(', ')']
 
@@ -267,11 +267,15 @@ class Function():
         self.return_type = str(return_type)
         self.access_type = str(access_type)
         self.quads_range = (-1, -1)
+        self.paramTypes = []
 
     def updateQuadsRange(self, quad_ptr, pos):
         quads_range = list(self.quads_range)
         quads_range[pos] = quad_ptr
         self.quads_range = tuple(quads_range)
+
+    def addParamType(self, ty):
+        self.paramTypes.append(ty)
 
 
 class PopurriListener(ParseTreeListener):
@@ -286,6 +290,7 @@ class PopurriListener(ParseTreeListener):
         self.ctxWrapper = ContextWrapper()
         self.quadWrapper = QuadWrapper()
         self.if_cond = False
+        self.param_count = -1
 
     def enterProgram(self, ctx):
         '''
@@ -388,6 +393,7 @@ class PopurriListener(ParseTreeListener):
                     type=ctx.funcParams().TYPE(i),
                 )
                 self.ctxWrapper.addVariable(param, func.id)
+                func.addParamType(param.type)
 
         # Function has primitive return type
         if ctx.TYPE() is not None:
@@ -650,6 +656,15 @@ class PopurriListener(ParseTreeListener):
                 at=self.quadWrapper.quads_ptr
             )
 
+        # Function call
+        if self.param_count != -1:
+            self.quadWrapper.insertQuad(Quadruple(
+                op=PARAM,
+                l=self.quadWrapper.popAddress(),
+                res='param ' + str(self.param_count)
+            ))
+            self.param_count += 1
+
     def exitCmp(self, ctx):
         self.quadWrapper.handleQuadruple(ctx, [ANDOP, OROP])
 
@@ -805,15 +820,30 @@ class PopurriListener(ParseTreeListener):
             op=ERA,
             l=ids
         ))
-        pass
+        self.param_count = 1
 
     def exitFuncCall(self, ctx):
         ids = [str(id) for id in ctx.ID()]
+
+        if len(ids) is 2:
+            class_var = self.ctxWrapper.getVariable(ids[0])
+            func = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
+        else:
+            func = self.ctxWrapper.getFunctionIfExists(ids[0])
+
+        if self.param_count - 1 != len(func.paramTypes):
+            raise error(ctx, PARAM_AMOUNT_MISMATCH.format(func.id, len(func.paramTypes)))
+
+        for i, func_ty in enumerate(func.paramTypes[::-1]):
+            call_ty = self.quadWrapper.popType()
+            if func_ty != call_ty:
+                raise error(ctx, INVALID_PARAM_TYPE.format(call_ty, i+1, func.id, func_ty))
+
         self.quadWrapper.insertQuad(Quadruple(
             op=GOSUB,
             l='.'.join(ids)
         ))
-        pass
+        self.param_count = -1 # So we dont add func quad when exiting a cond rule
 
     def enterConstant(self, ctx):
         pass
@@ -868,11 +898,6 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCondParam(self, ctx):
-        self.quadWrapper.insertQuad(Quadruple(
-            op=PARAM,
-            l=self.quadWrapper.popAddress(),
-            res='param '
-        ))
         pass
 
     def enterFuncParams(self, ctx):
