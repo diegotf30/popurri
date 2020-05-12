@@ -95,8 +95,7 @@ class QuadWrapper():
         l_type = self.popType()
         res_type = bailaMijaConElSeñor(op, l_type, r_type)
         if res_type is None:
-            raise error(
-                ctx, f'Unsupported operand types for {op}: "{l_type}" and "{r_type}"')
+            raise error(ctx, TYPE_MISMATCH.format(op, l_type, r_type))
         # Push resulting type into stack
         self.insertType(res_type)
 
@@ -347,7 +346,7 @@ class PopurriListener(ParseTreeListener):
     def enterDeclaration(self, ctx):
         # Checks if global is already declared
         if self.ctxWrapper.varExistsInContext(ctx.ID(0), "global"):
-            raise error(ctx, VAR_ALREADY_DEFINED.format(str(ctx.ID(0))))
+            raise error(ctx, VAR_REDEFINITION.format(str(ctx.ID(0))))
 
         var = None
         # var has data_type : INT, FLOAT, STRING, BOOL
@@ -361,7 +360,7 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) == 2:
             class_name = str(ctx.ID(1))
             if not self.ctxWrapper.classExists(class_name):
-                raise error(ctx, UNDEFINED_CLASS.format(class_name))
+                raise error(ctx, UNDEF_CLASS.format(class_name))
 
             var = Variable(
                 id=ctx.ID(0),
@@ -406,7 +405,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterFunction(self, ctx):
         if self.ctxWrapper.functionExistsInContext(ctx.ID(0), 'global'):
-            raise error(ctx, ALREADY_DEFINED_ERROR.format(str(ctx.ID(0))))
+            raise error(ctx, FUNC_REDEFINITION.format(str(ctx.ID(0))))
 
         func = self.createFunction(ctx)
         func.updateQuadsRange(self.quadWrapper.quads_ptr + 1, 0)
@@ -434,7 +433,7 @@ class PopurriListener(ParseTreeListener):
     def enterClassDeclaration(self, ctx):
         class_name = str(ctx.ID())
         if self.ctxWrapper.classExists(class_name):
-            raise error(ctx, ALREADY_DEFINED_ERROR.format(class_name))
+            raise error(ctx, FUNC_REDEFINITION.format(class_name))
 
         self.ctxWrapper.push('class ' + class_name)
         klass = Object(
@@ -443,8 +442,7 @@ class PopurriListener(ParseTreeListener):
         if ctx.parent() is not None:
             klass.parent_id = 'class ' + str(ctx.parent().ID())
             if not self.ctxWrapper.classExists(klass.parent_id):
-                raise error(
-                    ctx, PARENT_NOT_EXIST_ERROR.format(klass.parent_id, klass.id))
+                raise error(ctx, UNDEF_PARENT.format(klass.parent_id, klass.id))
 
             # Inherit attributes
             for attribute in self.ctxWrapper.variables[klass.parent_id].values():
@@ -466,8 +464,7 @@ class PopurriListener(ParseTreeListener):
                     continue
                 # Checks if attribute is already declared within class
                 elif self.ctxWrapper.varExistsInContext(attr.ID(), 'class ' + klass.id):
-                    raise error(
-                        ctx, VAR_ALREADY_DEFINED.format(attr.ID()))
+                    raise error(ctx, VAR_REDEFINITION.format(attr.ID()))
 
                 var = Variable(
                     id=attr.ID(),
@@ -485,8 +482,7 @@ class PopurriListener(ParseTreeListener):
                 continue
             # Checks if attribute is already declared within class
             elif self.ctxWrapper.functionExistsInContext(method.ID(0), 'class ' + klass.id):
-                raise error(
-                    ctx, ALREADY_DEFINED_ERROR.format(str(method.ID(0))))
+                raise error(ctx, FUNC_REDEFINITION.format(str(method.ID(0))))
 
             # TODO fix how params are generated in varTable for object methods
             method = self.createFunction(method)
@@ -538,21 +534,36 @@ class PopurriListener(ParseTreeListener):
     def exitStatement(self, ctx):
         pass
 
+    def enterBreakStmt(self, ctx):
+        self.quadWrapper.insertJump()
+        self.quadWrapper.insertQuad(Quadruple(
+            GOTO
+        ))
+        pass
+
     def enterWhileLoop(self, ctx):
         self.if_cond = True
         self.quadWrapper.insertJump()
+        self.quadWrapper.insertJump(OPENPAREN)
         pass
 
     def exitWhileLoop(self, ctx):
         goto_quad = Quadruple(GOTO)
         self.quadWrapper.insertQuad(goto_quad)
 
-        # Fill while gotoF with next quad outside loop
-        self.quadWrapper.fillQuadWith(
-            self.quadWrapper.quads_ptr + 1,
-            at=self.quadWrapper.popJump()
-        )
-        # Fill goto with loop start
+        # Fill while gotoF with next quad outside loop &
+        # Fill any breaks that might've been added inside
+        while True:
+            jump = self.quadWrapper.popJump()
+            if jump is None or jump == OPENPAREN:
+                break
+
+            self.quadWrapper.fillQuadWith(
+                self.quadWrapper.quads_ptr + 1,
+                at=jump
+            )
+
+        # Fill loop-end goto with loop start
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.popJump() + 1,
             at=self.quadWrapper.quads_ptr - 1
@@ -582,6 +593,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterIfStmt(self, ctx):
         self.if_cond = True
+        self.quadWrapper.insertJump()
 
     def exitIfStmt(self, ctx):
         # Rellena el GOTOF de este mismo IF con el siguiente cuadruplo
@@ -623,20 +635,19 @@ class PopurriListener(ParseTreeListener):
 
     def enterReturnStmt(self, ctx):
         if self.ctxWrapper.top() == 'global':
-            raise error(ctx, 'Return statement used outside function body')
+            raise error(ctx, RETURN_OUTSIDE_FUNC)
 
         # Return is inside function, verify if not void
         func = self.ctxWrapper.getCurrentFunction()
         if func.return_type == 'void':
-            raise error(ctx, f'Return on void function "{func.id}"')
+            raise error(ctx, RETURN_ON_VOID_FUNC.format(func.id))
 
     def exitReturnStmt(self, ctx):
         # Validate return type matches function return type
         func = self.ctxWrapper.getCurrentFunction()
         return_type = self.quadWrapper.popType()
         if return_type != func.return_type:
-            raise error(
-                ctx, f'Returning value of type {return_type} on function that returns {func.return_type}')
+            raise error(ctx, INVALID_RETURN_TYPE.format(return_type, func.return_type))
 
         self.quadWrapper.insertQuad(Quadruple(
             op=GOTOR,
@@ -648,13 +659,16 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.popOperator()
 
         if self.if_cond:
-            if_quad = Quadruple(
-                GOTOF, l=self.quadWrapper.address_stack.pop())
-            self.quadWrapper.insertJump()
-            self.quadWrapper.insertQuad(
-                if_quad,
-                at=self.quadWrapper.quads_ptr
+            cond_ty = self.quadWrapper.popType()
+            if cond_ty != 'bool':
+                raise error(ctx, EXPECTED_BOOL.format(cond_ty))
+
+            gotof_quad = Quadruple(
+                GOTOF,
+                l=self.quadWrapper.popAddress()
             )
+            self.quadWrapper.insertJump()
+            self.quadWrapper.insertQuad(gotof_quad)
 
         # Function call
         if self.param_count != -1:
@@ -799,8 +813,7 @@ class PopurriListener(ParseTreeListener):
                 res_type = bailaMijaConElSeñor(
                     op - 1, var_type, res_type)
                 if res_type is None:
-                    raise error(
-                        ctx, f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
+                    raise error(ctx, TYPE_MISMATCH.format(op, var_type, res_type))
 
             if var_type != res_type:
                 raise error(
@@ -834,10 +847,12 @@ class PopurriListener(ParseTreeListener):
         if self.param_count - 1 != len(func.paramTypes):
             raise error(ctx, PARAM_AMOUNT_MISMATCH.format(func.id, len(func.paramTypes)))
 
-        for i, func_ty in enumerate(func.paramTypes[::-1]):
+        call_signature = tuple(self.quadWrapper.type_stack)
+        func_signature = tuple(func.paramTypes)
+        for i, func_ty in enumerate(func_signature[::-1], start=1):
             call_ty = self.quadWrapper.popType()
             if func_ty != call_ty:
-                raise error(ctx, INVALID_PARAM_TYPE.format(call_ty, i+1, func.id, func_ty))
+                raise error(ctx, INVALID_SIGNATURE.format(func.id, call_signature, func_signature))
 
         self.quadWrapper.insertQuad(Quadruple(
             op=GOSUB,

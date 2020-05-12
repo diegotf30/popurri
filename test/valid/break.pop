@@ -1,0 +1,22 @@
+module breakout
+
+var a = 100
+
+while a + 1 > 10 {
+    a -= 2
+    break
+    if true {
+        a = 2
+        break
+    } 
+    else if false {
+        a = 3
+        break
+    }
+    else {
+        a = 10
+        break
+    }
+    a = a +1 * 2
+    print("ola")
+}

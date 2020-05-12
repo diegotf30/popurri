@@ -1,0 +1,16 @@
+module ifs
+
+var a = 10
+
+if true {
+    a = 2
+    break
+} 
+else if false {
+    a = 3
+    break
+}
+else {
+    a = 10
+    break
+}
