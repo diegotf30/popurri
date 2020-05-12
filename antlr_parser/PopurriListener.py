@@ -170,6 +170,15 @@ class PopurriListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PopurriParser#breakStmt.
+    def enterBreakStmt(self, ctx:PopurriParser.BreakStmtContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#breakStmt.
+    def exitBreakStmt(self, ctx:PopurriParser.BreakStmtContext):
+        pass
+
+
     # Enter a parse tree produced by PopurriParser#cond.
     def enterCond(self, ctx:PopurriParser.CondContext):
         pass

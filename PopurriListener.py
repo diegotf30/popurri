@@ -78,13 +78,16 @@ class QuadWrapper():
         self.address_stack.append(str(address))
 
     def insertOperator(self, operator):
-        self.operator_stack.append(self.getTokenCode(operator))
+        self.operator_stack.append(self.toToken(operator))
 
     def insertJump(self, jump=None):
         self.jump_stack.append(self.quads_ptr if jump is None else jump)
 
-    def getTokenCode(self, element):
-        return self.operator_codes.index(element)
+    def toToken(self, op):
+        return self.operator_codes.index(op)
+
+    def toString(self, tok):
+        return self.operator_codes[tok]
 
     def validateTypes(self, ctx):
         op = self.topOperator()
@@ -301,7 +304,9 @@ class PopurriListener(ParseTreeListener):
 
         print('quads_stack = [')
         for i, x in enumerate(self.quadWrapper.quads, start=1):
-            print('\t', i, x)
+            tmp = list(x)
+            tmp[0] = self.quadWrapper.toString(x[0])
+            print('\t', i, tuple(tmp))
         print(']')
 
         print('address_stack = ', end='')
@@ -520,7 +525,7 @@ class PopurriListener(ParseTreeListener):
     def enterStatement(self, ctx):
         self.if_cond = False
         if ctx.assignment() is not None:
-            var_id = self.validateIds(ctx)
+            var_id = self.validateCalledIds(ctx)
             self.quadWrapper.insertAddress(var_id)
         pass
 
@@ -677,42 +682,52 @@ class PopurriListener(ParseTreeListener):
             return 'none'
         # TODO: add arrays
 
-    # Helper function to validate id(s) exist in varTable, also pushes var type into type_stack
-    def validateIds(self, ctx):
+    # Helper to validate id(s) being called (be them )
+    def validateCalledIds(self, ctx, is_function=False):
         ids = [str(id) for id in ctx.ID()]
 
-        if len(ids) == 2:  # class attribute being accessed (i.e. myvar.myattribute)
+        if len(ids) is 2:  # class attr/method being called (i.e. myobj.name or myobj.print())
             class_var = self.ctxWrapper.getVariable(ids[0])
             if class_var is None:
-                raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
+                raise error(ctx, UNDEF_VAR.format(ids[0]))
 
-            attribute = self.ctxWrapper.getVariable(
-                ids[1], 'class ' + class_var.type)
-            if attribute is None:
-                raise error(
-                    ctx, f'TRYING TO ACCESS UNDEFINED ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+            if is_function:
+                method = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
+                if method is None:
+                    raise error(ctx, UNDEF_METHOD.format(ids[1], class_var.type))
+                if method.access_type is not 'public':
+                    raise error(ctx, NOT_PUBLIC_METHOD.format(method.access_type.upper(), ids[1], class_var.type))
+            else:
+                attr = self.ctxWrapper.getVariable(ids[1], 'class ' + class_var.type)
+                if attr is None:
+                    raise error(ctx, UNDEF_ATTRIBUTE.format(ids[1], class_var.type))
+                if attr.access_type is not 'public':
+                    raise error(ctx, NOT_PUBLIC_ATTRIBUTE.format(attr.access_type.upper(), ids[1], class_var.type))
 
-            if attribute.access_type != 'public':
-                raise error(
-                    ctx, f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+                self.quadWrapper.insertType(attr.type)
 
-             # Both variable and attribute exist!
-            self.quadWrapper.insertType(attribute.type)
             return '.'.join(ids)
-        else:  # variable being accessed
-            var, _ = self.ctxWrapper.getVariableIfExists(ids[0])
-            if var is None:
-                raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
+        else:  # global var/func being called
+            id = ids[0]
+            if is_function:
+                func = self.ctxWrapper.getFunctionIfExists(id)
+                if func is None:
+                    raise error(ctx, UNDEF_FUNC.format(id))
+            else:
+                var, _ = self.ctxWrapper.getVariableIfExists(id)
+                if var is None:
+                    raise error(ctx, UNDEF_VAR.format(id))
 
-            self.quadWrapper.insertType(var.type)
-            return var.id
+                self.quadWrapper.insertType(var.type)
+
+            return id
 
     def enterVal(self, ctx):
         if ctx.cond() is not None:  # nested cond
             # Add fake bottom to operator_stack
             self.quadWrapper.insertOperator('(')
         elif len(ctx.ID()) > 0:  # identifier
-            id = self.validateIds(ctx)
+            id = self.validateCalledIds(ctx)
             self.quadWrapper.insertAddress(id)
         elif ctx.constant() is not None:  # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
@@ -784,17 +799,19 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterFuncCall(self, ctx):
-        # TODO check if function id exists and replace the id with its address in memory
+        # TODO replace the id with its address in memory
+        ids = self.validateCalledIds(ctx, is_function=True)
         self.quadWrapper.insertQuad(Quadruple(
             op=ERA,
-            res=str(ctx.ID(0))
+            l=ids
         ))
         pass
 
     def exitFuncCall(self, ctx):
+        ids = [str(id) for id in ctx.ID()]
         self.quadWrapper.insertQuad(Quadruple(
             op=GOSUB,
-            res=str(ctx.ID(0))
+            l='.'.join(ids)
         ))
         pass
 
@@ -838,7 +855,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertQuad(quad)
 
     def enterInputStmt(self, ctx):
-        id = self.validateIds(ctx)
+        id = self.validateCalledIds(ctx)
         self.quadWrapper.insertQuad(Quadruple(
             op=INPUT,
             res=id
@@ -851,6 +868,11 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitCondParam(self, ctx):
+        self.quadWrapper.insertQuad(Quadruple(
+            op=PARAM,
+            l=self.quadWrapper.popAddress(),
+            res='param '
+        ))
         pass
 
     def enterFuncParams(self, ctx):
