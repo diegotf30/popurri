@@ -34,6 +34,7 @@ class QuadWrapper():
         self.operator_stack = []
         self.address_stack = []
         self.jump_stack = []
+        self.break_stack = []
 
     def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
@@ -70,6 +71,16 @@ class QuadWrapper():
 
     def popType(self):
         return self.type_stack.pop() if len(self.type_stack) > 0 else None
+
+    # Flushes jumps until either stack is empty or it encounters a false-bottom
+    def flushJumps(self):
+        jumps = []
+        while True:
+            j = self.popJump()
+            if j is None or j is OPENPAREN:
+                break
+            jumps.insert(0, j)
+        return jumps
 
     def insertType(self, type):
         self.type_stack.append(str(type))
@@ -140,6 +151,16 @@ class ContextWrapper():
         self.variables = {}
         self.functions = {}
         self.context_stack = ['global']
+        self.loop_stack = []
+
+    def pushLoop(self):
+        return self.loop_stack.append(True)
+
+    def popLoop(self):
+        return self.loop_stack.pop()
+
+    def insideLoop(self):
+        return len(self.loop_stack) > 0
 
     def top(self):
         return self.context_stack[-1]
@@ -536,32 +557,38 @@ class PopurriListener(ParseTreeListener):
 
     def enterBreakStmt(self, ctx):
         self.quadWrapper.insertJump()
-        self.quadWrapper.insertQuad(Quadruple(
-            GOTO
-        ))
+        self.quadWrapper.insertQuad(Quadruple(GOTO))
+        if not self.ctxWrapper.insideLoop():
+            raise error(ctx, INVALID_BREAK_USE)
+
         pass
 
     def enterWhileLoop(self, ctx):
         self.if_cond = True
         self.quadWrapper.insertJump()
-        self.quadWrapper.insertJump(OPENPAREN)
+        self.ctxWrapper.pushLoop()
         pass
 
     def exitWhileLoop(self, ctx):
         goto_quad = Quadruple(GOTO)
         self.quadWrapper.insertQuad(goto_quad)
+        self.ctxWrapper.popLoop()
 
-        # Fill while gotoF with next quad outside loop &
-        # Fill any breaks that might've been added inside
+        # Fill any breaks that might've been added inside loop
         while True:
-            jump = self.quadWrapper.popJump()
-            if jump is None or jump == OPENPAREN:
+            brk = self.quadWrapper.popJump()
+            if brk is None or brk == OPENPAREN:
                 break
 
             self.quadWrapper.fillQuadWith(
                 self.quadWrapper.quads_ptr + 1,
-                at=jump
+                at=brk
             )
+
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.quads_ptr + 1,
+            at=self.quadWrapper.popJump()
+        )
 
         # Fill loop-end goto with loop start
         self.quadWrapper.fillQuadWith(
@@ -581,56 +608,60 @@ class PopurriListener(ParseTreeListener):
 
     def exitBranch(self, ctx):
         self.if_cond = False
-        while True:
-            jump = self.quadWrapper.popJump()
-            if jump is OPENPAREN or jump is None:
-                break
 
+        # Ignore jumps inside else
+        if ctx.elseStmt() is not None:
+            else_jumps = self.quadWrapper.flushJumps()
+
+        # Fill if and elseif GOTOs with next quad outside branch
+        pending_jumps = []
+        no_branches = 1 + len(ctx.elseIf())
+        for _ in range(no_branches):
+            pending_jumps += self.quadWrapper.flushJumps()
+
+            branchEndJump = pending_jumps.pop()
             self.quadWrapper.fillQuadWith(
                 self.quadWrapper.quads_ptr + 1,
-                at=jump
+                at=branchEndJump
             )
+
+        self.quadWrapper.jump_stack += pending_jumps
+
+        # Re-push else jumps
+        if ctx.elseStmt() is not None:
+            self.quadWrapper.jump_stack += else_jumps
 
     def enterIfStmt(self, ctx):
         self.if_cond = True
-        self.quadWrapper.insertJump()
 
     def exitIfStmt(self, ctx):
-        # Rellena el GOTOF de este mismo IF con el siguiente cuadruplo
+        # Other jumps (breaks) might've been pushed inside If
+        pending_jumps = self.quadWrapper.flushJumps()
+
+        # Fill GOTOF with next quad
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.quads_ptr + 2,
             at=self.quadWrapper.popJump()
         )
 
-        # Anade un GOTO al final del IF
-        goto_quad = Quadruple(GOTO)
+        # Re-push pending jumps
+        self.quadWrapper.jump_stack += pending_jumps
 
+        goto_quad = Quadruple(GOTO)
         self.quadWrapper.insertJump()
+        self.quadWrapper.insertJump(OPENPAREN)
         self.quadWrapper.insertQuad(goto_quad)
 
     def enterElseIf(self, ctx):
         self.if_cond = True
 
     def exitElseIf(self, ctx):
-        self.quadWrapper.fillQuadWith(
-            self.quadWrapper.quads_ptr + 2,
-            at=self.quadWrapper.popJump(),
-        )
-
-        # Anade un GOTO al final del ELSE IF
-        goto_quad = Quadruple(GOTO)
-
-        self.quadWrapper.insertJump()
-        self.quadWrapper.insertQuad(goto_quad)
+        self.exitIfStmt(ctx) # Rule is the same as if statement
 
     def enterElseStmt(self, ctx):
         pass
 
     def exitElseStmt(self, ctx):
-        self.quadWrapper.fillQuadWith(
-            self.quadWrapper.quads_ptr + 1,
-            at=self.quadWrapper.popJump()
-        )
         pass
 
     def enterReturnStmt(self, ctx):
@@ -668,6 +699,7 @@ class PopurriListener(ParseTreeListener):
                 l=self.quadWrapper.popAddress()
             )
             self.quadWrapper.insertJump()
+            self.quadWrapper.insertJump(OPENPAREN) # False bottom for filling breaks inside if/loop
             self.quadWrapper.insertQuad(gotof_quad)
 
         # Function call

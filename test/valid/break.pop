@@ -16,6 +16,8 @@ while a + 1 > 10 {
     else {
         a = 10
         break
+        break
+        break
     }
     a = a +1 * 2
     print("ola")
