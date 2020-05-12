@@ -48,7 +48,7 @@ class QuadWrapper():
         self.quads[at] = tuple(new_quad)
 
     def topOperator(self):
-        if len(self.operator_stack) is 0 or self.operator_stack[-1] is OPENPAREN:
+        if len(self.operator_stack) == 0 or self.operator_stack[-1] == OPENPAREN:
             return None
 
         return self.operator_stack[-1]
@@ -57,7 +57,7 @@ class QuadWrapper():
         return self.jump_stack[-1] if len(self.jump_stack) > 0 else None
 
     def popOperator(self):
-        if len(self.operator_stack) is 0 or self.topOperator() is OPENPAREN:
+        if len(self.operator_stack) == 0 or self.topOperator() == OPENPAREN:
             return None
 
         return self.operator_stack.pop()
@@ -348,7 +348,7 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.TYPE()
             )
         # var is type object
-        elif len(ctx.ID()) is 2:
+        elif len(ctx.ID()) == 2:
             class_name = str(ctx.ID(1))
             if not self.ctxWrapper.classExists(class_name):
                 raise error(ctx, UNDEFINED_CLASS.format(class_name))
@@ -451,7 +451,7 @@ class PopurriListener(ParseTreeListener):
 
             for attr in declarations.attribute():
                 # if attribute inherited, do nothing
-                if access_type is not 'private' and self.ctxWrapper.varExistsInContext(attr.ID(), klass.parent_id):
+                if access_type != 'private' and self.ctxWrapper.varExistsInContext(attr.ID(), klass.parent_id):
                     continue
                 # Checks if attribute is already declared within class
                 elif self.ctxWrapper.varExistsInContext(attr.ID(), 'class ' + klass.id):
@@ -470,7 +470,7 @@ class PopurriListener(ParseTreeListener):
             access_type = self.getAccessType(method)
 
             # if method inherited, do nothing
-            if access_type is not 'private' and self.ctxWrapper.functionExistsInContext(method.ID(), klass.parent_id):
+            if access_type != 'private' and self.ctxWrapper.functionExistsInContext(method.ID(), klass.parent_id):
                 continue
             # Checks if attribute is already declared within class
             elif self.ctxWrapper.functionExistsInContext(method.ID(0), 'class ' + klass.id):
@@ -611,12 +611,12 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterReturnStmt(self, ctx):
-        if self.ctxWrapper.top() is 'global':
+        if self.ctxWrapper.top() == 'global':
             raise error(ctx, 'Return statement used outside function body')
 
         # Return is inside function, verify if not void
         func = self.ctxWrapper.getCurrentFunction()
-        if func.return_type is 'void':
+        if func.return_type == 'void':
             raise error(ctx, f'Return on void function "{func.id}"')
 
     def exitReturnStmt(self, ctx):
@@ -681,7 +681,7 @@ class PopurriListener(ParseTreeListener):
     def validateIds(self, ctx):
         ids = [str(id) for id in ctx.ID()]
 
-        if len(ids) is 2:  # class attribute being accessed (i.e. myvar.myattribute)
+        if len(ids) == 2:  # class attribute being accessed (i.e. myvar.myattribute)
             class_var = self.ctxWrapper.getVariable(ids[0])
             if class_var is None:
                 raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
@@ -692,7 +692,7 @@ class PopurriListener(ParseTreeListener):
                 raise error(
                     ctx, f'TRYING TO ACCESS UNDEFINED ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
 
-            if attribute.access_type is not 'public':
+            if attribute.access_type != 'public':
                 raise error(
                     ctx, f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
 
