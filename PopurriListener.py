@@ -289,9 +289,12 @@ class Function():
         self.quads_range = (-1, -1)
         self.paramTypes = []
 
-    def updateQuadsRange(self, quad_ptr, pos):
+    def updateQuadsRange(self, start=None, end=None):
         quads_range = list(self.quads_range)
-        quads_range[pos] = quad_ptr
+        if start is not None:
+            quads_range[0] = start
+        if end is not None:
+            quads_range[1] = end
         self.quads_range = tuple(quads_range)
 
     def addParamType(self, ty):
@@ -429,7 +432,7 @@ class PopurriListener(ParseTreeListener):
             raise error(ctx, FUNC_REDEFINITION.format(str(ctx.ID(0))))
 
         func = self.createFunction(ctx)
-        func.updateQuadsRange(self.quadWrapper.quads_ptr + 1, 0)
+        func.updateQuadsRange(start=self.quadWrapper.quads_ptr + 1)
         self.ctxWrapper.addFunction(func)
         self.ctxWrapper.push(func.id)
 
@@ -439,11 +442,9 @@ class PopurriListener(ParseTreeListener):
         func = self.ctxWrapper.getFunction(self.ctxWrapper.top())
 
         if func.quads_range[0] >= self.quadWrapper.quads_ptr:
-            func.updateQuadsRange(
-                -1, 0)
+            func.updateQuadsRange(start=-1)
         else:
-            func.updateQuadsRange(
-                self.quadWrapper.quads_ptr, 1)
+            func.updateQuadsRange(end=self.quadWrapper.quads_ptr)
         self.ctxWrapper.pop()
         pass
 
@@ -561,13 +562,10 @@ class PopurriListener(ParseTreeListener):
         if not self.ctxWrapper.insideLoop():
             raise error(ctx, INVALID_BREAK_USE)
 
-        pass
-
     def enterWhileLoop(self, ctx):
         self.if_cond = True
         self.quadWrapper.insertJump()
         self.ctxWrapper.pushLoop()
-        pass
 
     def exitWhileLoop(self, ctx):
         goto_quad = Quadruple(GOTO)
@@ -585,6 +583,7 @@ class PopurriListener(ParseTreeListener):
                 at=brk
             )
 
+        # Fill while gotoF with next quad
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.quads_ptr + 1,
             at=self.quadWrapper.popJump()
@@ -698,9 +697,9 @@ class PopurriListener(ParseTreeListener):
                 GOTOF,
                 l=self.quadWrapper.popAddress()
             )
+            self.quadWrapper.insertQuad(gotof_quad)
             self.quadWrapper.insertJump()
             self.quadWrapper.insertJump(OPENPAREN) # False bottom for filling breaks inside if/loop
-            self.quadWrapper.insertQuad(gotof_quad)
 
         # Function call
         if self.param_count != -1:
@@ -737,7 +736,8 @@ class PopurriListener(ParseTreeListener):
             return str(ctx.CONST_F())
         elif ctx.CONST_STR() is not None:
             self.quadWrapper.insertType('string')
-            return str(ctx.CONST_STR())
+            s = str(ctx.CONST_STR())
+            return s[1:-1] # Remove quotes
         else:
             self.quadWrapper.insertType('none')
             return 'none'
