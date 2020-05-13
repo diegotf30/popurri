@@ -1,6 +1,7 @@
 from antlr4 import *
-from parser.PopurriParser import PopurriParser
+from antlr_parser.PopurriParser import PopurriParser
 from popurri_tokens import *
+from error_tokens import *
 from semantic_cube import bailaMijaConElSeñor
 import jsbeautifier as js
 import json
@@ -16,13 +17,14 @@ def pprint(*args):
 def error(ctx, msg):
     return Exception(f'ERROR ON LINE {ctx.start.line}: {msg}')
 
+
 class QuadWrapper():
     '''
     Si tienes un mejor nombre para esta clase, go ahead.
     '''
-    operator_codes = ['', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
+    operator_codes = ['GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', 'ERA', 'PARAM', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
                       '%', '%=', '**', 'is', 'is not', '>', '>=', '<',
-                      '<=', 'and', 'or', '=', 'print']
+                      '<=', 'and', 'or', '=', 'print', 'input', '(', ')']
 
     def __init__(self):
         self.tmp_counter = 0
@@ -32,6 +34,7 @@ class QuadWrapper():
         self.operator_stack = []
         self.address_stack = []
         self.jump_stack = []
+        self.break_stack = []
 
     def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
@@ -46,7 +49,7 @@ class QuadWrapper():
         self.quads[at] = tuple(new_quad)
 
     def topOperator(self):
-        if len(self.operator_stack) is 0 or self.operator_stack[-1] is '(':
+        if len(self.operator_stack) == 0 or self.operator_stack[-1] == OPENPAREN:
             return None
 
         return self.operator_stack[-1]
@@ -55,7 +58,7 @@ class QuadWrapper():
         return self.jump_stack[-1] if len(self.jump_stack) > 0 else None
 
     def popOperator(self):
-        if len(self.operator_stack) is 0 or self.topOperator() is '(':
+        if len(self.operator_stack) == 0 or self.topOperator() == OPENPAREN:
             return None
 
         return self.operator_stack.pop()
@@ -69,6 +72,16 @@ class QuadWrapper():
     def popType(self):
         return self.type_stack.pop() if len(self.type_stack) > 0 else None
 
+    # Flushes jumps until either stack is empty or it encounters a false-bottom
+    def flushJumps(self):
+        jumps = []
+        while True:
+            j = self.popJump()
+            if j is None or j is OPENPAREN:
+                break
+            jumps.insert(0, j)
+        return jumps
+
     def insertType(self, type):
         self.type_stack.append(str(type))
 
@@ -76,13 +89,16 @@ class QuadWrapper():
         self.address_stack.append(str(address))
 
     def insertOperator(self, operator):
-        self.operator_stack.append(operator)
+        self.operator_stack.append(self.toToken(operator))
 
     def insertJump(self, jump=None):
         self.jump_stack.append(self.quads_ptr if jump is None else jump)
 
-    def getTokenCode(self, element):
-        return self.operator_codes.index(element) + 1
+    def toToken(self, op):
+        return self.operator_codes.index(op)
+
+    def toString(self, tok):
+        return self.operator_codes[tok]
 
     def validateTypes(self, ctx):
         op = self.topOperator()
@@ -90,7 +106,7 @@ class QuadWrapper():
         l_type = self.popType()
         res_type = bailaMijaConElSeñor(op, l_type, r_type)
         if res_type is None:
-            raise error(ctx, f'Unsupported operand types for {op}: "{l_type}" and "{r_type}"')
+            raise error(ctx, TYPE_MISMATCH.format(op, l_type, r_type))
         # Push resulting type into stack
         self.insertType(res_type)
 
@@ -135,6 +151,16 @@ class ContextWrapper():
         self.variables = {}
         self.functions = {}
         self.context_stack = ['global']
+        self.loop_stack = []
+
+    def pushLoop(self):
+        return self.loop_stack.append(True)
+
+    def popLoop(self):
+        return self.loop_stack.pop()
+
+    def insideLoop(self):
+        return len(self.loop_stack) > 0
 
     def top(self):
         return self.context_stack[-1]
@@ -160,7 +186,7 @@ class ContextWrapper():
     def getCurrentFunction(self):
         func_id = self.pop()
         func_ctx_id = self.top()
-        self.push(func_id) # Re-push current context
+        self.push(func_id)  # Re-push current context
         return self.getFunction(func_id, context=func_ctx_id)
 
     def addVariable(self, var, context="global"):
@@ -260,6 +286,19 @@ class Function():
         self.id = str(id)
         self.return_type = str(return_type)
         self.access_type = str(access_type)
+        self.quads_range = (-1, -1)
+        self.paramTypes = []
+
+    def updateQuadsRange(self, start=None, end=None):
+        quads_range = list(self.quads_range)
+        if start is not None:
+            quads_range[0] = start
+        if end is not None:
+            quads_range[1] = end
+        self.quads_range = tuple(quads_range)
+
+    def addParamType(self, ty):
+        self.paramTypes.append(ty)
 
 
 class PopurriListener(ParseTreeListener):
@@ -274,6 +313,7 @@ class PopurriListener(ParseTreeListener):
         self.ctxWrapper = ContextWrapper()
         self.quadWrapper = QuadWrapper()
         self.if_cond = False
+        self.param_count = -1
 
     def enterProgram(self, ctx):
         '''
@@ -292,7 +332,9 @@ class PopurriListener(ParseTreeListener):
 
         print('quads_stack = [')
         for i, x in enumerate(self.quadWrapper.quads, start=1):
-            print('\t',i, x)
+            tmp = list(x)
+            tmp[0] = self.quadWrapper.toString(x[0])
+            print('\t', i, tuple(tmp))
         print(']')
 
         print('address_stack = ', end='')
@@ -328,7 +370,7 @@ class PopurriListener(ParseTreeListener):
     def enterDeclaration(self, ctx):
         # Checks if global is already declared
         if self.ctxWrapper.varExistsInContext(ctx.ID(0), "global"):
-            raise error(ctx, f'ERROR VAR {str(ctx.ID(0))} ALREADY DEFINED')
+            raise error(ctx, VAR_REDEFINITION.format(str(ctx.ID(0))))
 
         var = None
         # var has data_type : INT, FLOAT, STRING, BOOL
@@ -339,10 +381,10 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.TYPE()
             )
         # var is type object
-        elif len(ctx.ID()) is 2:
+        elif len(ctx.ID()) == 2:
             class_name = str(ctx.ID(1))
             if not self.ctxWrapper.classExists(class_name):
-                raise error(ctx, f'ERROR UNDEFINED CLASS "{class_name}"')
+                raise error(ctx, UNDEF_CLASS.format(class_name))
 
             var = Variable(
                 id=ctx.ID(0),
@@ -374,6 +416,7 @@ class PopurriListener(ParseTreeListener):
                     type=ctx.funcParams().TYPE(i),
                 )
                 self.ctxWrapper.addVariable(param, func.id)
+                func.addParamType(param.type)
 
         # Function has primitive return type
         if ctx.TYPE() is not None:
@@ -386,14 +429,22 @@ class PopurriListener(ParseTreeListener):
 
     def enterFunction(self, ctx):
         if self.ctxWrapper.functionExistsInContext(ctx.ID(0), 'global'):
-            raise error(ctx, f'ERROR RE-DEFINITION OF {str(ctx.ID(0))}')
+            raise error(ctx, FUNC_REDEFINITION.format(str(ctx.ID(0))))
 
         func = self.createFunction(ctx)
+        func.updateQuadsRange(start=self.quadWrapper.quads_ptr + 1)
         self.ctxWrapper.addFunction(func)
         self.ctxWrapper.push(func.id)
+
         pass
 
     def exitFunction(self, ctx):
+        func = self.ctxWrapper.getFunction(self.ctxWrapper.top())
+
+        if func.quads_range[0] >= self.quadWrapper.quads_ptr:
+            func.updateQuadsRange(start=-1)
+        else:
+            func.updateQuadsRange(end=self.quadWrapper.quads_ptr)
         self.ctxWrapper.pop()
         pass
 
@@ -404,7 +455,7 @@ class PopurriListener(ParseTreeListener):
     def enterClassDeclaration(self, ctx):
         class_name = str(ctx.ID())
         if self.ctxWrapper.classExists(class_name):
-            raise error(ctx, f'ERROR RE-DEFINITION OF {class_name}')
+            raise error(ctx, FUNC_REDEFINITION.format(class_name))
 
         self.ctxWrapper.push('class ' + class_name)
         klass = Object(
@@ -413,7 +464,7 @@ class PopurriListener(ParseTreeListener):
         if ctx.parent() is not None:
             klass.parent_id = 'class ' + str(ctx.parent().ID())
             if not self.ctxWrapper.classExists(klass.parent_id):
-                raise error(ctx, f'ERROR PARENT CLASS "{klass.parent_id}" MUST BE DEFINED BEFORE CHILD CLASS "{klass.id}"')
+                raise error(ctx, UNDEF_PARENT.format(klass.parent_id, klass.id))
 
             # Inherit attributes
             for attribute in self.ctxWrapper.variables[klass.parent_id].values():
@@ -431,11 +482,11 @@ class PopurriListener(ParseTreeListener):
 
             for attr in declarations.attribute():
                 # if attribute inherited, do nothing
-                if access_type is not 'private' and self.ctxWrapper.varExistsInContext(attr.ID(), klass.parent_id):
+                if access_type != 'private' and self.ctxWrapper.varExistsInContext(attr.ID(), klass.parent_id):
                     continue
                 # Checks if attribute is already declared within class
                 elif self.ctxWrapper.varExistsInContext(attr.ID(), 'class ' + klass.id):
-                    raise error(ctx, f'ERROR ATTRIBUTE {str(attr.ID())} ALREADY DEFINED')
+                    raise error(ctx, VAR_REDEFINITION.format(attr.ID()))
 
                 var = Variable(
                     id=attr.ID(),
@@ -449,14 +500,14 @@ class PopurriListener(ParseTreeListener):
             access_type = self.getAccessType(method)
 
             # if method inherited, do nothing
-            if access_type is not 'private' and self.ctxWrapper.functionExistsInContext(method.ID(), klass.parent_id):
+            if access_type != 'private' and self.ctxWrapper.functionExistsInContext(method.ID(), klass.parent_id):
                 continue
             # Checks if attribute is already declared within class
             elif self.ctxWrapper.functionExistsInContext(method.ID(0), 'class ' + klass.id):
-                raise error(ctx, f'ERROR METHOD {str(attr.ID())} ALREADY DEFINED')
+                raise error(ctx, FUNC_REDEFINITION.format(str(method.ID(0))))
 
-
-            method = self.createFunction(method) # TODO fix how params are generated in varTable for object methods
+            # TODO fix how params are generated in varTable for object methods
+            method = self.createFunction(method)
             method.access_type = str(access_type)
 
             self.ctxWrapper.addFunction(method, 'class ' + klass.id)
@@ -498,28 +549,47 @@ class PopurriListener(ParseTreeListener):
     def enterStatement(self, ctx):
         self.if_cond = False
         if ctx.assignment() is not None:
-            var_id = self.validateIds(ctx)
+            var_id = self.validateCalledIds(ctx)
             self.quadWrapper.insertAddress(var_id)
         pass
 
     def exitStatement(self, ctx):
         pass
 
+    def enterBreakStmt(self, ctx):
+        self.quadWrapper.insertJump()
+        self.quadWrapper.insertQuad(Quadruple(GOTO))
+        if not self.ctxWrapper.insideLoop():
+            raise error(ctx, INVALID_BREAK_USE)
+
     def enterWhileLoop(self, ctx):
         self.if_cond = True
         self.quadWrapper.insertJump()
-        pass
+        self.ctxWrapper.pushLoop()
 
     def exitWhileLoop(self, ctx):
-        goto_quad = Quadruple('GOTO')
+        goto_quad = Quadruple(GOTO)
         self.quadWrapper.insertQuad(goto_quad)
+        self.ctxWrapper.popLoop()
 
-        # Fill while gotoF with next quad outside loop
+        # Fill any breaks that might've been added inside loop
+        while True:
+            brk = self.quadWrapper.popJump()
+            if brk is None or brk == OPENPAREN:
+                break
+
+            self.quadWrapper.fillQuadWith(
+                self.quadWrapper.quads_ptr + 1,
+                at=brk
+            )
+
+        # Fill while gotoF with next quad
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.quads_ptr + 1,
             at=self.quadWrapper.popJump()
         )
-        # Fill goto with loop start
+
+        # Fill loop-end goto with loop start
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.popJump() + 1,
             at=self.quadWrapper.quads_ptr - 1
@@ -532,106 +602,126 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterBranch(self, ctx):
-        self.quadWrapper.insertJump('(')
+        self.quadWrapper.insertJump(OPENPAREN)
         pass
 
     def exitBranch(self, ctx):
         self.if_cond = False
-        while True:
-            jump = self.quadWrapper.popJump()
-            if jump is '(' or jump is None:
-                break
 
+        # Ignore jumps inside else
+        if ctx.elseStmt() is not None:
+            else_jumps = self.quadWrapper.flushJumps()
+
+        # Fill if and elseif GOTOs with next quad outside branch
+        pending_jumps = []
+        no_branches = 1 + len(ctx.elseIf())
+        for _ in range(no_branches):
+            pending_jumps += self.quadWrapper.flushJumps()
+
+            branchEndJump = pending_jumps.pop()
             self.quadWrapper.fillQuadWith(
                 self.quadWrapper.quads_ptr + 1,
-                at=jump
+                at=branchEndJump
             )
+
+        self.quadWrapper.jump_stack += pending_jumps
+
+        # Re-push else jumps
+        if ctx.elseStmt() is not None:
+            self.quadWrapper.jump_stack += else_jumps
 
     def enterIfStmt(self, ctx):
         self.if_cond = True
 
     def exitIfStmt(self, ctx):
-        # Rellena el GOTOF de este mismo IF con el siguiente cuadruplo
+        # Other jumps (breaks) might've been pushed inside If
+        pending_jumps = self.quadWrapper.flushJumps()
+
+        # Fill GOTOF with next quad
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.quads_ptr + 2,
             at=self.quadWrapper.popJump()
         )
 
-        # Anade un GOTO al final del IF
-        goto_quad = Quadruple('GOTO')
+        # Re-push pending jumps
+        self.quadWrapper.jump_stack += pending_jumps
 
+        goto_quad = Quadruple(GOTO)
         self.quadWrapper.insertJump()
+        self.quadWrapper.insertJump(OPENPAREN)
         self.quadWrapper.insertQuad(goto_quad)
 
     def enterElseIf(self, ctx):
         self.if_cond = True
 
     def exitElseIf(self, ctx):
-        self.quadWrapper.fillQuadWith(
-            self.quadWrapper.quads_ptr + 2,
-            at=self.quadWrapper.popJump(),
-        )
-
-        # Anade un GOTO al final del ELSE IF
-        goto_quad = Quadruple('GOTO')
-
-        self.quadWrapper.insertJump()
-        self.quadWrapper.insertQuad(goto_quad)
+        self.exitIfStmt(ctx) # Rule is the same as if statement
 
     def enterElseStmt(self, ctx):
         pass
 
     def exitElseStmt(self, ctx):
-        self.quadWrapper.fillQuadWith(
-            self.quadWrapper.quads_ptr + 1,
-            at=self.quadWrapper.popJump()
-        )
         pass
 
     def enterReturnStmt(self, ctx):
-        if self.ctxWrapper.top() is 'global':
-            raise error(ctx, 'Return statement used outside function body')
+        if self.ctxWrapper.top() == 'global':
+            raise error(ctx, RETURN_OUTSIDE_FUNC)
 
         # Return is inside function, verify if not void
         func = self.ctxWrapper.getCurrentFunction()
-        if func.return_type is 'void':
-            raise error(ctx, f'Return on void function "{func.id}"')
+        if func.return_type == 'void':
+            raise error(ctx, RETURN_ON_VOID_FUNC.format(func.id))
 
     def exitReturnStmt(self, ctx):
         # Validate return type matches function return type
         func = self.ctxWrapper.getCurrentFunction()
         return_type = self.quadWrapper.popType()
         if return_type != func.return_type:
-            raise error(ctx, f'Returning value of type {return_type} on function that returns {func.return_type}')
+            raise error(ctx, INVALID_RETURN_TYPE.format(return_type, func.return_type))
 
         self.quadWrapper.insertQuad(Quadruple(
-            op='GOTOR',
+            op=GOTOR,
             l=self.quadWrapper.popAddress()
         ))
 
     def exitCond(self, ctx):
-        if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is '(':
+        if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is OPENPAREN:
             self.quadWrapper.popOperator()
 
         if self.if_cond:
-            if_quad = Quadruple('GOTOF', l=self.quadWrapper.address_stack.pop())
-            self.quadWrapper.insertJump()
-            self.quadWrapper.insertQuad(
-                if_quad,
-                at=self.quadWrapper.quads_ptr
+            cond_ty = self.quadWrapper.popType()
+            if cond_ty != 'bool':
+                raise error(ctx, EXPECTED_BOOL.format(cond_ty))
+
+            gotof_quad = Quadruple(
+                GOTOF,
+                l=self.quadWrapper.popAddress()
             )
+            self.quadWrapper.insertQuad(gotof_quad)
+            self.quadWrapper.insertJump()
+            self.quadWrapper.insertJump(OPENPAREN) # False bottom for filling breaks inside if/loop
+
+        # Function call
+        if self.param_count != -1:
+            self.quadWrapper.insertQuad(Quadruple(
+                op=PARAM,
+                l=self.quadWrapper.popAddress(),
+                res='param ' + str(self.param_count)
+            ))
+            self.param_count += 1
 
     def exitCmp(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['and', 'or'])
+        self.quadWrapper.handleQuadruple(ctx, [ANDOP, OROP])
 
     def exitExp(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['<', '<=', '>', '>=', 'is', 'is not'])
+        self.quadWrapper.handleQuadruple(
+            ctx, [LESSER, LESSEREQ, GREATER, GREATEREQ, EQUAL, NOTEQUAL])
 
     def exitAdd(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['+', '-'])
+        self.quadWrapper.handleQuadruple(ctx, [ADD, SUBS])
 
     def exitMultModDiv(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['*', '/', '%'])
+        self.quadWrapper.handleQuadruple(ctx, [MULT, DIV, MOD])
 
     # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
@@ -646,54 +736,67 @@ class PopurriListener(ParseTreeListener):
             return str(ctx.CONST_F())
         elif ctx.CONST_STR() is not None:
             self.quadWrapper.insertType('string')
-            return str(ctx.CONST_STR())
+            s = str(ctx.CONST_STR())
+            return s[1:-1] # Remove quotes
         else:
             self.quadWrapper.insertType('none')
             return 'none'
         # TODO: add arrays
 
-    # Helper function to validate id(s) exist in varTable, also pushes var type into type_stack
-    def validateIds(self, ctx):
+    # Helper to validate id(s) being called (be them )
+    def validateCalledIds(self, ctx, is_function=False):
         ids = [str(id) for id in ctx.ID()]
 
-        if len(ids) is 2: # class attribute being accessed (i.e. myvar.myattribute)
+        if len(ids) == 2:  # class attr/method being called (i.e. myobj.name or myobj.print())
             class_var = self.ctxWrapper.getVariable(ids[0])
             if class_var is None:
-                raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
+                raise error(ctx, UNDEF_VAR.format(ids[0]))
 
-            attribute = self.ctxWrapper.getVariable(ids[1], 'class ' + class_var.type)
-            if attribute is None:
-                raise error(ctx, f'TRYING TO ACCESS UNDEFINED ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+            if is_function:
+                method = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
+                if method is None:
+                    raise error(ctx, UNDEF_METHOD.format(ids[1], class_var.type))
+                if method.access_type != 'public':
+                    raise error(ctx, NOT_PUBLIC_METHOD.format(method.access_type.upper(), ids[1], class_var.type))
+            else:
+                attr = self.ctxWrapper.getVariable(ids[1], 'class ' + class_var.type)
+                if attr is None:
+                    raise error(ctx, UNDEF_ATTRIBUTE.format(ids[1], class_var.type))
+                if attr.access_type != 'public':
+                    raise error(ctx, NOT_PUBLIC_ATTRIBUTE.format(attr.access_type.upper(), ids[1], class_var.type))
 
-            if attribute.access_type is not 'public':
-                raise error(ctx, f'TRYING TO ACCESS {attribute.access_type.upper()} ATTRIBUTE "{ids[1]}" FROM CLASS "{class_var.type}"')
+                self.quadWrapper.insertType(attr.type)
 
-             # Both variable and attribute exist!
-            self.quadWrapper.insertType(attribute.type)
             return '.'.join(ids)
-        else: # variable being accessed
-            var, _ = self.ctxWrapper.getVariableIfExists(ids[0])
-            if var is None:
-                raise error(ctx, f'USE OF UNDEFINED VARIABLE "{ids[0]}"')
+        else:  # global var/func being called
+            id = ids[0]
+            if is_function:
+                func = self.ctxWrapper.getFunctionIfExists(id)
+                if func is None:
+                    raise error(ctx, UNDEF_FUNC.format(id))
+            else:
+                var, _ = self.ctxWrapper.getVariableIfExists(id)
+                if var is None:
+                    raise error(ctx, UNDEF_VAR.format(id))
 
-            self.quadWrapper.insertType(var.type)
-            return var.id
+                self.quadWrapper.insertType(var.type)
 
+            return id
 
     def enterVal(self, ctx):
-        if ctx.cond() is not None: # nested cond
+        if ctx.cond() is not None:  # nested cond
             # Add fake bottom to operator_stack
             self.quadWrapper.insertOperator('(')
         elif len(ctx.ID()) > 0:  # identifier
-            id = self.validateIds(ctx)
+            id = self.validateCalledIds(ctx)
             self.quadWrapper.insertAddress(id)
-        elif ctx.constant() is not None: # const
+        elif ctx.constant() is not None:  # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
 
         # TODO implement arrays
 
     def exitVal(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, ['**'])
+        self.quadWrapper.handleQuadruple(ctx, [POWER])
 
     def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
@@ -710,7 +813,7 @@ class PopurriListener(ParseTreeListener):
     def enterAssignOp(self, ctx: PopurriParser.AssignOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
-    def enterExpOp(self, ctx:PopurriParser.ExpOpContext):
+    def enterExpOp(self, ctx: PopurriParser.ExpOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
 
     def enterIndexation(self, ctx):
@@ -723,7 +826,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def exitAssignment(self, ctx):
-        if self.quadWrapper.topOperator() in ['=', '+=', '-=', '*=', '/=', '%=']:
+        if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
             res_id = self.quadWrapper.popAddress()
             var_id = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
@@ -736,14 +839,17 @@ class PopurriListener(ParseTreeListener):
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
+            # MADE CHANGES HERE {OP[0] -> OP}
             op = self.quadWrapper.popOperator()
-            if op is not '=':
-                res_type = bailaMijaConElSeñor(op[0], var_type, res_type)
+            if op is not ASSIGN:
+                res_type = bailaMijaConElSeñor(
+                    op - 1, var_type, res_type)
                 if res_type is None:
-                    raise error(ctx, f'Unsupported operand types for {op}: "{var_type}" and "{res_type}"')
+                    raise error(ctx, TYPE_MISMATCH.format(op, var_type, res_type))
 
             if var_type != res_type:
-                raise error(ctx, f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
+                raise error(
+                    ctx, f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
 
             self.quadWrapper.insertQuad(Quadruple(
                 op=op,
@@ -753,10 +859,38 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterFuncCall(self, ctx):
-        pass
+        # TODO replace the id with its address in memory
+        ids = self.validateCalledIds(ctx, is_function=True)
+        self.quadWrapper.insertQuad(Quadruple(
+            op=ERA,
+            l=ids
+        ))
+        self.param_count = 1
 
     def exitFuncCall(self, ctx):
-        pass
+        ids = [str(id) for id in ctx.ID()]
+
+        if len(ids) == 2:
+            class_var = self.ctxWrapper.getVariable(ids[0])
+            func = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
+        else:
+            func = self.ctxWrapper.getFunctionIfExists(ids[0])
+
+        if self.param_count - 1 != len(func.paramTypes):
+            raise error(ctx, PARAM_AMOUNT_MISMATCH.format(func.id, len(func.paramTypes)))
+
+        call_signature = tuple(self.quadWrapper.type_stack)
+        func_signature = tuple(func.paramTypes)
+        for i, func_ty in enumerate(func_signature[::-1], start=1):
+            call_ty = self.quadWrapper.popType()
+            if func_ty != call_ty:
+                raise error(ctx, INVALID_SIGNATURE.format(func.id, call_signature, func_signature))
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op=GOSUB,
+            l='.'.join(ids)
+        ))
+        self.param_count = -1 # So we dont add func quad when exiting a cond rule
 
     def enterConstant(self, ctx):
         pass
@@ -789,18 +923,18 @@ class PopurriListener(ParseTreeListener):
 
             self.quadWrapper.popType()
             print_quads.append(Quadruple(
-                op='PRINT',
+                op=PRINT,
                 l=address
             ))
 
-        # Quads are generated in inverse order (due to being in stack), so push them end to start 
+        # Quads are generated in inverse order (due to being in stack), so push them end to start
         for quad in print_quads[::-1]:
             self.quadWrapper.insertQuad(quad)
 
     def enterInputStmt(self, ctx):
-        id = self.validateIds(ctx)
+        id = self.validateCalledIds(ctx)
         self.quadWrapper.insertQuad(Quadruple(
-            op='INPUT',
+            op=INPUT,
             res=id
         ))
 

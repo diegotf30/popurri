@@ -1,3 +1,5 @@
+from popurri_tokens import *
+
 # Supported Operators
 '''
 boolOp    : 'and' | 'or'
@@ -13,54 +15,56 @@ expOp     : '**'
 TYPE      :  'int' | 'float' | 'string' | 'bool' | '[float]' | '[int]' | '[bool]'
 '''
 
+
 def bailaMijaConElSeñor(baile, mija=None, sr=None):
     return bailes[baile].get((mija, sr), None)
 
 # Operations between user-defined classes are NOT allowed
 
+
 # This semantic cube should be accesed using .get(), since it only describxes valid operations
 # So the get() function handles an unvalid combination of types
 bailes = {
     #### boolOp ####
-    "and": {
+    ANDOP: {
         ("bool", "bool"): "bool"
     },
-    "or": {
+    OROP: {
         ("bool", "bool"): "bool"
     },
     #### cmpOp ####
-    "<": {
+    LESSER: {
         ("int", "int"): "bool",
         ("int", "float"): "bool",
         ("float", "int"): "bool",
         ("float", "float"): "bool"
     },
-    "<=": {
+    LESSEREQ: {
         ("int", "int"): "bool",
         ("int", "float"): "bool",
         ("float", "int"): "bool",
         ("float", "float"): "bool"
     },
-    ">": {
+    GREATER: {
         ("int", "int"): "bool",
         ("int", "float"): "bool",
         ("float", "int"): "bool",
         ("float", "float"): "bool"
     },
-    ">=": {
+    GREATEREQ: {
         ("int", "int"): "bool",
         ("int", "float"): "bool",
         ("float", "int"): "bool",
         ("float", "float"): "bool"
     },
-    "is": {
+    EQUAL: {
         # Any
     },
-    "is not": {
+    NOTEQUAL: {
         # Any
     },
     #### addOp ####
-    "+": {
+    ADD: {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
@@ -68,14 +72,14 @@ bailes = {
         # "a" + "bc" = "abc"
         ("string", "string"): "string"
     },
-    "-": {
+    SUBS: {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
         ("float", "float"): "float"
     },
     #### multDivOp ####
-    "*": {
+    MULT: {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
@@ -84,28 +88,28 @@ bailes = {
         ("string", "int"): "string",
         ("int", "string"): "string"
     },
-    "/": {
-        # 3 / 10 = 0.33333 
+    DIV: {
+        # 3 / 10 = 0.33333
         ("int", "int"): "float",
         ("int", "float"): "float",
         ("float", "int"): "float",
         ("float", "float"): "float"
     },
-    "%": {
+    MOD: {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
         ("float", "float"): "float"
     },
     #### assignOp ####
-    "=": {
+    ASSIGN: {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
         ("float", "float"): "float"
     },
     #### expOp ####
-    "**": {
+    POWER: {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
@@ -115,7 +119,7 @@ bailes = {
 
 # Append all combinations to "is" and "is not" operators
 types = ['int', 'float', 'string', 'bool']
-for op in ["is", "is not"]:
+for op in [EQUAL, NOTEQUAL]:
     for left in types:
         for right in types:
             bailes[op][(left, right)] = "bool"

@@ -36,7 +36,7 @@ method:
 	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
 
 // Statements
-statement:
+statement:(
 	(ID '.')? ID assignment
 	| whileLoop
 	| forLoop
@@ -45,7 +45,8 @@ statement:
 	| funcCall
 	| printStmt
 	| inputStmt
-	| 'break';
+	| breakStmt
+	) COMMENT?;
 whileLoop: 'while' cond '{' statement* '}';
 forLoop: 'for' ID 'in' iterable '{' statement* '}';
 branch: ifStmt elseIf* elseStmt?;
@@ -53,6 +54,7 @@ ifStmt: 'if' cond '{' statement* '}';
 elseIf: 'else if' cond '{' statement* '}';
 elseStmt: 'else' '{' statement* '}';
 returnStmt: 'return' cond;
+breakStmt: 'break';
 
 cond: (cmp boolOp?)+;
 cmp: (exp cmpOp?)+;
