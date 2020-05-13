@@ -747,7 +747,7 @@ class PopurriListener(ParseTreeListener):
     def validateCalledIds(self, ctx, is_function=False):
         ids = [str(id) for id in ctx.ID()]
 
-        if len(ids) is 2:  # class attr/method being called (i.e. myobj.name or myobj.print())
+        if len(ids) == 2:  # class attr/method being called (i.e. myobj.name or myobj.print())
             class_var = self.ctxWrapper.getVariable(ids[0])
             if class_var is None:
                 raise error(ctx, UNDEF_VAR.format(ids[0]))
@@ -756,13 +756,13 @@ class PopurriListener(ParseTreeListener):
                 method = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
                 if method is None:
                     raise error(ctx, UNDEF_METHOD.format(ids[1], class_var.type))
-                if method.access_type is not 'public':
+                if method.access_type != 'public':
                     raise error(ctx, NOT_PUBLIC_METHOD.format(method.access_type.upper(), ids[1], class_var.type))
             else:
                 attr = self.ctxWrapper.getVariable(ids[1], 'class ' + class_var.type)
                 if attr is None:
                     raise error(ctx, UNDEF_ATTRIBUTE.format(ids[1], class_var.type))
-                if attr.access_type is not 'public':
+                if attr.access_type != 'public':
                     raise error(ctx, NOT_PUBLIC_ATTRIBUTE.format(attr.access_type.upper(), ids[1], class_var.type))
 
                 self.quadWrapper.insertType(attr.type)
@@ -870,7 +870,7 @@ class PopurriListener(ParseTreeListener):
     def exitFuncCall(self, ctx):
         ids = [str(id) for id in ctx.ID()]
 
-        if len(ids) is 2:
+        if len(ids) == 2:
             class_var = self.ctxWrapper.getVariable(ids[0])
             func = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
         else:
