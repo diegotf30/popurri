@@ -49,3 +49,18 @@ Diego Enrique Treviño Ferrer A00819313
 
 * Mi companero y yo corregimos unos problemas de los diagramas de sintaxis que evitaban la generacion exitosa de los cuadruplos.
 
+
+*|* Semana 3 : 
+
+- Diego:
+
+* Agregué los puntos neuralgicos para que la generación de cuadruplos en breaks (y validación para que sólo se use dentro de loops)
+
+* Hice refactor a cómo se rellenan los GOTOs en ifs y whiles (llenaban los GOTOs pertenecientes a breaks)
+
+* Arreglé una regla en la gramática para permitir comentarios al final de estatutos
+
+* Finalicé el proceso de migración de strings de error a tokens
+
+* Agregué validación de tipos en llamadas a funciones (para que haga match con la firma de dicha funcion)
+
