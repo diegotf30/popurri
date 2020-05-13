@@ -64,3 +64,10 @@ Diego Enrique Treviño Ferrer A00819313
 
 * Agregué validación de tipos en llamadas a funciones (para que haga match con la firma de dicha funcion)
 
+- Daniel:
+
+* Se cambio el formato de literales a Tokens para cuadruplos y diferentes pilas
+
+* Se anadieron cuadruplos para las funciones
+
+* Se arreglaron problemas producidos por los Tokens
