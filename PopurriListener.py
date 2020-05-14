@@ -314,11 +314,17 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper = QuadWrapper()
         self.if_cond = False
         self.param_count = -1
+        self.func_count = -1
+        self.func_returned_val = False
 
     def enterProgram(self, ctx):
         '''
         [Program] marca el inicio de las reglas de la gramatica. Aqui inicia la fase de compilacion.
         '''
+        goto_quad = Quadruple(GOTO)
+        self.quadWrapper.insertQuad(goto_quad)
+        self.quadWrapper.insertJump()
+        self.func_count = len(ctx.function())
         pass
 
     def exitProgram(self, ctx):
@@ -362,10 +368,16 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterDeclarations(self, ctx):
-        pass
+        # Fill GOTO to declarations start (so classes dont get executed)
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.quads_ptr + 1,
+            at=self.quadWrapper.popJump() - 1
+        )
 
     def exitDeclarations(self, ctx):
-        pass
+        goto_quad = Quadruple(GOTO)
+        self.quadWrapper.insertQuad(goto_quad)
+        self.quadWrapper.insertJump()
 
     def enterDeclaration(self, ctx):
         # Checks if global is already declared
@@ -425,6 +437,8 @@ class PopurriListener(ParseTreeListener):
         elif len(ctx.ID()) > 1:
             func.return_type = str(ctx.ID(1))
 
+        func.updateQuadsRange(start=self.quadWrapper.quads_ptr + 1)
+
         return func
 
     def enterFunction(self, ctx):
@@ -432,7 +446,6 @@ class PopurriListener(ParseTreeListener):
             raise error(ctx, FUNC_REDEFINITION.format(str(ctx.ID(0))))
 
         func = self.createFunction(ctx)
-        func.updateQuadsRange(start=self.quadWrapper.quads_ptr + 1)
         self.ctxWrapper.addFunction(func)
         self.ctxWrapper.push(func.id)
 
@@ -440,12 +453,18 @@ class PopurriListener(ParseTreeListener):
 
     def exitFunction(self, ctx):
         func = self.ctxWrapper.getFunction(self.ctxWrapper.top())
+        # If function is non-void verify it had at least one return inside
+        if func.return_type != "void" and not self.func_returned_val:
+            raise error(ctx, MUST_RETURN_ON_NON_VOID_FUNC.format(func.id))
 
         if func.quads_range[0] >= self.quadWrapper.quads_ptr:
             func.updateQuadsRange(start=-1)
         else:
             func.updateQuadsRange(end=self.quadWrapper.quads_ptr)
+
         self.ctxWrapper.pop()
+        self.func_count -= 1
+        self.func_returned_val = False # Reset flag
         pass
 
     def getAccessType(self, ctx):
@@ -547,6 +566,15 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterStatement(self, ctx):
+        # Check if Main Start
+        if self.func_count == 0:
+            # Fill GOTO to main start (so funcs dont get executed)
+            self.quadWrapper.fillQuadWith(
+                self.quadWrapper.quads_ptr + 1,
+                at=self.quadWrapper.popJump() - 1
+            )
+            self.func_count = -1 # Reset flag
+
         self.if_cond = False
         if ctx.assignment() is not None:
             var_id = self.validateCalledIds(ctx)
@@ -681,8 +709,9 @@ class PopurriListener(ParseTreeListener):
 
         self.quadWrapper.insertQuad(Quadruple(
             op=GOTOR,
-            l=self.quadWrapper.popAddress()
+            res=self.quadWrapper.popAddress()
         ))
+        self.func_returned_val = True
 
     def exitCond(self, ctx):
         if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is OPENPAREN:
