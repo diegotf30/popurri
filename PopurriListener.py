@@ -22,7 +22,8 @@ class QuadWrapper():
     '''
     Si tienes un mejor nombre para esta clase, go ahead.
     '''
-    operator_codes = ['GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', 'ERA', 'PARAM', '+', '+=', '-', '-=', '*', '*=', '/', '/=',
+    operator_codes = ['GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', 'ERA', 'PARAM', 'ENDPROC',
+                      '+', '+=', '-', '-=', '*', '*=', '/', '/=',
                       '%', '%=', '**', 'is', 'is not', '>', '>=', '<',
                       '<=', 'and', 'or', '=', 'print', 'input', '(', ')']
 
@@ -461,6 +462,10 @@ class PopurriListener(ParseTreeListener):
             func.updateQuadsRange(start=-1)
         else:
             func.updateQuadsRange(end=self.quadWrapper.quads_ptr)
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op=ENDPROC
+        ))
 
         self.ctxWrapper.pop()
         self.func_count -= 1
