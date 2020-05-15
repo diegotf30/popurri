@@ -1,0 +1,21 @@
+module main
+
+class parent {
+    private var name : string = "name"
+    var ssn = 1 * 10 * (2 + 3 * 2) / 15 ** 2.0
+    func printParent() {
+        print(name, ssn)
+    }
+}
+
+var p : parent
+
+func func1() int {
+    return 2 + 3 * 2
+}
+
+func func2() {
+    
+}
+
+p.printParent()

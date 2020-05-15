@@ -8,8 +8,9 @@ func b(int a, float b) float {
     return a + b
 }
 
-func c(string d) Objeto {
+func c(string d) string {
     print("ola", d)
+    return d + " olas"
 }
 
 
