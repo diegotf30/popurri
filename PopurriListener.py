@@ -920,6 +920,7 @@ class PopurriListener(ParseTreeListener):
         if self.param_count - 1 != len(func.paramTypes):
             raise error(ctx, PARAM_AMOUNT_MISMATCH.format(func.id, len(func.paramTypes)))
 
+        # Validate call signature with function signature
         call_signature = tuple(self.quadWrapper.type_stack)
         func_signature = tuple(func.paramTypes)
         for i, func_ty in enumerate(func_signature[::-1], start=1):
@@ -927,11 +928,23 @@ class PopurriListener(ParseTreeListener):
             if func_ty != call_ty:
                 raise error(ctx, INVALID_SIGNATURE.format(func.id, call_signature, func_signature))
 
+        call = '.'.join(ids)
+
         self.quadWrapper.insertQuad(Quadruple(
             op=GOSUB,
-            l='.'.join(ids)
+            l=call
         ))
-        self.param_count = -1 # So we dont add func quad when exiting a cond rule
+
+        # Assign return value to tmp var
+        self.quadWrapper.tmp_counter += 1
+        tmp = f'temp_{self.quadWrapper.tmp_counter}'
+        self.quadWrapper.insertQuad(Quadruple(
+            op=EQUAL,
+            l=call,
+            res=tmp
+        ))
+        self.quadWrapper.insertAddress(tmp)
+        self.param_count = -1 # Reset parameter counter flag (So we dont add func quad when exiting a condition)
 
     def enterConstant(self, ctx):
         pass
