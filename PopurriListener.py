@@ -458,7 +458,7 @@ class PopurriListener(ParseTreeListener):
         if func.return_type != "void" and not self.func_returned_val:
             raise error(ctx, MUST_RETURN_ON_NON_VOID_FUNC.format(func.id))
 
-        if func.quads_range[0] >= self.quadWrapper.quads_ptr:
+        if func.quads_range[0] > self.quadWrapper.quads_ptr:
             func.updateQuadsRange(start=-1)
         else:
             func.updateQuadsRange(end=self.quadWrapper.quads_ptr)
@@ -564,11 +564,18 @@ class PopurriListener(ParseTreeListener):
 
     def enterMethod(self, ctx):
         self.ctxWrapper.push(ctx.ID(0))
-        pass
 
     def exitMethod(self, ctx):
-        self.ctxWrapper.pop()
-        pass
+        name = self.ctxWrapper.pop()
+        method = self.ctxWrapper.getFunction(name, context=self.ctxWrapper.top())
+        if method.quads_range[0] > self.quadWrapper.quads_ptr:
+            method.updateQuadsRange(start=-1)
+        else:
+            method.updateQuadsRange(end=self.quadWrapper.quads_ptr)
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op=ENDPROC
+        ))
 
     def enterStatement(self, ctx):
         # Check if Main Start

@@ -1,7 +1,7 @@
 module main
 class mychild {
     private var hola : int
-    func a() {
+    func a(int a) {
         print("ola")
     }
     var a : float
