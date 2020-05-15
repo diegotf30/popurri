@@ -965,7 +965,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.popType()
             print_quads.append(Quadruple(
                 op=PRINT,
-                l=address
+                res=address
             ))
 
         # Quads are generated in inverse order (due to being in stack), so push them end to start
