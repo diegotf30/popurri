@@ -1,0 +1,10 @@
+INT = 0
+FLOAT = 1
+BOOL = 2
+STRING = 3
+
+# Context
+
+GLOBAL = 4
+TEMPORAL = 5
+LOCAL = 6
