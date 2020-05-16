@@ -11,7 +11,8 @@ class MemoryHandler():
 
     def updateMemory(self, address=None, value=None, dtype=None):
         '''
-        Updates a particular mem stack size
+        Updates a particular mem stack size/value
+        this functions should be used only by PopurriListener.py
         '''
 
         context, address = self.getAddressContext(address)
@@ -19,11 +20,16 @@ class MemoryHandler():
         # updates the corresponding type list
         self.mem_context_list[context].updateTypeStackSize(dtype)
 
-        # inserts value in the corresponding type list
-        self.mem_context_list[context].updateAddress(
-            address=address, dtype=dtype, value=value)
+        if value is not None:
+            # inserts value in the corresponding type list
+            self.mem_context_list[context].updateAddress(
+                address=address, dtype=dtype, value=value)
 
     def getAddressContext(self, address):
+        '''
+        given the address return the context [GLOBAL, LOCAL, TEMPORAL] 
+        and removes the offset from the address [this new address is returned too]
+        '''
         if address >= 10000 and address <= 19999:
             return (GLOBAL, address - 10000)
         elif address >= 20000 and address <= 29999:
@@ -32,6 +38,11 @@ class MemoryHandler():
             return (TEMPORAL, address - 30000)
         else:
             return (None, None)
+
+    def getAddressValue(self, address):
+        context, address = self.getAddressContext(address)
+
+        return self.mem_context_list[context].getAddressValue()
 
 
 class Memory():
@@ -46,6 +57,9 @@ class Memory():
             self.list_types[dtype] = sizes[dtype]
 
     def updateTypeStackSize(self, dtype=None):
+        '''
+        Increase the list size of a certain type[INT, FLOAT, BOOL, STRING]
+        '''
         if dtype is None:
             return False
 
