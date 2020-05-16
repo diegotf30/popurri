@@ -488,7 +488,8 @@ class PopurriListener(ParseTreeListener):
         if ctx.parent() is not None:
             klass.parent_id = 'class ' + str(ctx.parent().ID())
             if not self.ctxWrapper.classExists(klass.parent_id):
-                raise error(ctx, UNDEF_PARENT.format(klass.parent_id, klass.id))
+                raise error(ctx, UNDEF_PARENT.format(
+                    klass.parent_id, klass.id))
 
             # Inherit attributes
             for attribute in self.ctxWrapper.variables[klass.parent_id].values():
@@ -695,7 +696,7 @@ class PopurriListener(ParseTreeListener):
         self.if_cond = True
 
     def exitElseIf(self, ctx):
-        self.exitIfStmt(ctx) # Rule is the same as if statement
+        self.exitIfStmt(ctx)  # Rule is the same as if statement
 
     def enterElseStmt(self, ctx):
         pass
@@ -717,7 +718,8 @@ class PopurriListener(ParseTreeListener):
         func = self.ctxWrapper.getCurrentFunction()
         return_type = self.quadWrapper.popType()
         if return_type != func.return_type:
-            raise error(ctx, INVALID_RETURN_TYPE.format(return_type, func.return_type))
+            raise error(ctx, INVALID_RETURN_TYPE.format(
+                return_type, func.return_type))
 
         self.quadWrapper.insertQuad(Quadruple(
             op=GOTOR,
@@ -740,7 +742,8 @@ class PopurriListener(ParseTreeListener):
             )
             self.quadWrapper.insertQuad(gotof_quad)
             self.quadWrapper.insertJump()
-            self.quadWrapper.insertJump(OPENPAREN) # False bottom for filling breaks inside if/loop
+            # False bottom for filling breaks inside if/loop
+            self.quadWrapper.insertJump(OPENPAREN)
 
         # Function call
         if self.param_count != -1:
@@ -778,7 +781,7 @@ class PopurriListener(ParseTreeListener):
         elif ctx.CONST_STR() is not None:
             self.quadWrapper.insertType('string')
             s = str(ctx.CONST_STR())
-            return s[1:-1] # Remove quotes
+            return s[1:-1]  # Remove quotes
         else:
             self.quadWrapper.insertType('none')
             return 'none'
@@ -794,17 +797,23 @@ class PopurriListener(ParseTreeListener):
                 raise error(ctx, UNDEF_VAR.format(ids[0]))
 
             if is_function:
-                method = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
+                method = self.ctxWrapper.getFunction(
+                    ids[1], 'class ' + class_var.type)
                 if method is None:
-                    raise error(ctx, UNDEF_METHOD.format(ids[1], class_var.type))
+                    raise error(ctx, UNDEF_METHOD.format(
+                        ids[1], class_var.type))
                 if method.access_type != 'public':
-                    raise error(ctx, NOT_PUBLIC_METHOD.format(method.access_type.upper(), ids[1], class_var.type))
+                    raise error(ctx, NOT_PUBLIC_METHOD.format(
+                        method.access_type.upper(), ids[1], class_var.type))
             else:
-                attr = self.ctxWrapper.getVariable(ids[1], 'class ' + class_var.type)
+                attr = self.ctxWrapper.getVariable(
+                    ids[1], 'class ' + class_var.type)
                 if attr is None:
-                    raise error(ctx, UNDEF_ATTRIBUTE.format(ids[1], class_var.type))
+                    raise error(ctx, UNDEF_ATTRIBUTE.format(
+                        ids[1], class_var.type))
                 if attr.access_type != 'public':
-                    raise error(ctx, NOT_PUBLIC_ATTRIBUTE.format(attr.access_type.upper(), ids[1], class_var.type))
+                    raise error(ctx, NOT_PUBLIC_ATTRIBUTE.format(
+                        attr.access_type.upper(), ids[1], class_var.type))
 
                 self.quadWrapper.insertType(attr.type)
 
@@ -886,7 +895,8 @@ class PopurriListener(ParseTreeListener):
                 res_type = bailaMijaConElSeñor(
                     op - 1, var_type, res_type)
                 if res_type is None:
-                    raise error(ctx, TYPE_MISMATCH.format(op, var_type, res_type))
+                    raise error(ctx, TYPE_MISMATCH.format(
+                        op, var_type, res_type))
 
             if var_type != res_type:
                 raise error(
@@ -913,12 +923,14 @@ class PopurriListener(ParseTreeListener):
 
         if len(ids) == 2:
             class_var = self.ctxWrapper.getVariable(ids[0])
-            func = self.ctxWrapper.getFunction(ids[1], 'class ' + class_var.type)
+            func = self.ctxWrapper.getFunction(
+                ids[1], 'class ' + class_var.type)
         else:
             func = self.ctxWrapper.getFunctionIfExists(ids[0])
 
         if self.param_count - 1 != len(func.paramTypes):
-            raise error(ctx, PARAM_AMOUNT_MISMATCH.format(func.id, len(func.paramTypes)))
+            raise error(ctx, PARAM_AMOUNT_MISMATCH.format(
+                func.id, len(func.paramTypes)))
 
         # Validate call signature with function signature
         call_signature = tuple(self.quadWrapper.type_stack)
@@ -926,7 +938,8 @@ class PopurriListener(ParseTreeListener):
         for i, func_ty in enumerate(func_signature[::-1], start=1):
             call_ty = self.quadWrapper.popType()
             if func_ty != call_ty:
-                raise error(ctx, INVALID_SIGNATURE.format(func.id, call_signature, func_signature))
+                raise error(ctx, INVALID_SIGNATURE.format(
+                    func.id, call_signature, func_signature))
 
         call = '.'.join(ids)
 

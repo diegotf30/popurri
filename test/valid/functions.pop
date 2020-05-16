@@ -5,6 +5,8 @@ func a() {
 }
 
 func b(int a, float b) float {
+    var c : int
+    var f 
     return a + b
 }
 
