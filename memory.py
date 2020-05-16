@@ -7,7 +7,7 @@ class MemoryHandler():
         '''
         mem_context_list : [GLOBAL, LOCAL, TEMPORAL]
         '''
-        self.mem_context_list = [Memory([0, 0, 0, 0])] * 3
+        self.mem_context_list = [Memory()] * 3
 
     def updateMemory(self, address=None, value=None, dtype=None):
         '''
@@ -47,14 +47,14 @@ class MemoryHandler():
 
 class Memory():
 
-    def __init__(self, sizes=None):
+    def __init__(self):
         '''
         Lists size can be redefined after creating a Memory object.
         '''
         self.list_types = [] * 4
 
         for dtype in [INT, FLOAT, BOOL, STRING]:
-            self.list_types[dtype] = sizes[dtype]
+            self.list_types[dtype] = []
 
     def updateTypeStackSize(self, dtype=None):
         '''
