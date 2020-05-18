@@ -5,6 +5,8 @@ from error_tokens import *
 from semantic_cube import bailaMijaConElSeñor
 import jsbeautifier as js
 import json
+import memory
+import popurri_memory_tokens as mem_tokens
 
 
 def pprint(*args):
@@ -36,6 +38,7 @@ class QuadWrapper():
         self.address_stack = []
         self.jump_stack = []
         self.break_stack = []
+        self.mem_handler = memory.MemoryHandler()
 
     def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
@@ -111,12 +114,17 @@ class QuadWrapper():
         # Push resulting type into stack
         self.insertType(res_type)
 
+        return res_type
+
     def handleQuadruple(self, ctx, operators):
         if self.topOperator() in operators:
-            self.validateTypes(ctx)
+            tmp_type = self.validateTypes(ctx)
 
             self.tmp_counter += 1
-            tmp = f'temp_{self.tmp_counter}'
+            # tmp = f'temp_{self.tmp_counter}'
+            tmp = self.mem_handler.reserveMemoryAddress(
+                context=mem_tokens.TEMPORAL, dtype=self.mem_handler.getTypeFromRawString(tmp_type))
+
             self.insertQuad(Quadruple(
                 op=self.popOperator(),
                 r=self.popAddress(),
@@ -171,6 +179,11 @@ class ContextWrapper():
 
     def push(self, ctx):
         return self.context_stack.append(str(ctx))
+
+    def getVariableByAddress(self, address=None):
+        for _, var_dict in (self.variables).items():
+            for var, data in var_dict.items():
+                print(var, data.address)
 
     def getVariable(self, var_id, context="global"):
         if context in self.variables:
@@ -256,11 +269,12 @@ class Variable():
     [value] es el valor inicial que tendra la variable. Ej. var edad = 25. Donde 25 es el valor inicial.
     '''
 
-    def __init__(self, id, access_type="public", type=None, value=None):
+    def __init__(self, id, access_type="public", type=None, value=None, address=None):
         self.access_type = str(access_type)
         self.id = str(id)
         self.type = str(type)
         self.value = value
+        self.address = address
 
 
 class Object():
@@ -354,6 +368,18 @@ class PopurriListener(ParseTreeListener):
         pprint(self.quadWrapper.jump_stack)
         print('quad_ptr = ', end='')
         pprint(self.quadWrapper.quads_ptr)
+        print('global_mem = ', end='')
+        pprint(
+            self.quadWrapper.mem_handler.mem_context_list[mem_tokens.GLOBAL - 4].list_types)
+        print('local_mem = ', end='')
+        pprint(
+            self.quadWrapper.mem_handler.mem_context_list[mem_tokens.LOCAL - 4].list_types)
+        print('temporal_mem = ', end='')
+        pprint(
+            self.quadWrapper.mem_handler.mem_context_list[mem_tokens.TEMPORAL - 4].list_types)
+        print('constant_mem = ', end='')
+        pprint(
+            self.quadWrapper.mem_handler.getAdressStack(mem_tokens.CONSTANT))
         pass
 
     def enterModule(self, ctx):
@@ -389,10 +415,19 @@ class PopurriListener(ParseTreeListener):
         # var has data_type : INT, FLOAT, STRING, BOOL
         # TODO: Arrays are not yet implemented
         if ctx.TYPE() is not None:
+            dtype = self.quadWrapper.mem_handler.getTypeFromRawString(
+                str(ctx.TYPE()))
+
+            var_address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+                context=mem_tokens.GLOBAL,
+                dtype=dtype)
+
             var = Variable(
                 id=ctx.ID(0),
-                type=ctx.TYPE()
+                type=ctx.TYPE(),
+                address=var_address
             )
+
         # var is type object
         elif len(ctx.ID()) == 2:
             class_name = str(ctx.ID(1))
@@ -403,11 +438,13 @@ class PopurriListener(ParseTreeListener):
                 id=ctx.ID(0),
                 type=class_name
             )
-        # Var has no delcared type
+        # Var has no declared type
         else:
+            # TODO get data type
             var = Variable(id=ctx.ID(0))
 
         if ctx.assignment() is not None:
+
             self.quadWrapper.insertAddress(var.id)
             self.quadWrapper.insertType(var.type)
 
@@ -769,28 +806,32 @@ class PopurriListener(ParseTreeListener):
 
     # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
+
         if ctx.CONST_BOOL() is not None:
+            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+                mem_tokens.CONSTANT, mem_tokens.BOOL, str(ctx.CONST_BOOL()))
             self.quadWrapper.insertType('bool')
-            return str(ctx.CONST_BOOL())
         elif ctx.CONST_I() is not None:
+            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+                mem_tokens.CONSTANT, mem_tokens.INT, int(str(ctx.CONST_I())))
             self.quadWrapper.insertType('int')
-            return str(ctx.CONST_I())
         elif ctx.CONST_F() is not None:
+            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+                mem_tokens.CONSTANT, mem_tokens.FLOAT, float(str(ctx.CONST_F())))
             self.quadWrapper.insertType('float')
-            return str(ctx.CONST_F())
         elif ctx.CONST_STR() is not None:
+            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+                mem_tokens.CONSTANT, mem_tokens.STRING, str(ctx.CONST_STR())[1:-1])
             self.quadWrapper.insertType('string')
-            s = str(ctx.CONST_STR())
-            return s[1:-1]  # Remove quotes
         else:
             self.quadWrapper.insertType('none')
             return 'none'
+        return address
         # TODO: add arrays
 
     # Helper to validate id(s) being called (be them )
     def validateCalledIds(self, ctx, is_function=False):
         ids = [str(id) for id in ctx.ID()]
-
         if len(ids) == 2:  # class attr/method being called (i.e. myobj.name or myobj.print())
             class_var = self.ctxWrapper.getVariable(ids[0])
             if class_var is None:
@@ -820,6 +861,7 @@ class PopurriListener(ParseTreeListener):
             return '.'.join(ids)
         else:  # global var/func being called
             id = ids[0]
+            address = ''
             if is_function:
                 func = self.ctxWrapper.getFunctionIfExists(id)
                 if func is None:
@@ -831,7 +873,9 @@ class PopurriListener(ParseTreeListener):
 
                 self.quadWrapper.insertType(var.type)
 
-            return id
+                address = var.address
+
+            return address
 
     def enterVal(self, ctx):
         if ctx.cond() is not None:  # nested cond
@@ -841,6 +885,7 @@ class PopurriListener(ParseTreeListener):
             id = self.validateCalledIds(ctx)
             self.quadWrapper.insertAddress(id)
         elif ctx.constant() is not None:  # const
+
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
 
         # TODO implement arrays
@@ -877,17 +922,33 @@ class PopurriListener(ParseTreeListener):
 
     def exitAssignment(self, ctx):
         if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
+            address = None
             res_id = self.quadWrapper.popAddress()
             var_id = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
             var_type = self.quadWrapper.popType()
 
+            print(self.ctxWrapper.getVariableByAddress(var_id))
             # If var type is undeclared (None), update with resulting type
             if var_type == 'None':
                 var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
                 var.type = res_type
+
+                dtype = self.quadWrapper.mem_handler.getTypeFromRawString(
+                    var.type)
+
+                context = self.quadWrapper.mem_handler.getContextByRawString(
+                    self.ctxWrapper.top())
+                address = var.address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+                    context,
+                    dtype,
+                    var.value
+                )
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
+
+            var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
+            address = var.address
 
             # MADE CHANGES HERE {OP[0] -> OP}
             op = self.quadWrapper.popOperator()
@@ -905,7 +966,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertQuad(Quadruple(
                 op=op,
                 l=res_id,
-                res=var_id
+                res=address
             ))
         pass
 
