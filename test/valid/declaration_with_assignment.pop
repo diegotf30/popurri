@@ -1,4 +1,4 @@
 module main
 
-var a = 10 * 16 / 2.0, b = 10
+var a = 10 * 16 / 2.0, b  = 10
 var c : float = 10 / 2

@@ -1,5 +1,6 @@
 module main
 
-var a : float
-
+var a : float = 45.5
+var f : bool = true
 a = 2 * (3 * 4 + 2) * 5.0 / 3 + 32.1 * 15 * 91 / 2.0 ** 3
+f = false 
