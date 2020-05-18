@@ -1,10 +1,14 @@
 module main
 
-class  child {
-private var a : int = 10
-private var b : float = 10 * 5 / 2
+class child {
+public var a : int
+private var b = 10 * 5 / 2
 private var c = "ola"
 
 }
 
-var a
+var a : int
+
+var c : child
+
+//a.c
