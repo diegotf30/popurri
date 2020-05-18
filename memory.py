@@ -8,6 +8,12 @@ CONTEXT_TOKEN_OFFSET = 4
 
 class MemoryHandler():
 
+    contextConversion = {
+        'global': GLOBAL,
+        'class': LOCAL,
+        'function': LOCAL,
+    }
+
     dataTypes = {
         'int': INT,
         'float': FLOAT,
@@ -18,7 +24,8 @@ class MemoryHandler():
     memoryContextStartingPoint = {
         GLOBAL: 10000,
         LOCAL: 20000,
-        TEMPORAL: 30000
+        TEMPORAL: 30000,
+        CONSTANT: 40000,
     }
 
     def __init__(self):
@@ -26,7 +33,7 @@ class MemoryHandler():
         mem_context_list : [GLOBAL, LOCAL, TEMPORAL]
         '''
         self.mem_context_list = []
-        for _ in range(0, 4):
+        for _ in range(0, 5):
             self.mem_context_list.append(Memory())
 
     def getTypeFromValue(self, value=None):
@@ -62,7 +69,8 @@ class MemoryHandler():
         address = quadrant_memory + (TYPE_OFFSET * dtype) + relative_memory
 
         if value is not None:
-            self.updateMemory(address, value)
+            self.mem_context_list[context].updateAddress(
+                address=relative_memory, dtype=dtype, value=value)
 
         return address
 
@@ -88,8 +96,6 @@ class MemoryHandler():
             self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].updateAddress(
                 address=address, dtype=dtype, value=value)
 
-        print(self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].list_types)
-
     def getAddressContext(self, address):
         '''
         given the address return the context [GLOBAL, LOCAL, TEMPORAL] 
@@ -97,6 +103,7 @@ class MemoryHandler():
         10000 -> 19999 : GLOBAL
         20000 -> 29999 : LOCAL
         30000 -> 39999 : TEMPORAL
+        40000 -> 49999 : CONSTANT
         '''
         if address >= 10000 and address <= 19999:
             return (GLOBAL, address - 10000)
@@ -104,17 +111,32 @@ class MemoryHandler():
             return (LOCAL, address - 20000)
         elif address >= 30000 and address <= 39999:
             return (TEMPORAL, address - 30000)
+        elif address >= 40000 and address <= 49999:
+            return (CONSTANT, address - 40000)
         else:
             return (None, None)
 
     def getAddressValue(self, address):
         context, address = self.getAddressContext(address)
 
-        dtype = address / 2499
+        dtype = math.floor(address / 2499)
 
         address -= (dtype * 2499)
+        print(dtype, address)
+        return self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].getAddressValue(address, dtype)
 
-        return self.mem_context_list[context].getAddressValue(address, dtype)
+    def getAdressStack(self, context):
+        return self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].list_types
+
+    def copyAddressType(self, address):
+        _, address = self.getAddressContext(address)
+
+        dtype = (address / TYPE_OFFSET)
+
+        return dtype
+
+    def getContextByRawString(self, context=None):
+        return self.contextConversion[context]
 
 
 class Memory():
@@ -165,4 +187,6 @@ class Memory():
         list_address is the index after offset. Ej. Address:5024 -> 24.
         dtype is the on of the possible data types used by popurri
         '''
-        return self.list_types[dtype][address]
+
+        print(self.list_types[dtype][address - 1], dtype, address - 1)
+        return self.list_types[dtype][address - 1]
