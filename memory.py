@@ -27,8 +27,22 @@ class MemoryHandler():
         '''
         self.mem_context_list = [Memory()] * 3
 
-    def getType(self, value=None):
-        return self.dataTypes[type(value)]
+    def getTypeFromValue(self, value=None):
+        value_type = None
+
+        if type(value) is int:
+            value_type = 'int'
+        elif type(value) is float:
+            value_type = 'float'
+        if type(value) is bool:
+            value_type = 'bool'
+        if type(value) is str:
+            value_type = 'string'
+
+        return self.dataTypes[value_type]
+
+    def getTypeFromRawString(self, raw_type=None):
+        return self.dataTypes[raw_type]
 
     def reserveMemoryAddress(self, context=None, dtype=None):
         '''
