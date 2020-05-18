@@ -183,7 +183,9 @@ class ContextWrapper():
     def getVariableByAddress(self, address=None):
         for _, var_dict in (self.variables).items():
             for var, data in var_dict.items():
-                print(var, data.address)
+                if address == str(data.address):
+                    return var
+        return None
 
     def getVariable(self, var_id, context="global"):
         if context in self.variables:
@@ -444,8 +446,10 @@ class PopurriListener(ParseTreeListener):
             var = Variable(id=ctx.ID(0))
 
         if ctx.assignment() is not None:
-
-            self.quadWrapper.insertAddress(var.id)
+            if var.address is not None:
+                self.quadWrapper.insertAddress(var.address)
+            else:
+                self.quadWrapper.insertAddress(var.id)
             self.quadWrapper.insertType(var.type)
 
         self.ctxWrapper.addVariable(var)
@@ -928,8 +932,7 @@ class PopurriListener(ParseTreeListener):
             res_type = self.quadWrapper.popType()
             var_type = self.quadWrapper.popType()
 
-            print(self.ctxWrapper.getVariableByAddress(var_id))
-            # If var type is undeclared (None), update with resulting type
+            print(var_id)
             if var_type == 'None':
                 var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
                 var.type = res_type
@@ -947,8 +950,12 @@ class PopurriListener(ParseTreeListener):
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
-            var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
-            address = var.address
+            if address == None:
+                print('hola', var_id)
+                var_id = self.ctxWrapper.getVariableByAddress(var_id)
+                print(var_id)
+                var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
+                address = var.address
 
             # MADE CHANGES HERE {OP[0] -> OP}
             op = self.quadWrapper.popOperator()

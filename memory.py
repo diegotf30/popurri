@@ -136,6 +136,10 @@ class MemoryHandler():
         return dtype
 
     def getContextByRawString(self, context=None):
+        if context[:5] == 'class':
+            context = 'class'
+        elif context[:4] == 'func':
+            context = 'function'
         return self.contextConversion[context]
 
 
