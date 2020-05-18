@@ -1,26 +1,10 @@
-from popurri_memory_tokens import *
+from popurri_tokens import *
 import math
 
 # 9999 / 4 = 2499
 TYPE_OFFSET = 2499
-CONTEXT_TOKEN_OFFSET = 4
-
 
 class MemoryHandler():
-
-    contextConversion = {
-        'global': GLOBAL,
-        'class': LOCAL,
-        'function': LOCAL,
-    }
-
-    dataTypes = {
-        'int': INT,
-        'float': FLOAT,
-        'bool': BOOL,
-        'string': STRING,
-    }
-
     memoryContextStartingPoint = {
         GLOBAL: 10000,
         LOCAL: 20000,
@@ -36,23 +20,6 @@ class MemoryHandler():
         for _ in range(0, 5):
             self.mem_context_list.append(Memory())
 
-    def getTypeFromValue(self, value=None):
-        value_type = None
-
-        if type(value) is int:
-            value_type = 'int'
-        elif type(value) is float:
-            value_type = 'float'
-        if type(value) is bool:
-            value_type = 'bool'
-        if type(value) is str:
-            value_type = 'string'
-
-        return self.dataTypes[value_type]
-
-    def getTypeFromRawString(self, raw_type=None):
-        return self.dataTypes[raw_type]
-
     def reserveMemoryAddress(self, context=None, dtype=None, value=None):
         '''
         this function will reserve an address for the corresponding source call.
@@ -61,7 +28,8 @@ class MemoryHandler():
 
         quadrant_memory = self.memoryContextStartingPoint[context]
 
-        context -= CONTEXT_TOKEN_OFFSET
+        context -= 36 # DELETE THIS
+        dtype -= 32
 
         relative_memory = self.mem_context_list[context].updateTypeStackSize(
             dtype)
@@ -93,7 +61,7 @@ class MemoryHandler():
 
         if value is not None:
             # inserts value in the corresponding type list
-            self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].updateAddress(
+            self.mem_context_list[context - 36].updateAddress(
                 address=address, dtype=dtype, value=value)
 
     def getAddressContext(self, address):
@@ -123,10 +91,10 @@ class MemoryHandler():
 
         address -= (dtype * 2499)
         print(dtype, address)
-        return self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].getAddressValue(address, dtype)
+        return self.mem_context_list[context - 36].getAddressValue(address, dtype)
 
     def getAdressStack(self, context):
-        return self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].list_types
+        return self.mem_context_list[context - 36].list_types
 
     def copyAddressType(self, address):
         _, address = self.getAddressContext(address)
@@ -134,13 +102,6 @@ class MemoryHandler():
         dtype = (address / TYPE_OFFSET)
 
         return dtype
-
-    def getContextByRawString(self, context=None):
-        if context[:5] == 'class':
-            context = 'class'
-        elif context[:4] == 'func':
-            context = 'function'
-        return self.contextConversion[context]
 
 
 class Memory():

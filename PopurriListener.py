@@ -6,7 +6,6 @@ from semantic_cube import bailaMijaConElSeñor
 import jsbeautifier as js
 import json
 import memory
-import popurri_memory_tokens as mem_tokens
 
 
 def pprint(*args):
@@ -22,12 +21,8 @@ def error(ctx, msg):
 
 class QuadWrapper():
     '''
-    Si tienes un mejor nombre para esta clase, go ahead.
+    Handles all quadruple generation related stuff
     '''
-    operator_codes = ['GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', 'ERA', 'PARAM', 'ENDPROC',
-                      '+', '+=', '-', '-=', '*', '*=', '/', '/=',
-                      '%', '%=', '**', 'is', 'is not', '>', '>=', '<',
-                      '<=', 'and', 'or', '=', 'print', 'input', '(', ')']
 
     def __init__(self):
         self.tmp_counter = 0
@@ -93,16 +88,10 @@ class QuadWrapper():
         self.address_stack.append(str(address))
 
     def insertOperator(self, operator):
-        self.operator_stack.append(self.toToken(operator))
+        self.operator_stack.append(tokenize(operator))
 
     def insertJump(self, jump=None):
         self.jump_stack.append(self.quads_ptr if jump is None else jump)
-
-    def toToken(self, op):
-        return self.operator_codes.index(op)
-
-    def toString(self, tok):
-        return self.operator_codes[tok]
 
     def validateTypes(self, ctx):
         op = self.topOperator()
@@ -123,7 +112,9 @@ class QuadWrapper():
             self.tmp_counter += 1
             # tmp = f'temp_{self.tmp_counter}'
             tmp = self.mem_handler.reserveMemoryAddress(
-                context=mem_tokens.TEMPORAL, dtype=self.mem_handler.getTypeFromRawString(tmp_type))
+                context=TEMPORAL,
+                dtype=tokenize(tmp_type)
+            )
 
             self.insertQuad(Quadruple(
                 op=self.popOperator(),
@@ -356,7 +347,7 @@ class PopurriListener(ParseTreeListener):
         print('quads_stack = [')
         for i, x in enumerate(self.quadWrapper.quads, start=1):
             tmp = list(x)
-            tmp[0] = self.quadWrapper.toString(x[0])
+            tmp[0] = stringifyToken(x[0])
             print('\t', i, tuple(tmp))
         print(']')
 
@@ -372,16 +363,16 @@ class PopurriListener(ParseTreeListener):
         pprint(self.quadWrapper.quads_ptr)
         print('global_mem = ', end='')
         pprint(
-            self.quadWrapper.mem_handler.mem_context_list[mem_tokens.GLOBAL - 4].list_types)
+            self.quadWrapper.mem_handler.mem_context_list[GLOBAL - 36].list_types)
         print('local_mem = ', end='')
         pprint(
-            self.quadWrapper.mem_handler.mem_context_list[mem_tokens.LOCAL - 4].list_types)
+            self.quadWrapper.mem_handler.mem_context_list[LOCAL - 36].list_types)
         print('temporal_mem = ', end='')
         pprint(
-            self.quadWrapper.mem_handler.mem_context_list[mem_tokens.TEMPORAL - 4].list_types)
+            self.quadWrapper.mem_handler.mem_context_list[TEMPORAL - 36].list_types)
         print('constant_mem = ', end='')
         pprint(
-            self.quadWrapper.mem_handler.getAdressStack(mem_tokens.CONSTANT))
+            self.quadWrapper.mem_handler.getAdressStack(CONSTANT))
         pass
 
     def enterModule(self, ctx):
@@ -417,12 +408,12 @@ class PopurriListener(ParseTreeListener):
         # var has data_type : INT, FLOAT, STRING, BOOL
         # TODO: Arrays are not yet implemented
         if ctx.TYPE() is not None:
-            dtype = self.quadWrapper.mem_handler.getTypeFromRawString(
-                str(ctx.TYPE()))
+            dtype = tokenize(ctx.TYPE())
 
             var_address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                context=mem_tokens.GLOBAL,
-                dtype=dtype)
+                context=GLOBAL,
+                dtype=dtype
+            )
 
             var = Variable(
                 id=ctx.ID(0),
@@ -813,19 +804,19 @@ class PopurriListener(ParseTreeListener):
 
         if ctx.CONST_BOOL() is not None:
             address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                mem_tokens.CONSTANT, mem_tokens.BOOL, str(ctx.CONST_BOOL()))
+                CONSTANT, BOOL, str(ctx.CONST_BOOL()))
             self.quadWrapper.insertType('bool')
         elif ctx.CONST_I() is not None:
             address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                mem_tokens.CONSTANT, mem_tokens.INT, int(str(ctx.CONST_I())))
+                CONSTANT, INT, int(str(ctx.CONST_I())))
             self.quadWrapper.insertType('int')
         elif ctx.CONST_F() is not None:
             address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                mem_tokens.CONSTANT, mem_tokens.FLOAT, float(str(ctx.CONST_F())))
+                CONSTANT, FLOAT, float(str(ctx.CONST_F())))
             self.quadWrapper.insertType('float')
         elif ctx.CONST_STR() is not None:
             address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                mem_tokens.CONSTANT, mem_tokens.STRING, str(ctx.CONST_STR())[1:-1])
+                CONSTANT, STRING, str(ctx.CONST_STR())[1:-1])
             self.quadWrapper.insertType('string')
         else:
             self.quadWrapper.insertType('none')
@@ -937,11 +928,9 @@ class PopurriListener(ParseTreeListener):
                 var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
                 var.type = res_type
 
-                dtype = self.quadWrapper.mem_handler.getTypeFromRawString(
-                    var.type)
+                dtype = tokenize(var.type)
 
-                context = self.quadWrapper.mem_handler.getContextByRawString(
-                    self.ctxWrapper.top())
+                context = tokenizeContext(self.ctxWrapper.top())
                 address = var.address = self.quadWrapper.mem_handler.reserveMemoryAddress(
                     context,
                     dtype,
@@ -959,11 +948,9 @@ class PopurriListener(ParseTreeListener):
                 # var_id es un id
                 else:
                     var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
-                    dtype = self.quadWrapper.mem_handler.getTypeFromRawString(
-                        var.type)
+                    dtype = tokenize(var.type)
 
-                    context = self.quadWrapper.mem_handler.getContextByRawString(
-                        self.ctxWrapper.top())
+                    context = tokenizeContext(self.ctxWrapper.top())
                     address = var.address = self.quadWrapper.mem_handler.reserveMemoryAddress(
                         context,
                         dtype,

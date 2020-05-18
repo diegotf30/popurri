@@ -12,7 +12,7 @@ expOp     : '**'
 
 # Supported Types
 '''
-TYPE      :  'int' | 'float' | 'string' | 'bool' | '[float]' | '[int]' | '[bool]'
+TYPE      :  'int' | 'float' | 'str' | 'bool' | '[float]' | '[int]' | '[bool]'
 '''
 
 
@@ -70,7 +70,7 @@ bailes = {
         ("float", "int"): "float",
         ("float", "float"): "float",
         # "a" + "bc" = "abc"
-        ("string", "string"): "string"
+        ("str", "str"): "str"
     },
     SUBS: {
         ("int", "int"): "int",
@@ -85,8 +85,8 @@ bailes = {
         ("float", "int"): "float",
         ("float", "float"): "float",
         # "a" * 3 = "aaa"
-        ("string", "int"): "string",
-        ("int", "string"): "string"
+        ("str", "int"): "str",
+        ("int", "str"): "str"
     },
     DIV: {
         # 3 / 10 = 0.33333
@@ -118,11 +118,11 @@ bailes = {
 }
 
 # Append all combinations to "is" and "is not" operators
-types = ['int', 'float', 'string', 'bool']
+types = ['int', 'float', 'str', 'bool']
 for op in [EQUAL, NOTEQUAL]:
     for left in types:
         for right in types:
             bailes[op][(left, right)] = "bool"
 
 
-# TYPE      :  'int' | 'float' | 'string' | 'bool' | '[float]' | '[int]' | '[bool]'
+# TYPE      :  'int' | 'float' | 'str' | 'bool' | '[float]' | '[int]' | '[bool]'
