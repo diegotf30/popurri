@@ -950,11 +950,27 @@ class PopurriListener(ParseTreeListener):
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
+            # revisa si address se ha llenado por la sentancia if anterior
             if address == None:
-                print('hola', var_id)
-                var_id = self.ctxWrapper.getVariableByAddress(var_id)
-                print(var_id)
-                var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
+                # checa si var_id es una direccion o un id de variable
+                if self.ctxWrapper.getVariableByAddress(var_id) is not None:
+                    var_id = self.ctxWrapper.getVariableByAddress(var_id)
+                    var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
+                # var_id es un id
+                else:
+                    var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
+                    dtype = self.quadWrapper.mem_handler.getTypeFromRawString(
+                        var.type)
+
+                    context = self.quadWrapper.mem_handler.getContextByRawString(
+                        self.ctxWrapper.top())
+                    address = var.address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+                        context,
+                        dtype,
+                        var.value
+                    )
+
+                print(var.address)
                 address = var.address
 
             # MADE CHANGES HERE {OP[0] -> OP}
