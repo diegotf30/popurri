@@ -25,7 +25,9 @@ class MemoryHandler():
         '''
         mem_context_list : [GLOBAL, LOCAL, TEMPORAL]
         '''
-        self.mem_context_list = [Memory()] * 3
+        self.mem_context_list = []
+        for _ in range(0, 4):
+            self.mem_context_list.append(Memory())
 
     def getTypeFromValue(self, value=None):
         value_type = None
@@ -44,7 +46,7 @@ class MemoryHandler():
     def getTypeFromRawString(self, raw_type=None):
         return self.dataTypes[raw_type]
 
-    def reserveMemoryAddress(self, context=None, dtype=None):
+    def reserveMemoryAddress(self, context=None, dtype=None, value=None):
         '''
         this function will reserve an address for the corresponding source call.
 
@@ -57,7 +59,12 @@ class MemoryHandler():
         relative_memory = self.mem_context_list[context].updateTypeStackSize(
             dtype)
 
-        return quadrant_memory + (TYPE_OFFSET * dtype) + relative_memory
+        address = quadrant_memory + (TYPE_OFFSET * dtype) + relative_memory
+
+        if value is not None:
+            self.updateMemory(address, value)
+
+        return address
 
     def updateMemory(self, address=None, value=None):
         '''
@@ -82,7 +89,6 @@ class MemoryHandler():
                 address=address, dtype=dtype, value=value)
 
         print(self.mem_context_list[context - CONTEXT_TOKEN_OFFSET].list_types)
-        return True
 
     def getAddressContext(self, address):
         '''
@@ -104,7 +110,11 @@ class MemoryHandler():
     def getAddressValue(self, address):
         context, address = self.getAddressContext(address)
 
-        return self.mem_context_list[context].getAddressValue()
+        dtype = address / 2499
+
+        address -= (dtype * 2499)
+
+        return self.mem_context_list[context].getAddressValue(address, dtype)
 
 
 class Memory():
@@ -150,9 +160,9 @@ class Memory():
 
         return True
 
-    def getAddressValue(self, list_address=None, dtype=None):
+    def getAddressValue(self, address=None, dtype=None):
         '''
         list_address is the index after offset. Ej. Address:5024 -> 24.
         dtype is the on of the possible data types used by popurri
         '''
-        return self.list_types[dtype][list_address]
+        return self.list_types[dtype][address]
