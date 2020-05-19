@@ -3,8 +3,8 @@ import math
 
 class MemoryHandler():
     contexts = {}
-    context_offset = 10000
-    type_offset = int(context_offset / 4)
+    context_offset = None
+    type_offset = None
 
     def __init__(self, context_offset=10000):
         '''
@@ -35,6 +35,7 @@ class MemoryHandler():
                 value=value
             )
 
+        dtype -= INT
         return ctxMemory.start + reserved_address + (self.type_offset * dtype)
 
     def update(self, address, value):
@@ -76,16 +77,17 @@ class MemoryHandler():
 
 
 class Memory():
-    start = -1
-    sections = {
-        INT: [],
-        FLOAT: [],
-        STRING: [],
-        BOOL: []
-    }
+    start = None
+    sections = {}
 
     def __init__(self, start):
         self.start = start
+        self.sections = {
+            INT: [],
+            FLOAT: [],
+            BOOL: [],
+            STRING: []
+        }
 
     def reserveAddress(self, dtype):
         '''

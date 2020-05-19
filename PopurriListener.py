@@ -359,18 +359,13 @@ class PopurriListener(ParseTreeListener):
         pprint(self.quadWrapper.jump_stack)
         print('quad_ptr = ', end='')
         pprint(self.quadWrapper.quads_ptr)
-        print('globals = {', end='')
-        pprint(self.memHandler.contexts[GLOBAL].sections)
-        print('}')
-        print('locals = {', end='')
-        pprint(self.memHandler.contexts[LOCAL].sections)
-        print('}')
-        print('constants = {', end='')
-        pprint(self.memHandler.contexts[CONSTANT].sections)
-        print('}')
-        print('tmps = {', end='')
-        pprint(self.memHandler.contexts[TEMPORAL].sections)
-        print('}')
+
+        for ctx in [GLOBAL, LOCAL, CONSTANT, TEMPORAL]:
+            context = self.memHandler.contexts[ctx].sections
+            print(stringifyToken(ctx), '= {')
+            for section in context:
+                print('    ', stringifyToken(section), context[section])
+            print('}')
 
     def enterModule(self, ctx):
         '''
@@ -925,18 +920,20 @@ class PopurriListener(ParseTreeListener):
             var_type = self.quadWrapper.popType()
 
             print(var_id)
+            # Assign resulting type to variable and allocate in memory
             if var_type == 'None':
                 var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
                 var.type = res_type
-
-                dtype = tokenize(var.type)
-
-                context = tokenizeContext(self.ctxWrapper.top())
-                address = var.address = self.memHandler.reserve(context, dtype, var.value)
+                address = var.address = self.memHandler.reserve(
+                    context=tokenizeContext(self.ctxWrapper.top()),
+                    dtype=tokenize(var.type),
+                    value=var.value
+                )
+                print(address)
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
-            # revisa si address se ha llenado por la sentancia if anterior
+            # revisa si address se ha llenado por if previo
             if address == None:
                 # checa si var_id es una direccion o un id de variable
                 if self.ctxWrapper.getVariableByAddress(var_id) is not None:
