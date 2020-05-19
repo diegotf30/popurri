@@ -1133,6 +1133,16 @@ class PopurriParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
+        def ID(self, i:int=None):
+            if i is None:
+                return self.getTokens(PopurriParser.ID)
+            else:
+                return self.getToken(PopurriParser.ID, i)
+
+        def assignment(self):
+            return self.getTypedRuleContext(PopurriParser.AssignmentContext,0)
+
+
         def whileLoop(self):
             return self.getTypedRuleContext(PopurriParser.WhileLoopContext,0)
 
@@ -1167,16 +1177,6 @@ class PopurriParser ( Parser ):
 
         def COMMENT(self):
             return self.getToken(PopurriParser.COMMENT, 0)
-
-        def ID(self, i:int=None):
-            if i is None:
-                return self.getTokens(PopurriParser.ID)
-            else:
-                return self.getToken(PopurriParser.ID, i)
-
-        def assignment(self):
-            return self.getTypedRuleContext(PopurriParser.AssignmentContext,0)
-
 
         def getRuleIndex(self):
             return PopurriParser.RULE_statement

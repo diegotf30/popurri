@@ -12,7 +12,7 @@ TYPE:
 	| 'float'
 	| 'string'
 	| 'bool'
-	| '[' ('float' | 'int' | 'bool') ']';
+	| '[' ('float' | 'int' | 'bool') ']' '[' CONST_I ']';
 ACCESS_TYPE: 'public' | 'protected' | 'private';
 
 ID: [_a-zA-Z][_a-zA-Z0-9]* [!?]?;
