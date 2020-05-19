@@ -3,9 +3,9 @@ from antlr_parser.PopurriParser import PopurriParser
 from popurri_tokens import *
 from error_tokens import *
 from semantic_cube import bailaMijaConElSeñor
+from memory import MemoryHandler
 import jsbeautifier as js
 import json
-import memory
 
 
 def pprint(*args):
@@ -33,7 +33,6 @@ class QuadWrapper():
         self.address_stack = []
         self.jump_stack = []
         self.break_stack = []
-        self.mem_handler = memory.MemoryHandler()
 
     def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
@@ -105,25 +104,23 @@ class QuadWrapper():
 
         return res_type
 
-    def handleQuadruple(self, ctx, operators):
-        if self.topOperator() in operators:
-            tmp_type = self.validateTypes(ctx)
+    def generateQuad(self, ctx, memHandler):
+        tmp_type = self.validateTypes(ctx)
 
-            self.tmp_counter += 1
-            # tmp = f'temp_{self.tmp_counter}'
-            tmp = self.mem_handler.reserveMemoryAddress(
-                context=TEMPORAL,
-                dtype=tokenize(tmp_type)
-            )
+        self.tmp_counter += 1
+        # tmp = f'temp_{self.tmp_counter}'
+        tmp = memHandler.reserve(
+            context=TEMPORAL,
+            dtype=tokenize(tmp_type)
+        )
 
-            self.insertQuad(Quadruple(
-                op=self.popOperator(),
-                r=self.popAddress(),
-                l=self.popAddress(),
-                res=tmp
-            ))
-            self.insertAddress(tmp)
-            return True
+        self.insertQuad(Quadruple(
+            op=self.popOperator(),
+            r=self.popAddress(),
+            l=self.popAddress(),
+            res=tmp
+        ))
+        self.insertAddress(tmp)
 
 
 class Quadruple():
@@ -320,6 +317,7 @@ class PopurriListener(ParseTreeListener):
     def __init__(self):
         self.ctxWrapper = ContextWrapper()
         self.quadWrapper = QuadWrapper()
+        self.memHandler = MemoryHandler()
         self.if_cond = False
         self.param_count = -1
         self.func_count = -1
@@ -361,19 +359,18 @@ class PopurriListener(ParseTreeListener):
         pprint(self.quadWrapper.jump_stack)
         print('quad_ptr = ', end='')
         pprint(self.quadWrapper.quads_ptr)
-        print('global_mem = ', end='')
-        pprint(
-            self.quadWrapper.mem_handler.mem_context_list[GLOBAL - 36].list_types)
-        print('local_mem = ', end='')
-        pprint(
-            self.quadWrapper.mem_handler.mem_context_list[LOCAL - 36].list_types)
-        print('temporal_mem = ', end='')
-        pprint(
-            self.quadWrapper.mem_handler.mem_context_list[TEMPORAL - 36].list_types)
-        print('constant_mem = ', end='')
-        pprint(
-            self.quadWrapper.mem_handler.getAdressStack(CONSTANT))
-        pass
+        print('globals = {', end='')
+        pprint(self.memHandler.contexts[GLOBAL].sections)
+        print('}')
+        print('locals = {', end='')
+        pprint(self.memHandler.contexts[LOCAL].sections)
+        print('}')
+        print('constants = {', end='')
+        pprint(self.memHandler.contexts[CONSTANT].sections)
+        print('}')
+        print('tmps = {', end='')
+        pprint(self.memHandler.contexts[TEMPORAL].sections)
+        print('}')
 
     def enterModule(self, ctx):
         '''
@@ -410,7 +407,7 @@ class PopurriListener(ParseTreeListener):
         if ctx.TYPE() is not None:
             dtype = tokenize(ctx.TYPE())
 
-            var_address = self.quadWrapper.mem_handler.reserveMemoryAddress(
+            var_address = self.memHandler.reserve(
                 context=GLOBAL,
                 dtype=dtype
             )
@@ -787,41 +784,44 @@ class PopurriListener(ParseTreeListener):
             self.param_count += 1
 
     def exitCmp(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, [ANDOP, OROP])
+        if self.quadWrapper.topOperator() in [ANDOP, OROP]:
+            self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     def exitExp(self, ctx):
-        self.quadWrapper.handleQuadruple(
-            ctx, [LESSER, LESSEREQ, GREATER, GREATEREQ, EQUAL, NOTEQUAL])
+        if self.quadWrapper.topOperator() in [LESSER, LESSEREQ, GREATER, GREATEREQ, EQUAL, NOTEQUAL]:
+            self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     def exitAdd(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, [ADD, SUBS])
+        if self.quadWrapper.topOperator() in [ADD, SUBS]:
+            self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     def exitMultModDiv(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, [MULT, DIV, MOD])
+        if self.quadWrapper.topOperator() in [MULT, MOD, DIV]:
+            self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     # Helper to stringify 'constant' rule
     def getConstant(self, ctx):
-
         if ctx.CONST_BOOL() is not None:
-            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                CONSTANT, BOOL, str(ctx.CONST_BOOL()))
+            value = str(ctx.CONST_BOOL()) == 'true'
             self.quadWrapper.insertType('bool')
         elif ctx.CONST_I() is not None:
-            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                CONSTANT, INT, int(str(ctx.CONST_I())))
+            value = int(str(ctx.CONST_I()))
             self.quadWrapper.insertType('int')
         elif ctx.CONST_F() is not None:
-            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                CONSTANT, FLOAT, float(str(ctx.CONST_F())))
+            value = float(str(ctx.CONST_F()))
             self.quadWrapper.insertType('float')
         elif ctx.CONST_STR() is not None:
-            address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                CONSTANT, STRING, str(ctx.CONST_STR())[1:-1])
+            value = str(ctx.CONST_STR())[1:-1]
             self.quadWrapper.insertType('string')
         else:
             self.quadWrapper.insertType('none')
             return 'none'
-        return address
+
+        return self.memHandler.reserve(
+            context=CONSTANT, 
+            dtype=tokenizeByValue(value),
+            value=value
+        )
         # TODO: add arrays
 
     # Helper to validate id(s) being called (be them )
@@ -886,7 +886,8 @@ class PopurriListener(ParseTreeListener):
         # TODO implement arrays
 
     def exitVal(self, ctx):
-        self.quadWrapper.handleQuadruple(ctx, [POWER])
+        if self.quadWrapper.topOperator() in [POWER]:
+            self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
@@ -931,11 +932,7 @@ class PopurriListener(ParseTreeListener):
                 dtype = tokenize(var.type)
 
                 context = tokenizeContext(self.ctxWrapper.top())
-                address = var.address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                    context,
-                    dtype,
-                    var.value
-                )
+                address = var.address = self.memHandler.reserve(context, dtype, var.value)
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
@@ -951,11 +948,7 @@ class PopurriListener(ParseTreeListener):
                     dtype = tokenize(var.type)
 
                     context = tokenizeContext(self.ctxWrapper.top())
-                    address = var.address = self.quadWrapper.mem_handler.reserveMemoryAddress(
-                        context,
-                        dtype,
-                        var.value
-                    )
+                    address = var.address = self.memHandler.reserve(context, dtype, var.value)
 
                 print(var.address)
                 address = var.address

@@ -1,157 +1,115 @@
 from popurri_tokens import *
 import math
 
-# 9999 / 4 = 2499
-TYPE_OFFSET = 2499
-
 class MemoryHandler():
-    memoryContextStartingPoint = {
-        GLOBAL: 10000,
-        LOCAL: 20000,
-        TEMPORAL: 30000,
-        CONSTANT: 40000,
-    }
+    contexts = {}
+    context_offset = 10000
+    type_offset = int(context_offset / 4)
 
-    def __init__(self):
+    def __init__(self, context_offset=10000):
         '''
-        mem_context_list : [GLOBAL, LOCAL, TEMPORAL]
+        Creates 4 memory contexts (GLOBAL, LOCAL, TEMPORAL, CONSTANT) with default size of 10k
+        0     ->  9999 : GLOBAL
+        10000 -> 19999 : LOCAL
+        20000 -> 29999 : TEMPORAL
+        30000 -> 39999 : CONSTANT
         '''
-        self.mem_context_list = []
-        for _ in range(0, 5):
-            self.mem_context_list.append(Memory())
+        self.context_offset = context_offset
+        self.type_offset = int(context_offset / 4)
 
-    def reserveMemoryAddress(self, context=None, dtype=None, value=None):
-        '''
-        this function will reserve an address for the corresponding source call.
+        if self.type_offset % 1 != 0:
+            raise Exception('ERROR: \'context_offset\' must be divisible by 4')
 
-        '''
+        for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
+            self.contexts[ctx] = Memory(start=context_offset * i)
 
-        quadrant_memory = self.memoryContextStartingPoint[context]
-
-        context -= 36 # DELETE THIS
-        dtype -= 32
-
-        relative_memory = self.mem_context_list[context].updateTypeStackSize(
-            dtype)
-
-        address = quadrant_memory + (TYPE_OFFSET * dtype) + relative_memory
+    def reserve(self, context, dtype, value=None):
+        'reserves an address; assigns value if given'
+        ctxMemory = self.contexts[context]
+        reserved_address = ctxMemory.reserveAddress(dtype)
 
         if value is not None:
-            self.mem_context_list[context].updateAddress(
-                address=relative_memory, dtype=dtype, value=value)
+            ctxMemory.updateAddress(
+                address=reserved_address,
+                dtype=dtype,
+                value=value
+            )
 
-        return address
+        return ctxMemory.start + reserved_address + (self.type_offset * dtype)
 
-    def updateMemory(self, address=None, value=None):
+    def update(self, address, value):
         '''
         Updates a particular mem stack size/value
         this functions should be used only by PopurriListener.py
         '''
 
-        context, address = self.getAddressContext(address)
+        address, context = self.getContextAddress(address)
 
         # obtains the data type from the address [INT, FLOAT, BOOL, STRING]
-        dtype = math.floor(address / TYPE_OFFSET)
+        dtype = math.floor(address / self.type_offset)
 
         # obtains the relative address within context address stack [1 -> TYPE_OFFSET]
-        address -= (dtype * TYPE_OFFSET)
+        address -= (dtype * self.type_offset)
+        # Update value
+        self.contexts[context].updateAddress(address, dtype, value)
 
-        # updates the corresponding type list
-        # self.mem_context_list[context].updateTypeStackSize(dtype)
-
-        if value is not None:
-            # inserts value in the corresponding type list
-            self.mem_context_list[context - 36].updateAddress(
-                address=address, dtype=dtype, value=value)
-
-    def getAddressContext(self, address):
+    def getContextAddress(self, address):
         '''
-        given the address return the context [GLOBAL, LOCAL, TEMPORAL] 
-        and removes the offset from the address [this new address is returned too]
-        10000 -> 19999 : GLOBAL
-        20000 -> 29999 : LOCAL
-        30000 -> 39999 : TEMPORAL
-        40000 -> 49999 : CONSTANT
+        given the address return the address without offset (GLOBAL, LOCAL, TEMPORAL or CONSTANT)
+        and its respective context.
         '''
-        if address >= 10000 and address <= 19999:
-            return (GLOBAL, address - 10000)
-        elif address >= 20000 and address <= 29999:
-            return (LOCAL, address - 20000)
-        elif address >= 30000 and address <= 39999:
-            return (TEMPORAL, address - 30000)
-        elif address >= 40000 and address <= 49999:
-            return (CONSTANT, address - 40000)
-        else:
-            return (None, None)
+        for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
+            start = self.context_offset * i
+            end = self.context_offset * (i + 1) - 1
+            if address in range(start, end):
+                return (address - start, ctx)
 
-    def getAddressValue(self, address):
-        context, address = self.getAddressContext(address)
+        return (None, None)
 
-        dtype = math.floor(address / 2499)
-
-        address -= (dtype * 2499)
+    def getValue(self, address):
+        address, context = self.getContextAddress(address)
+        dtype = math.floor(address / self.type_offset)
+        address -= (dtype * self.type_offset)
         print(dtype, address)
-        return self.mem_context_list[context - 36].getAddressValue(address, dtype)
 
-    def getAdressStack(self, context):
-        return self.mem_context_list[context - 36].list_types
-
-    def copyAddressType(self, address):
-        _, address = self.getAddressContext(address)
-
-        dtype = (address / TYPE_OFFSET)
-
-        return dtype
+        return self.contexts[context].getAddressValue(address, dtype)
 
 
 class Memory():
+    start = -1
+    sections = {
+        INT: [],
+        FLOAT: [],
+        STRING: [],
+        BOOL: []
+    }
 
-    def __init__(self):
+    def __init__(self, start):
+        self.start = start
+
+    def reserveAddress(self, dtype):
         '''
-        Lists size can be redefined after creating a Memory object.
+        Increase the list size of the given type (INT, FLOAT, BOOL, STRING).
+        returns the local address of the reserved space
         '''
-        self.list_types = [None] * 4
+        self.sections[dtype].append(None)
+        return len(self.sections[dtype]) - 1
 
-        for dtype in range(0, 4):
-            self.list_types[dtype] = []
-
-    def updateTypeStackSize(self, dtype=None):
-        '''
-        Increase the list size of a certain type[INT, FLOAT, BOOL, STRING]
-        this function simulates the addition of another slot of a certain type
-        '''
-        if dtype is None:
-            return False
-
-        self.list_types[dtype].append(None)
-
-        return len(self.list_types[dtype])
-
-    def getContextStack(self):
-        '''
-        return a tuple of list_types
-        '''
-        return tuple(self.list_types)
-
-    def updateAddress(self, address=None, dtype=None, value=None):
+    def updateAddress(self, address, dtype=None, value=None):
         '''
         address is the index after offset. Ej. Address:5024 -> 24.
         dtype is the on of the possible data types used by popurri
         value is the actual value to be recorded in the current address 
         '''
+        if value is None:
+            return
 
-        if type is None or value is None:
-            return False
+        self.sections[dtype][address] = value
 
-        self.list_types[dtype][address-1] = value
-
-        return True
-
-    def getAddressValue(self, address=None, dtype=None):
+    def getValue(self, address, dtype):
         '''
         list_address is the index after offset. Ej. Address:5024 -> 24.
         dtype is the on of the possible data types used by popurri
         '''
 
-        print(self.list_types[dtype][address - 1], dtype, address - 1)
-        return self.list_types[dtype][address - 1]
+        return self.sections[dtype][address]
