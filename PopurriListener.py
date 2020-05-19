@@ -168,10 +168,10 @@ class ContextWrapper():
     def push(self, ctx):
         return self.context_stack.append(str(ctx))
 
-    def getVariableByAddress(self, address=None):
-        for _, var_dict in (self.variables).items():
-            for var, data in var_dict.items():
-                if address == str(data.address):
+    def getVariableByAddress(self, address):
+        for _, variables in self.variables.items():
+            for _, var in variables.items():
+                if address == str(var.address):
                     return var
         return None
 
@@ -393,7 +393,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterDeclaration(self, ctx):
         # Checks if global is already declared
-        if self.ctxWrapper.varExistsInContext(ctx.ID(0), "global"):
+        if self.ctxWrapper.varExistsInContext(ctx.ID(0), ctx=self.ctxWrapper.top()):
             raise error(ctx, VAR_REDEFINITION.format(str(ctx.ID(0))))
 
         var = None
@@ -402,15 +402,15 @@ class PopurriListener(ParseTreeListener):
         if ctx.TYPE() is not None:
             dtype = tokenize(ctx.TYPE())
 
-            var_address = self.memHandler.reserve(
-                context=GLOBAL,
+            reserved_address = self.memHandler.reserve(
+                context=tokenizeContext(self.ctxWrapper.top()),
                 dtype=dtype
             )
 
             var = Variable(
                 id=ctx.ID(0),
                 type=ctx.TYPE(),
-                address=var_address
+                address=reserved_address
             )
 
         # var is type object
@@ -423,10 +423,11 @@ class PopurriListener(ParseTreeListener):
                 id=ctx.ID(0),
                 type=class_name
             )
-        # Var has no declared type
-        else:
-            # TODO get data type
+        # Var type will be declared implicitly via assignment
+        elif ctx.assignment() is not None:
             var = Variable(id=ctx.ID(0))
+        else:
+            raise error(ctx, MUST_DECLARE_VAR_TYPE.format(str(ctx.ID(0))))
 
         if ctx.assignment() is not None:
             if var.address is not None:
@@ -435,7 +436,7 @@ class PopurriListener(ParseTreeListener):
                 self.quadWrapper.insertAddress(var.id)
             self.quadWrapper.insertType(var.type)
 
-        self.ctxWrapper.addVariable(var)
+        self.ctxWrapper.addVariable(var, context=self.ctxWrapper.top())
 
     def exitDeclaration(self, ctx):
         pass
@@ -501,29 +502,26 @@ class PopurriListener(ParseTreeListener):
         return 'public' if ty is None else ty
 
     def enterClassDeclaration(self, ctx):
-        class_name = str(ctx.ID())
-        if self.ctxWrapper.classExists(class_name):
-            raise error(ctx, FUNC_REDEFINITION.format(class_name))
+        class_id = str(ctx.ID())
+        if self.ctxWrapper.classExists(class_id):
+            raise error(ctx, CLASS_REDEFINITION.format(class_id))
 
-        self.ctxWrapper.push('class ' + class_name)
-        klass = Object(
-            id=class_name
-        )
+        class_id = 'class ' + class_id
+        parent_id = None
         if ctx.parent() is not None:
-            klass.parent_id = 'class ' + str(ctx.parent().ID())
-            if not self.ctxWrapper.classExists(klass.parent_id):
-                raise error(ctx, UNDEF_PARENT.format(
-                    klass.parent_id, klass.id))
+            parent_id = 'class ' + str(ctx.parent().ID())
+            if not self.ctxWrapper.classExists(parent_id):
+                raise error(ctx, UNDEF_PARENT.format(parent_id, class_id))
 
             # Inherit attributes
-            for attribute in self.ctxWrapper.variables[klass.parent_id].values():
+            for attribute in self.ctxWrapper.variables[parent_id].values():
                 if attribute.access_type != 'private':
-                    self.ctxWrapper.addVariable(attribute, 'class ' + klass.id)
+                    self.ctxWrapper.addVariable(attribute, class_id)
 
             # Inherit functions
-            for func in self.ctxWrapper.functions[klass.parent_id].values():
+            for func in self.ctxWrapper.functions[parent_id].values():
                 if func.access_type != 'private':
-                    self.ctxWrapper.addFunction(func, 'class ' + klass.id)
+                    self.ctxWrapper.addFunction(func, class_id)
 
         # Parse class attributes
         for declarations in ctx.attributes():
@@ -531,36 +529,49 @@ class PopurriListener(ParseTreeListener):
 
             for attr in declarations.attribute():
                 # if attribute inherited, do nothing
-                if access_type != 'private' and self.ctxWrapper.varExistsInContext(attr.ID(), klass.parent_id):
+                if access_type != 'private' and self.ctxWrapper.varExistsInContext(attr.ID(), parent_id):
                     continue
                 # Checks if attribute is already declared within class
-                elif self.ctxWrapper.varExistsInContext(attr.ID(), 'class ' + klass.id):
+                elif self.ctxWrapper.varExistsInContext(attr.ID(), class_id):
                     raise error(ctx, VAR_REDEFINITION.format(attr.ID()))
+
+                reserved_address = None
+                # Type is defined explicitly, allocate memory
+                if attr.TYPE() is not None:
+                    reserved_address = self.memHandler.reserve(
+                        context=tokenizeContext(class_id),
+                        dtype=tokenize(attr.TYPE())
+                    )
+                # No type defined, raise error
+                elif attr.assignment() is None:
+                    raise error(ctx, MUST_DECLARE_ATTRIBUTE_TYPE.format(str(attr.ID())))
 
                 var = Variable(
                     id=attr.ID(),
                     type=attr.TYPE(),
-                    access_type=access_type
+                    access_type=access_type,
+                    address=reserved_address
                 )
-                self.ctxWrapper.addVariable(var, 'class ' + klass.id)
+                self.ctxWrapper.addVariable(var, class_id)
 
         # Parse class methods
         for method in ctx.method():
             access_type = self.getAccessType(method)
 
             # if method inherited, do nothing
-            if access_type != 'private' and self.ctxWrapper.functionExistsInContext(method.ID(), klass.parent_id):
+            if access_type != 'private' and self.ctxWrapper.functionExistsInContext(method.ID(), parent_id):
                 continue
             # Checks if attribute is already declared within class
-            elif self.ctxWrapper.functionExistsInContext(method.ID(0), 'class ' + klass.id):
+            elif self.ctxWrapper.functionExistsInContext(method.ID(0), class_id):
                 raise error(ctx, FUNC_REDEFINITION.format(str(method.ID(0))))
 
             # TODO fix how params are generated in varTable for object methods
             method = self.createFunction(method)
             method.access_type = str(access_type)
 
-            self.ctxWrapper.addFunction(method, 'class ' + klass.id)
+            self.ctxWrapper.addFunction(method, class_id)
 
+        self.ctxWrapper.push(class_id)
         pass
 
     def exitClassDeclaration(self, ctx):
@@ -581,7 +592,8 @@ class PopurriListener(ParseTreeListener):
 
     def enterAttribute(self, ctx):
         if ctx.assignment() is not None:
-            self.quadWrapper.insertAddress(ctx.ID())
+            var = self.ctxWrapper.getVariable(ctx.ID(), context=self.ctxWrapper.top())
+            self.quadWrapper.insertAddress(var.address if var.address else var.id)
             self.quadWrapper.insertType(ctx.TYPE())
 
     def exitAttribute(self, ctx):
@@ -859,10 +871,7 @@ class PopurriListener(ParseTreeListener):
                 if var is None:
                     raise error(ctx, UNDEF_VAR.format(id))
 
-                # Return address if var has been allocated
-                if var.address != 'None':
-                    id = var.address
-
+                id = var.address
                 self.quadWrapper.insertType(var.type)
 
             return id
@@ -875,7 +884,6 @@ class PopurriListener(ParseTreeListener):
             id = self.validateCalledIds(ctx)
             self.quadWrapper.insertAddress(id)
         elif ctx.constant() is not None:  # const
-
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
 
         # TODO implement arrays
@@ -913,59 +921,42 @@ class PopurriListener(ParseTreeListener):
 
     def exitAssignment(self, ctx):
         if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
-            address = None
-            res_id = self.quadWrapper.popAddress()
-            var_id = self.quadWrapper.popAddress()
+            res_address = self.quadWrapper.popAddress()
+            var_address = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
             var_type = self.quadWrapper.popType()
 
+            var = None
             # Assign resulting type to variable and allocate in memory
             if var_type == 'None':
-                var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
+                var, context = self.ctxWrapper.getVariableIfExists(var_address)
                 var.type = res_type
-                address = var.address = self.memHandler.reserve(
+                var.address = self.memHandler.reserve(
                     context=tokenizeContext(self.ctxWrapper.top()),
                     dtype=tokenize(var.type),
                     value=var.value
                 )
-                self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
+            # Var already has a defined type (and thus allocated)
+            else:
+                var = self.ctxWrapper.getVariableByAddress(var_address)
 
-            # revisa si address se ha llenado por if previo
-            if address == None:
-                # checa si var_id es una direccion o un id de variable
-                if self.ctxWrapper.getVariableByAddress(var_id) is not None:
-                    var_id = self.ctxWrapper.getVariableByAddress(var_id)
-                    var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
-                # var_id es un id
-                else:
-                    var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
-                    dtype = tokenize(var.type)
-
-                    context = tokenizeContext(self.ctxWrapper.top())
-                    address = var.address = self.memHandler.reserve(context, dtype, var.value)
-
-                address = var.address
-
-            # MADE CHANGES HERE {OP[0] -> OP}
             op = self.quadWrapper.popOperator()
             if op is not ASSIGN:
                 res_type = bailaMijaConElSeñor(
                     op - 1, var_type, res_type)
                 if res_type is None:
                     raise error(ctx, TYPE_MISMATCH.format(
-                        op, var_type, res_type))
+                        stringifyToken(op), var_type, res_type))
 
             if var_type != res_type:
-                raise error(
-                    ctx, f'Type mismatch: cannot assign value of type {res_type} into "{var_id}" (type {var_type})')
+                raise error(ctx, TYPE_MISMATCH.format(stringifyToken(op), var_type, res_type))
 
             self.quadWrapper.insertQuad(Quadruple(
                 op=op,
-                l=res_id,
-                res=address
+                l=res_address,
+                res=var.address
             ))
-        pass
 
     def enterFuncCall(self, ctx):
         # TODO replace the id with its address in memory
