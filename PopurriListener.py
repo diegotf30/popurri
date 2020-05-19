@@ -266,20 +266,6 @@ class Variable():
         self.value = value
         self.address = address
 
-
-class Object():
-    '''
-    Esto nos permite simular la creacion de clases. Inicializandolos con atributos predeterminados.
-    [id] es el identificador con el que se podra localizar la clase actual. Ej. class Humano {}. Donde Humano es el identificador.
-    [parent_id] es el identificador del cual la clase actual heredara todas las propiedades. Ej. class Humano -> Persona. Donde Humano es el identificador
-    padre.
-    '''
-
-    def __init__(self, id, parent_id=None):
-        self.id = str(id)
-        self.parent_id = str(parent_id)
-
-
 class Function():
     '''
     Esto nos permite simular la creacion de funciones. Inicializandolas con atributos predeterminados.
