@@ -616,7 +616,6 @@ class PopurriListener(ParseTreeListener):
         if ctx.assignment() is not None:
             var_id = self.validateCalledIds(ctx)
             self.quadWrapper.insertAddress(var_id)
-        pass
 
     def exitStatement(self, ctx):
         pass
@@ -851,7 +850,6 @@ class PopurriListener(ParseTreeListener):
             return '.'.join(ids)
         else:  # global var/func being called
             id = ids[0]
-            address = ''
             if is_function:
                 func = self.ctxWrapper.getFunctionIfExists(id)
                 if func is None:
@@ -861,11 +859,13 @@ class PopurriListener(ParseTreeListener):
                 if var is None:
                     raise error(ctx, UNDEF_VAR.format(id))
 
+                # Return address if var has been allocated
+                if var.address != 'None':
+                    id = var.address
+
                 self.quadWrapper.insertType(var.type)
 
-                address = var.address
-
-            return address
+            return id
 
     def enterVal(self, ctx):
         if ctx.cond() is not None:  # nested cond
@@ -919,7 +919,6 @@ class PopurriListener(ParseTreeListener):
             res_type = self.quadWrapper.popType()
             var_type = self.quadWrapper.popType()
 
-            print(var_id)
             # Assign resulting type to variable and allocate in memory
             if var_type == 'None':
                 var, ctx = self.ctxWrapper.getVariableIfExists(var_id)
@@ -929,7 +928,6 @@ class PopurriListener(ParseTreeListener):
                     dtype=tokenize(var.type),
                     value=var.value
                 )
-                print(address)
                 self.ctxWrapper.addVariable(var, ctx)
                 var_type = res_type
 
@@ -947,7 +945,6 @@ class PopurriListener(ParseTreeListener):
                     context = tokenizeContext(self.ctxWrapper.top())
                     address = var.address = self.memHandler.reserve(context, dtype, var.value)
 
-                print(var.address)
                 address = var.address
 
             # MADE CHANGES HERE {OP[0] -> OP}
