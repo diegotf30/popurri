@@ -21,7 +21,7 @@ class MemoryHandler():
             raise Exception('ERROR: \'context_offset\' must be divisible by 4')
 
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
-            self.contexts[ctx] = Memory(start=context_offset * i)
+            self.contexts[ctx] = Memory(start=context_offset * i, max_size=self.type_offset)
 
     def reserve(self, context, dtype, value=None):
         'reserves an address; assigns value if given'
@@ -78,9 +78,10 @@ class MemoryHandler():
 
 class Memory():
     start = None
+    max_size = None
     sections = {}
 
-    def __init__(self, start):
+    def __init__(self, start, max_size):
         self.start = start
         self.sections = {
             INT: [],
@@ -88,12 +89,16 @@ class Memory():
             BOOL: [],
             STRING: []
         }
+        self.max_size = max_size
 
     def reserveAddress(self, dtype):
         '''
         Increase the list size of the given type (INT, FLOAT, BOOL, STRING).
         returns the local address of the reserved space
         '''
+        if len(self.sections[dtype]) == self.max_size:
+            raise Exception(f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
+
         self.sections[dtype].append(None)
         return len(self.sections[dtype]) - 1
 
