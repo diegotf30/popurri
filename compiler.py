@@ -36,7 +36,7 @@ class Compiler(object):
 
         tree = parser.program()
         walker = ParseTreeWalker()
-        listener = PopurriListener()
+        listener = PopurriListener(self.mem_size)
         walker.walk(listener, tree)
         return parser.getNumberOfSyntaxErrors()
 

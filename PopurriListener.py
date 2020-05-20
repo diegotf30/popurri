@@ -300,10 +300,10 @@ class PopurriListener(ParseTreeListener):
     -Cada funcion 'exit' representa el estado cuando se acaba una regla
     '''
 
-    def __init__(self):
+    def __init__(self, mem_size):
         self.ctxWrapper = ContextWrapper()
         self.quadWrapper = QuadWrapper()
-        self.memHandler = MemoryHandler()
+        self.memHandler = MemoryHandler(mem_size)
         self.if_cond = False
         self.param_count = -1
         self.func_count = -1
