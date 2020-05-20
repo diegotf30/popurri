@@ -75,6 +75,9 @@ class MemoryHandler():
 
         return self.contexts[context].getAddressValue(address, dtype)
 
+    # def importFromDict(self, s):
+
+
 
 class Memory():
     start = None

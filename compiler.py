@@ -7,6 +7,8 @@ from PopurriListener import PopurriListener
 from antlr4 import *
 from antlr4.error.ErrorListener import ErrorListener
 from os.path import isfile, basename
+from os import devnull
+import json
 import sys
 
 # 10000 direcciones para cada tipo [INT, FLOAT, STRING, BOOL]
@@ -24,9 +26,21 @@ class Compiler(object):
     def __init__(self, mem_size=MEM_DEFAULT):
         self.mem_size = mem_size
 
-    def compile(self, file):
+    def exportOvejota(self, listener, filename):
+        with open(filename, 'w') as f:
+            ctx = listener.ctxWrapper
+            memory = listener.memHandler.contexts
+            quads = listener.quadWrapper.quads
+            for arg in [ctx.variables, ctx.functions, memory, quads]:
+                json.dump(arg, f, default=vars)
+                f.write('\n')
+
+    def compile(self, file, export=True, debug=False):
         if not isfile(file):
             raise Exception(f'Error: {file} not found')
+
+        if not debug: # Silence debug prints
+            sys.stdout = open(devnull, 'w')
 
         input_stream = FileStream(file, encoding='utf-8')
         lexer = PopurriLexer(input_stream)
@@ -38,14 +52,10 @@ class Compiler(object):
         walker = ParseTreeWalker()
         listener = PopurriListener(self.mem_size)
         walker.walk(listener, tree)
-        return parser.getNumberOfSyntaxErrors()
 
+        if export:
+            filename = basename(file).replace('.pop', '.pobj')
+            self.exportOvejota(listener, filename)
+            return filename
 
-if __name__ == '__main__':
-    compiler = Compiler()
-    try:
-        compiler.compile(sys.argv[1])
-    except Exception as e:
-        print('Failed to compile!')
-        print('Got error:', e)
-        exit(1)
+        sys.stdout = sys.__stdout__ # Restore prints (if silenced)

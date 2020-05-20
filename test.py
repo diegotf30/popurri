@@ -6,22 +6,20 @@ import os
 def test_valid(compiler, files):
     for test in test_files:
         print("--------TESTING VALID INPUT", basename(test))
-        errors = compiler.compile(test)
-        if errors > 0:
-            exit(1)
-        else:
+        try:
+            compiler.compile(test, export=False, debug=True)
             print("Compiled successfully!")
+        except Exception as e:
+            print('Failed to compile, got: ', e)
+            exit(1)
 
 def test_malformed(compiler, files):
     for test in test_files:
         print("--------TESTING MALFORMED INPUT", basename(test))
         try:
-            errors = compiler.compile(test)
-            if errors == 0:
-                print("Failed to detect errors :/")
-                exit(1)
-            else:
-                print("Detected errors!")
+            compiler.compile(test, export=False, debug=True)
+            print("Failed to detect errors :/") # This shouldnt be evaluated if compiler raises error
+            exit(1)
         except Exception as e:
             print("Detected errors!", "Got error:", e)
 
