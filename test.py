@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # test only inputs
     if len(sys.argv) > 1:
-        test_files = [join(dir_path, f) for f in sys.argv[1:] if isfile(join(dir_path, f))]
+        test_files = [join(dir_path, f) for f in sys.argv[1:]]
         test_valid(compiler, test_files)
         exit()
 
