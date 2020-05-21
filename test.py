@@ -20,6 +20,8 @@ def test_malformed(compiler, files):
             compiler.compile(test, export=False, debug=True)
             print("Failed to detect errors :/") # This shouldnt be evaluated if compiler raises error
             exit(1)
+        except SystemExit:
+            print('Detected syntax error')
         except Exception as e:
             print("Detected errors!", "Got error:", e)
 
