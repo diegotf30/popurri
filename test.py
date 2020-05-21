@@ -7,7 +7,7 @@ def test_valid(compiler, files):
     for test in test_files:
         print("--------TESTING VALID INPUT", basename(test))
         try:
-            compiler.compile(test, export=False, debug=True)
+            compiler.compile(test, export=False)
             print("Compiled successfully!")
         except Exception as e:
             print('Failed to compile, got: ', e)
@@ -17,7 +17,7 @@ def test_malformed(compiler, files):
     for test in test_files:
         print("--------TESTING MALFORMED INPUT", basename(test))
         try:
-            compiler.compile(test, export=False, debug=True)
+            compiler.compile(test, export=False)
             print("Failed to detect errors :/") # This shouldnt be evaluated if compiler raises error
             exit(1)
         except SystemExit:

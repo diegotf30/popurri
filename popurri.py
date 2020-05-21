@@ -5,7 +5,7 @@ import sys
 if __name__ == '__main__':
     compiler = Compiler()
     try:
-        filename = compiler.compile(sys.argv[1], debug=False)
+        filename = compiler.compile(sys.argv[1])
         print('Compiled successfully!')
     except Exception as e:
         print('Failed to compile!')

@@ -34,12 +34,9 @@ class Compiler(object):
                 json.dump(arg, f, default=vars)
                 f.write('\n')
 
-    def compile(self, file, export=True, debug=False):
+    def compile(self, file, export=True):
         if not isfile(file):
             raise Exception(f'Error: {file} not found')
-
-        if not debug: # Silence debug prints
-            sys.stdout = open(devnull, 'w')
 
         input_stream = FileStream(file, encoding='utf-8')
         lexer = PopurriLexer(input_stream)
@@ -51,8 +48,6 @@ class Compiler(object):
         walker = ParseTreeWalker()
         listener = PopurriListener(self.mem_size)
         walker.walk(listener, tree)
-
-        sys.stdout = sys.__stdout__ # Restore prints (if silenced)
 
         if export:
             filename = basename(file).replace('.pop', '.pobj')
