@@ -28,10 +28,9 @@ class Compiler(object):
 
     def exportOvejota(self, listener, filename):
         with open(filename, 'w') as f:
-            ctx = listener.ctxWrapper
             memory = listener.memHandler.contexts
             quads = listener.quadWrapper.quads
-            for arg in [ctx.variables, ctx.functions, memory, quads]:
+            for arg in [memory, quads]:
                 json.dump(arg, f, default=vars)
                 f.write('\n')
 
@@ -53,9 +52,10 @@ class Compiler(object):
         listener = PopurriListener(self.mem_size)
         walker.walk(listener, tree)
 
+        sys.stdout = sys.__stdout__ # Restore prints (if silenced)
+
         if export:
             filename = basename(file).replace('.pop', '.pobj')
             self.exportOvejota(listener, filename)
             return filename
 
-        sys.stdout = sys.__stdout__ # Restore prints (if silenced)

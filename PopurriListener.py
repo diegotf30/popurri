@@ -84,7 +84,7 @@ class QuadWrapper():
         self.type_stack.append(str(type))
 
     def insertAddress(self, address):
-        self.address_stack.append(str(address))
+        self.address_stack.append(address)
 
     def insertOperator(self, operator):
         self.operator_stack.append(tokenize(operator))
@@ -473,10 +473,10 @@ class PopurriListener(ParseTreeListener):
             func.updateQuadsRange(start=-1)
         else:
             func.updateQuadsRange(end=self.quadWrapper.quads_ptr)
+            self.quadWrapper.insertQuad(Quadruple(
+                op=ENDPROC
+            ))
 
-        self.quadWrapper.insertQuad(Quadruple(
-            op=ENDPROC
-        ))
 
         self.ctxWrapper.pop()
         self.func_count -= 1
@@ -987,7 +987,7 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.tmp_counter += 1
         tmp = f'temp_{self.quadWrapper.tmp_counter}'
         self.quadWrapper.insertQuad(Quadruple(
-            op=EQUAL,
+            op=ASSIGN,
             l=call,
             res=tmp
         ))
