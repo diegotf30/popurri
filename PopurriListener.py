@@ -384,6 +384,7 @@ class PopurriListener(ParseTreeListener):
         # var has data_type : INT, FLOAT, STRING, BOOL
         # TODO: Arrays are not yet implemented
         if ctx.TYPE() is not None:
+
             dtype = tokenize(ctx.TYPE())
 
             reserved_address = self.memHandler.reserve(
@@ -396,6 +397,25 @@ class PopurriListener(ParseTreeListener):
                 type=ctx.TYPE(),
                 address=reserved_address
             )
+            
+            # var is not an array
+            if ctx.CONST_I() is not None:
+
+                mem_reservations = self.getConstant(ctx, True) - 1
+
+                for _ in range(0,mem_reservations):
+                    reserved_address = self.memHandler.reserve(
+                        context=tokenizeContext(self.ctxWrapper.top()),
+                        dtype=dtype
+                    )
+
+                    Variable(
+                        id=ctx.ID(0),
+                        type=ctx.TYPE(),
+                        address=reserved_address
+                    )
+
+
 
         # var is type object
         elif len(ctx.ID()) == 2:
@@ -791,7 +811,9 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     # Helper to stringify 'constant' rule
-    def getConstant(self, ctx):
+    def getConstant(self, ctx, constantOnly=False):
+        if constantOnly:
+            return int(str(ctx.CONST_I()))
         if ctx.CONST_BOOL() is not None:
             value = str(ctx.CONST_BOOL()) == 'true'
             self.quadWrapper.insertType('bool')

@@ -1,0 +1,6 @@
+module main
+
+var a : [ int ] [ 4 ]
+var b : [ string ] [ 5 ]
+
+a[4] = 4
