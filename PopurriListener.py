@@ -25,7 +25,6 @@ class QuadWrapper():
     '''
 
     def __init__(self):
-        self.tmp_counter = 0
         self.quads = []
         self.quads_ptr = 0
         self.type_stack = []
@@ -107,8 +106,6 @@ class QuadWrapper():
     def generateQuad(self, ctx, memHandler):
         tmp_type = self.validateTypes(ctx)
 
-        self.tmp_counter += 1
-        # tmp = f'temp_{self.tmp_counter}'
         tmp = memHandler.reserve(
             context=TEMPORAL,
             dtype=tokenize(tmp_type)
@@ -983,15 +980,20 @@ class PopurriListener(ParseTreeListener):
             l=call
         ))
 
-        # Assign return value to tmp var
-        self.quadWrapper.tmp_counter += 1
-        tmp = f'temp_{self.quadWrapper.tmp_counter}'
-        self.quadWrapper.insertQuad(Quadruple(
-            op=ASSIGN,
-            l=call,
-            res=tmp
-        ))
-        self.quadWrapper.insertAddress(tmp)
+        # Allocate return value
+        if func.return_type != 'void':
+            tmp = self.memHandler.reserve(
+                context=TEMPORAL,
+                dtype=tokenize(func.return_type)
+            )
+
+            self.quadWrapper.insertQuad(Quadruple(
+                op=ASSIGN,
+                l=call,
+                res=tmp
+            ))
+            self.quadWrapper.insertAddress(tmp)
+
         self.param_count = -1 # Reset parameter counter flag (So we dont add func quad when exiting a condition)
 
     def enterConstant(self, ctx):
