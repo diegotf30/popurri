@@ -168,7 +168,7 @@ class ContextWrapper():
     def getVariableByAddress(self, address):
         for _, variables in self.variables.items():
             for _, var in variables.items():
-                if address == str(var.address):
+                if address == var.address:
                     return var
         return None
 
@@ -302,6 +302,7 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper = QuadWrapper()
         self.memHandler = MemoryHandler(mem_size)
         self.if_cond = False
+        self.statement = False
         self.param_count = -1
         self.func_count = -1
         self.func_returned_val = False
@@ -598,6 +599,7 @@ class PopurriListener(ParseTreeListener):
         ))
 
     def enterStatement(self, ctx):
+        self.statement = True
         # Check if Main Start
         if self.func_count == 0:
             # Fill GOTO to main start (so funcs dont get executed)
@@ -613,7 +615,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertAddress(var_id)
 
     def exitStatement(self, ctx):
-        pass
+        self.statement = False
 
     def enterBreakStmt(self, ctx):
         self.quadWrapper.insertJump()
@@ -912,7 +914,7 @@ class PopurriListener(ParseTreeListener):
             var = None
             # Assign resulting type to variable and allocate in memory
             if var_type == 'None':
-                var, context = self.ctxWrapper.getVariableIfExists(var_address)
+                var, _ = self.ctxWrapper.getVariableIfExists(var_address)
                 var.type = res_type
                 var.address = self.memHandler.reserve(
                     context=tokenizeContext(self.ctxWrapper.top()),
@@ -967,7 +969,7 @@ class PopurriListener(ParseTreeListener):
         # Validate call signature with function signature
         call_signature = tuple(self.quadWrapper.type_stack)
         func_signature = tuple(func.paramTypes)
-        for i, func_ty in enumerate(func_signature[::-1], start=1):
+        for func_ty in func_signature[::-1]:
             call_ty = self.quadWrapper.popType()
             if func_ty != call_ty:
                 raise error(ctx, INVALID_SIGNATURE.format(
@@ -980,8 +982,12 @@ class PopurriListener(ParseTreeListener):
             l=call
         ))
 
-        # Allocate return value
-        if func.return_type != 'void':
+        # Allocate return value if using funcCall in expression (and if function returns something)
+        if not self.statement:
+            # Trying to use void function inside expression
+            if func.return_type == 'void':
+                raise error(ctx, VOID_FUNCTION_CALL_ON_EXPRESSION.format(func.id))
+
             tmp = self.memHandler.reserve(
                 context=TEMPORAL,
                 dtype=tokenize(func.return_type)

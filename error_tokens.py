@@ -8,6 +8,7 @@ MUST_DECLARE_VAR_TYPE = 'MUST DECLARE VARIABLE "{}" WITH TYPE (either implicitly
 # Expressions
 TYPE_MISMATCH = 'Unsupported operand types for "{}" with "{}" and "{}"'
 EXPECTED_BOOL = 'Expected boolean value but got "{}"'
+VOID_FUNCTION_CALL_ON_EXPRESSION = 'CANNOT CALL VOID FUNCTION "{}" INSIDE EXPRESSION'
 
 # Functions
 FUNC_REDEFINITION = 'RE-DEFINITION OF FUNCTION "{}"'
