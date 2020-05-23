@@ -38,7 +38,7 @@ method:
 
 // Statements
 statement: (
-		(ID '.')? ID ('[' exp ']')? assignment
+		((ID '.')? ID | indexation) assignment
 		| whileLoop
 		| forLoop
 		| branch
