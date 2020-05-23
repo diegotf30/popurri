@@ -308,6 +308,8 @@ class PopurriListener(ParseTreeListener):
         self.param_count = -1
         self.func_count = -1
         self.func_returned_val = False
+        # a[ array_indexation_exp ]
+        self.array_indexation_exp = False
 
     def enterProgram(self, ctx):
         '''
@@ -638,9 +640,13 @@ class PopurriListener(ParseTreeListener):
 
             # Check if var_id is a single value var, or an array.
 
-            if ctx.CONST_I() is not None:
-                array_offset = self.getConstant(ctx, True)
-                self.quadWrapper.insertAddress(array_offset)
+            # Before changes, the existence ctx.CONST_I() meant an array was being used as var.
+            #
+
+            if ctx.exp() is not None:
+                # array_offset = self.getConstant(ctx, True)
+                # self.quadWrapper.insertAddress(array_offset)
+                self.array_indexation_exp = True
 
             self.quadWrapper.insertAddress(var_id)
 

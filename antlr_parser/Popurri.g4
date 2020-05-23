@@ -32,13 +32,13 @@ classDeclaration:
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
 attribute:
-	ID (':' (TYPE | '[' TYPE ']' '[' CONST_I ']'))? assignment?;
+	ID (':' (TYPE | '[' TYPE ']' '[' exp ']'))? assignment?;
 method:
 	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
 
 // Statements
 statement: (
-		(ID '.')? ID ('[' CONST_I ']')? assignment
+		(ID '.')? ID ('[' exp ']')? assignment
 		| whileLoop
 		| forLoop
 		| branch
