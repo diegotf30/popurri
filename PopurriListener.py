@@ -438,11 +438,7 @@ class PopurriListener(ParseTreeListener):
                 self.quadWrapper.insertAddress(var.id)
             self.quadWrapper.insertType(var.type)
 
-        if type(var) is list:
-            for v in var:
-                self.ctxWrapper.addVariable(v, context=self.ctxWrapper.top())
-        else:
-            self.ctxWrapper.addVariable(var, context=self.ctxWrapper.top())
+        self.ctxWrapper.addVariable(var, context=self.ctxWrapper.top())
 
     def exitDeclaration(self, ctx):
         pass
@@ -600,8 +596,10 @@ class PopurriListener(ParseTreeListener):
         if ctx.assignment() is not None:
             var = self.ctxWrapper.getVariable(
                 ctx.ID(), context=self.ctxWrapper.top())
-            self.quadWrapper.insertAddress(
-                var.address if var.address else var.id)
+            if var.address:
+                self.quadWrapper.insertAddress(var.address)
+            else:
+                self.quadWrapper.insertAddress(var.id)
             self.quadWrapper.insertType(ctx.TYPE())
 
     def exitAttribute(self, ctx):
