@@ -41,3 +41,43 @@ INPUT = 29
 # Parenthesis
 OPENPAREN = 30
 CLOSEPAREN = 31
+
+# Types
+INT = 32
+FLOAT = 33
+BOOL = 34
+STRING = 35
+
+# Contexts
+GLOBAL = 36
+TEMPORAL = 37
+LOCAL = 38
+CONSTANT = 39
+
+tokens = [
+    'GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', # GOTOs
+    'ERA', 'PARAM', 'ENDPROC', # Functions
+    '+', '+=', '-', '-=', '*', '*=', '/', '/=', '%', '%=', '**', 'is', 'is not', '>', '>=', '<', '<=', 'and', 'or', '=', # Operators
+    'print', 'input', # Special Functions
+    '(', ')', # Parenthesis
+    'int', 'float', 'bool', 'string', # Types
+    'global', 'temporal', 'local', 'constant' # Contexts
+]
+
+def tokenize(s):
+    return tokens.index(str(s))
+
+def tokenizeByValue(val):
+    if type(val).__name__ == 'str':
+        return tokens.index('string')
+
+    return tokens.index(type(val).__name__)
+
+def tokenizeContext(ctx_str):
+    if ctx_str[:5] == 'class' or ctx_str[:4] == 'func':
+        return LOCAL
+
+    return GLOBAL
+
+def stringifyToken(token):
+    return tokens[token]

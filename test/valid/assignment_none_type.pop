@@ -1,6 +1,0 @@
-module main
-
-var a, b
-
-a = 10
-b = a

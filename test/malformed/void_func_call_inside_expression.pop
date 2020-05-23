@@ -1,0 +1,9 @@
+module uhoh
+
+var a : int
+
+func voidFunc() {
+    print('returns nothing!')
+}
+
+a = 10 * 15 / voidFunc() + 2
