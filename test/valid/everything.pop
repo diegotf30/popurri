@@ -1,21 +1,27 @@
 module main
 
 class parent {
-    private var name : string = "name"
-    var ssn = 1 * 10 * (2 + 3 * 2) / 15 ** 2.0
-    func printParent() {
-        print(name, ssn)
+    private var name : string
+    var ssn : string
+    func func1(int a, int b) {
+        print(self.name)
     }
 }
 
-var p : parent
-
-func func1() int {
-    return 2 + 3 * 2
+class parent -> child {
+    func func2() {
+        var x : parent
+        print(self.ssn)
+    }
 }
 
-func func2() {
-    
+var p : parent, x : parent
+var i : int = 10
+
+func func1(string a, string b) string {
+    var x : int
+    return a + b
 }
 
-p.printParent()
+p.ssn = "ola"
+p.func1(1,2)

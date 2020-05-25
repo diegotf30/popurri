@@ -1,8 +1,10 @@
 from popurri_tokens import *
+from copy import deepcopy
 import math
 
 class MemoryHandler():
     contexts = {}
+    snapshot = None
     context_offset = None
     type_offset = None
 
@@ -75,8 +77,20 @@ class MemoryHandler():
 
         return self.contexts[context].getAddressValue(address, dtype)
 
-    # def importFromDict(self, s):
+    def saveSnapshot(self, context=LOCAL):
+        self.snapshot = deepcopy(self.contexts[context])
 
+    def restoreSnapshot(self, context=LOCAL):
+        self.contexts[context] = deepcopy(self.snapshot)
+
+    def flush(self, context=LOCAL):
+        start_offset = context - GLOBAL
+        self.contexts[context] = Memory(start=self.context_offset * start_offset, max_size=self.type_offset)
+
+    def count(self, context=LOCAL):
+        'Returns a tuple with the amount of items allocated in each section'
+        memCtx = self.contexts[context].sections
+        return tuple([len(v) for v in memCtx.values()])
 
 
 class Memory():

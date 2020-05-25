@@ -25,16 +25,16 @@ declaration:
 	ID (':' (TYPE | ID | '[' TYPE ']' '[' CONST_I ']'))? assignment?;
 
 function:
-	'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
+	'func' ID '(' funcParams? ')' (TYPE | ID)? '{' declarations* statement* '}';
 
 classDeclaration:
 	'class' parent? ID '{' (attributes | method)+ '}';
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
 attribute:
-	ID (':' (TYPE | '[' TYPE ']' '[' exp ']'))? assignment?;
+	ID (':' (TYPE | '[' TYPE ']' '[' exp ']'))?;
 method:
-	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
+	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' declarations* statement* '}';
 
 // Statements
 statement: (
