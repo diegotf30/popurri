@@ -3,40 +3,38 @@ module ifs
 var a = 10
 
 while true {
-    if true {
-        a = 2
-        break
+    if false {
+        print('ERROR')
     } 
-    else if false {
-        a = 3
+    else if true {
+        print('inside else if')
         break
+        print('ERROR')
         break
+        print('ERROR')
         break
+        print('ERROR')
     }
     else {
-        a = 10
-        break
+        print('ERROR')
     }
 }
-a = 10
-a = 10
-a = 10
 
 if false {
-    a = 11
+    print('ERROR')
 }
 else {
-    a = 12
+    print('inside else')
 }
 
 if true {
-    a = 1
+    print('inside if with else')
 } else if true {
-    a = 2
+    print('ERROR')
 }
 
 if true {
-    a = 3
+    print('inside single if')
 }
 
 #1 (= 10 null a)

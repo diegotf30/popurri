@@ -54,6 +54,9 @@ TEMPORAL = 37
 LOCAL = 38
 CONSTANT = 39
 
+# (Internal use only)
+FALSEBOTTOM = 999999
+
 tokens = [
     'GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', # GOTOs
     'ERA', 'PARAM', 'ENDPROC', # Functions
@@ -64,8 +67,11 @@ tokens = [
     'global', 'temporal', 'local', 'constant' # Contexts
 ]
 
-def tokenize(s):
-    return tokens.index(str(s))
+def tokenize(v):
+    if type(v) == int: # Already tokenized
+        return v
+
+    return tokens.index(str(v))
 
 def tokenizeByValue(val):
     if type(val).__name__ == 'str':

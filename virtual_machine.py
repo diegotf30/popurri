@@ -64,6 +64,15 @@ def run(obj_file):
         if op == GOTO:
             ip = res - 1
             continue
+        elif op == GOTOF:
+            if l_val == False:
+                ip = res - 1
+                continue
+        elif op == GOTOV:
+            if l_val == True:
+                ip = res - 1
+                continue
+
         # Operations
         elif op == ASSIGN:
             memHandler.update(res, l_val)
@@ -79,6 +88,8 @@ def run(obj_file):
             op -= 1
             # Applies short-hand operator and stores it in res
             handleOperation(memHandler, op, res_val, l_val, res)
+
+        # Special Functions
         elif op == INPUT:
             res_type = memHandler.getAddressType(res)
             tmp = input()

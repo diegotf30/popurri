@@ -47,7 +47,7 @@ class QuadWrapper():
         self.quads[at] = tuple(new_quad)
 
     def topOperator(self):
-        if len(self.operator_stack) == 0 or self.operator_stack[-1] == OPENPAREN:
+        if len(self.operator_stack) == 0 or self.operator_stack[-1] == FALSEBOTTOM:
             return None
 
         return self.operator_stack[-1]
@@ -56,7 +56,7 @@ class QuadWrapper():
         return self.jump_stack[-1] if len(self.jump_stack) > 0 else None
 
     def popOperator(self):
-        if len(self.operator_stack) == 0 or self.topOperator() == OPENPAREN:
+        if len(self.operator_stack) == 0 or self.topOperator() == FALSEBOTTOM:
             return None
 
         return self.operator_stack.pop()
@@ -75,7 +75,7 @@ class QuadWrapper():
         jumps = []
         while True:
             j = self.popJump()
-            if j is None or j is OPENPAREN:
+            if j is None or j is FALSEBOTTOM:
                 break
             jumps.insert(0, j)
         return jumps
@@ -747,7 +747,7 @@ class PopurriListener(ParseTreeListener):
         # Fill any breaks that might've been added inside loop
         while True:
             brk = self.quadWrapper.popJump()
-            if brk is None or brk == OPENPAREN:
+            if brk is None or brk == FALSEBOTTOM:
                 break
 
             self.quadWrapper.fillQuadWith(
@@ -774,7 +774,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterBranch(self, ctx):
-        self.quadWrapper.insertJump(OPENPAREN)
+        self.quadWrapper.insertJump(FALSEBOTTOM)
         pass
 
     def exitBranch(self, ctx):
@@ -822,7 +822,7 @@ class PopurriListener(ParseTreeListener):
 
         goto_quad = Quadruple(GOTO)
         self.quadWrapper.insertJump()
-        self.quadWrapper.insertJump(OPENPAREN)
+        self.quadWrapper.insertJump(FALSEBOTTOM)
         self.quadWrapper.insertQuad(goto_quad)
 
     def enterElseIf(self, ctx):
@@ -861,7 +861,7 @@ class PopurriListener(ParseTreeListener):
         self.func_returned_val = True
 
     def exitCond(self, ctx):
-        if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is OPENPAREN:
+        if len(self.quadWrapper.operator_stack) > 0 and self.quadWrapper.operator_stack[-1] is FALSEBOTTOM:
             self.quadWrapper.popOperator()
 
         if self.if_cond:
@@ -876,7 +876,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertQuad(gotof_quad)
             self.quadWrapper.insertJump()
             # False bottom for filling breaks inside if/loop
-            self.quadWrapper.insertJump(OPENPAREN)
+            self.quadWrapper.insertJump(FALSEBOTTOM)
 
         # Function call
         if self.param_count != -1:
@@ -986,7 +986,7 @@ class PopurriListener(ParseTreeListener):
     def enterVal(self, ctx):
         if ctx.cond() is not None:  # nested cond
             # Add fake bottom to operator_stack
-            self.quadWrapper.insertOperator('(')
+            self.quadWrapper.insertOperator(FALSEBOTTOM)
         elif len(ctx.ID()) > 0:  # identifier
             self.validateCalledIds(ctx)
         elif ctx.constant() is not None:  # const
@@ -1151,14 +1151,14 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterPrintStmt(self, ctx):
-        self.quadWrapper.insertAddress('(')
+        self.quadWrapper.insertAddress(FALSEBOTTOM)
         pass
 
     def exitPrintStmt(self, ctx):
         print_quads = []
         while True:
             address = self.quadWrapper.popAddress()
-            if address is None or address == '(':
+            if address is None or address == FALSEBOTTOM:
                 break
 
             self.quadWrapper.popType()
