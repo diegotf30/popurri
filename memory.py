@@ -1,6 +1,7 @@
 from popurri_tokens import *
 import math
 
+
 class MemoryHandler():
     contexts = {}
     context_offset = None
@@ -21,7 +22,13 @@ class MemoryHandler():
             raise Exception('ERROR: \'context_offset\' must be divisible by 4')
 
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
-            self.contexts[ctx] = Memory(start=context_offset * i, max_size=self.type_offset)
+            if ctx == TEMPORAL:
+                self.contexts[ctx] = Memory(
+                    start=context_offset * i, max_size=self.type_offset, is_temp=True)
+                continue
+
+            self.contexts[ctx] = Memory(
+                start=context_offset * i, max_size=self.type_offset)
 
     def reserve(self, context, dtype, value=None):
         'reserves an address; assigns value if given'
@@ -71,12 +78,12 @@ class MemoryHandler():
         address, context = self.getContextAddress(address)
         dtype = math.floor(address / self.type_offset)
         address -= (dtype * self.type_offset)
-        print(dtype, address)
 
-        return self.contexts[context].getAddressValue(address, dtype)
+        print(address, dtype, context)
+
+        return self.contexts[context].getValue(address, dtype + 32)
 
     # def importFromDict(self, s):
-
 
 
 class Memory():
@@ -84,7 +91,7 @@ class Memory():
     max_size = None
     sections = {}
 
-    def __init__(self, start, max_size):
+    def __init__(self, start, max_size, is_temp=False):
         self.start = start
         self.sections = {
             INT: [],
@@ -92,6 +99,8 @@ class Memory():
             BOOL: [],
             STRING: []
         }
+        if is_temp:
+            self.sections[POINTER] = []
         self.max_size = max_size
 
     def reserveAddress(self, dtype):
@@ -100,7 +109,8 @@ class Memory():
         returns the local address of the reserved space
         '''
         if len(self.sections[dtype]) == self.max_size:
-            raise Exception(f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
+            raise Exception(
+                f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
 
         self.sections[dtype].append(None)
         return len(self.sections[dtype]) - 1
@@ -121,5 +131,6 @@ class Memory():
         list_address is the index after offset. Ej. Address:5024 -> 24.
         dtype is the on of the possible data types used by popurri
         '''
+        print(self.sections[dtype])
 
         return self.sections[dtype][address]
