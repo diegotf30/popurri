@@ -54,18 +54,25 @@ TEMPORAL = 37
 LOCAL = 38
 CONSTANT = 39
 
+# Arrays
+VERIFY = 40
+POINTER = 41
+
 tokens = [
-    'GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', # GOTOs
-    'ERA', 'PARAM', 'ENDPROC', # Functions
-    '+', '+=', '-', '-=', '*', '*=', '/', '/=', '%', '%=', '**', 'is', 'is not', '>', '>=', '<', '<=', 'and', 'or', '=', # Operators
-    'print', 'input', # Special Functions
-    '(', ')', # Parenthesis
-    'int', 'float', 'bool', 'string', # Types
-    'global', 'temporal', 'local', 'constant' # Contexts
+    'GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR',  # GOTOs
+    'ERA', 'PARAM', 'ENDPROC',  # Functions
+    '+', '+=', '-', '-=', '*', '*=', '/', '/=', '%', '%=', '**', 'is', 'is not', '>', '>=', '<', '<=', 'and', 'or', '=',  # Operators
+    'print', 'input',  # Special Functions
+    '(', ')',  # Parenthesis
+    'int', 'float', 'bool', 'string',  # Types
+    'global', 'temporal', 'local', 'constant',  # Contexts
+    'verify', 'pointer'  # Arrays
 ]
+
 
 def tokenize(s):
     return tokens.index(str(s))
+
 
 def tokenizeByValue(val):
     if type(val).__name__ == 'str':
@@ -73,11 +80,13 @@ def tokenizeByValue(val):
 
     return tokens.index(type(val).__name__)
 
+
 def tokenizeContext(ctx_str):
     if ctx_str[:5] == 'class' or ctx_str[:4] == 'func':
         return LOCAL
 
     return GLOBAL
+
 
 def stringifyToken(token):
     return tokens[token]
