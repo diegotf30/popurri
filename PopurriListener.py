@@ -377,6 +377,8 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertQuad(goto_quad)
         self.quadWrapper.insertJump()
         self.func_count = len(ctx.function())
+        for klass in ctx.classDeclaration():
+            self.func_count += len(klass.method())
         pass
 
     def exitProgram(self, ctx):
@@ -705,6 +707,8 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertQuad(Quadruple(
             op=ENDPROC
         ))
+        self.func_count -= 1
+        # Save required memory for method & flush local & tmp memory
         method.era_local = self.memHandler.count(LOCAL)
         method.era_tmp = self.memHandler.count(TEMPORAL)
         self.memHandler.restoreSnapshot(LOCAL)
@@ -975,7 +979,7 @@ class PopurriListener(ParseTreeListener):
                 self.quadWrapper.insertType(attr.type)
                 self.quadWrapper.insertAddress(attr.address)
 
-            return '.'.join(ids)
+            return ids
         else:  # global var/func being called
             id = ids[0]
             if is_function:
@@ -1082,12 +1086,21 @@ class PopurriListener(ParseTreeListener):
                 ))
 
     def enterFuncCall(self, ctx):
-        # TODO replace the id with its address in memory
         ids = self.validateCalledIds(ctx, is_function=True)
+        if len(ids) == 2:
+            # Quad to allocate class in memory
+            self.quadWrapper.insertQuad(Quadruple(
+                op=ERAC,
+                l=ids[0]
+            ))
+            ids = ids[1]
+
+        # Quad to allocate function's required memory
         self.quadWrapper.insertQuad(Quadruple(
             op=ERA,
             l=ids
         ))
+
         self.param_count = 1
 
     def exitFuncCall(self, ctx):

@@ -7,3 +7,7 @@ class mychild {
     var a : float
     protected var b : string
 }
+
+var x : mychild
+
+x.a(1)

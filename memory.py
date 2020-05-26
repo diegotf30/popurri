@@ -5,7 +5,7 @@ import math
 
 class MemoryHandler():
     contexts = {}
-    snapshot = None
+    snapshots = []
     context_offset = None
     type_offset = None
 
@@ -83,11 +83,17 @@ class MemoryHandler():
 
         return self.contexts[context].getValue(address, dtype)
 
+    def topSnapshot(self):
+        return self.snapshots[-1] if self.snapshots else None
+
+    def popSnapshot(self):
+        return self.snapshots.pop() if self.snapshots else None
+
     def saveSnapshot(self, context=LOCAL):
-        self.snapshot = deepcopy(self.contexts[context])
+        self.snapshots.append(deepcopy(self.contexts[context]))
 
     def restoreSnapshot(self, context=LOCAL):
-        self.contexts[context] = deepcopy(self.snapshot)
+        self.contexts[context] = deepcopy(self.popSnapshot())
 
     def flush(self, context=LOCAL):
         start_offset = context - GLOBAL

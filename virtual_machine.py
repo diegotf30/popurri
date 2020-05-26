@@ -55,9 +55,9 @@ def run(obj_file):
         # print(')')
 
         op, l, r, res = quad
-        if l != None:
+        if type(l) == int:
             l_val = memHandler.getValue(l)
-        if r != None:
+        if type(r) == int:
             r_val = memHandler.getValue(r)
 
         # GOTOs
@@ -107,5 +107,9 @@ def run(obj_file):
             memHandler.update(res, tmp)
         elif op == PRINT:
             print(memHandler.getValue(res))
+
+        # Function Calls
+        elif op == ERA:
+            print('era')
 
         ip += 1
