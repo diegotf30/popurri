@@ -142,7 +142,7 @@ class ContextWrapper():
     Antes GlobalContext
     '''
 
-    def __init__(self):
+    def __init__(self, variables={}, functions={}):
         self.variables = {}
         self.functions = {}
         self.context_stack = ['global']

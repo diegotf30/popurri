@@ -35,3 +35,7 @@ INVALID_ATTRIBUTE_TYPE = 'CANNOT DECLARE AN ATTRIBUTE WITH CLASS TYPE'
 MUST_DECLARE_ATTRIBUTE_TYPE = 'MUST DECLARE ATTRIBUTE "{}" WITH TYPE (either implicitly via assignment or explicitly)'
 CLASS_ASSIGNMENT = 'CANNOT USE \'=\' OPERATOR WITH CLASSES'
 SELF_USE_OUTSIDE_CLASS = 'CANNOT USE keyword \'self\' outside class context'
+
+# Runtime Error
+EXPECTED_TYPE = 'ERROR: Expected "{}" value but got "{}"'
+CANNOT_CAST = 'ERROR: Cannot cast input "{}" to "{}"'

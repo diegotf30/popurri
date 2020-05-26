@@ -1,23 +1,66 @@
 from PopurriListener import ContextWrapper, QuadWrapper, Variable, Function, pprint
 from memory import MemoryHandler, Memory
 from popurri_tokens import *
+from error_tokens import *
 import json
 
 def importMemory(f):
     memHandler = MemoryHandler()
     mem_dict = json.loads(f.readline())
-    for ctx, mem_dict in mem_dict.items():
-        memCtx = Memory(mem_dict['start'], mem_dict['max_size'])
-        for section, spaces in mem_dict['sections'].items():
-            memCtx.sections[int(section)] = spaces
-        memHandler.contexts[int(ctx)] = memCtx
+    for ctx, mem in mem_dict.items():
+        memObj = Memory(mem['start'], mem['max_size'])
+        for section, spaces in mem['sections'].items():
+            memObj.sections[int(section)] = spaces
+
+        memHandler.contexts[int(ctx)] = memObj
 
     return memHandler
 
+def importContext(f):
+    var_dict = json.loads(f.readline())
+    func_dict = json.loads(f.readline())
+    return ContextWrapper(variables=var_dict, functions=func_dict)
+
 def run(obj_file):
     with open(obj_file, 'r') as f:
+        ctx = importContext(f)
         memHandler = importMemory(f)
         quads = json.loads(f.readline())
 
-    for q in quads:
-        print('[', stringifyToken(q[0]), *q[1:], ']', sep=' ')
+    ip = 0
+    while ip < len(quads):
+        quad = quads[ip]
+        print(ip + 1, '(', end='')
+        print(stringifyToken(quad[0]), *quad[1:], sep=', ', end='')
+        print(')')
+
+        op, l, r, res = quad
+        if op == GOTO:
+            ip = res - 1
+            continue
+        elif op == ASSIGN:
+            l_val = memHandler.getValue(l)
+            memHandler.update(res, l_val)
+        elif op == MULT:
+            l_val = memHandler.getValue(l)
+            r_val = memHandler.getValue(r)
+            memHandler.update(res, l_val * r_val)
+        elif op == INPUT:
+            res_type = memHandler.getAddressType(res)
+            tmp = input()
+            try:
+                if res_type == INT:
+                    tmp = int(tmp)
+                elif res_type == FLOAT:
+                    tmp = float(tmp)
+                elif res_type == BOOL:
+                    tmp = tmp == 'true'
+                # Input is casted to string by default, so no need to cast
+            except Exception:
+                raise Exception(CANNOT_CAST.format(tmp, stringifyToken(res_type)))
+
+            memHandler.update(res, tmp)
+        elif op == PRINT:
+            print(memHandler.getValue(res))
+
+        ip += 1

@@ -28,9 +28,11 @@ class Compiler(object):
 
     def exportOvejota(self, listener, filename):
         with open(filename, 'w') as f:
+            variables = listener.ctxWrapper.variables
+            funcs = listener.ctxWrapper.functions
             memory = listener.memHandler.contexts
             quads = listener.quadWrapper.quads
-            for arg in [memory, quads]:
+            for arg in [variables, funcs, memory, quads]:
                 json.dump(arg, f, default=vars)
                 f.write('\n')
 

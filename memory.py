@@ -1,4 +1,5 @@
 from popurri_tokens import *
+from error_tokens import *
 from copy import deepcopy
 import math
 
@@ -47,12 +48,14 @@ class MemoryHandler():
         '''
 
         address, context = self.getContextAddress(address)
+        dtype = self.getAddressType(address)
 
-        # obtains the data type from the address [INT, FLOAT, BOOL, STRING]
-        dtype = math.floor(address / self.type_offset)
+        if tokenizeByValue(value) != dtype:
+            msg = EXPECTED_TYPE.format(stringifyToken(dtype), stringifyToken(tokenizeByValue(value)))
+            raise Exception(f'ERROR: {msg}')
 
         # obtains the relative address within context address stack [1 -> TYPE_OFFSET]
-        address -= (dtype * self.type_offset)
+        address -= ((dtype - INT) * self.type_offset)
         # Update value
         self.contexts[context].updateAddress(address, dtype, value)
 
@@ -69,13 +72,16 @@ class MemoryHandler():
 
         return (None, None)
 
+    def getAddressType(self, address):
+        'obtains the data type from address [INT, FLOAT, BOOL, STRING]'
+        return math.floor(address / self.type_offset) + INT
+
     def getValue(self, address):
         address, context = self.getContextAddress(address)
-        dtype = math.floor(address / self.type_offset)
-        address -= (dtype * self.type_offset)
-        print(dtype, address)
+        dtype = self.getAddressType(address)
+        address -= ((dtype - INT) * self.type_offset)
 
-        return self.contexts[context].getAddressValue(address, dtype)
+        return self.contexts[context].getValue(address, dtype)
 
     def saveSnapshot(self, context=LOCAL):
         self.snapshot = deepcopy(self.contexts[context])
