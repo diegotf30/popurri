@@ -1,9 +1,7 @@
 module main
 
 var a : [ int ] [ 4 ]
-var b : [ string ] [ 5 ]
+var b : [string] [5]
+var c: int
 
-//b[4] = '4'
-//a[2] = 1
-//a[3] = 2
-//a[2] = 2
+a[1 + 1 + 1] = 1 + a[4] * a[3] + 1

@@ -32,13 +32,13 @@ classDeclaration:
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
 attribute:
-	ID (':' (TYPE | '[' TYPE ']' '[' exp ']'))? assignment?;
+	ID (':' (TYPE | '[' TYPE ']' '[' CONST_I ']'))? assignment?;
 method:
 	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
 
 // Statements
 statement: (
-		((ID '.')? ID | indexation) assignment
+		((ID '.')? (indexation | ID)) assignment
 		| whileLoop
 		| forLoop
 		| branch
@@ -63,11 +63,11 @@ exp: (add addOp?)+;
 add: (multModDiv multDivOp?)+;
 multModDiv: (val expOp?)+;
 val:
-	'(' cond ')'
+	indexation
+	| '(' cond ')'
 	| ID ('.' ID)?
 	| funcCall
-	| constant
-	| indexation; // TODO "addOp?"
+	| constant; // TODO "addOp?"
 indexation: iterable '[' exp ']';
 
 // Operators
