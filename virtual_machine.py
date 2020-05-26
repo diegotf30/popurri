@@ -55,9 +55,9 @@ def run(obj_file):
         # print(')')
 
         op, l, r, res = quad
-        if l:
+        if l != None:
             l_val = memHandler.getValue(l)
-        if r:
+        if r != None:
             r_val = memHandler.getValue(r)
 
         # GOTOs
