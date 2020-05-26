@@ -2,6 +2,7 @@ from PopurriListener import ContextWrapper, QuadWrapper, Variable, Function, ppr
 from memory import MemoryHandler, Memory
 from popurri_tokens import *
 from error_tokens import *
+from operator import *
 import json
 
 def importMemory(f):
@@ -21,6 +22,25 @@ def importContext(f):
     func_dict = json.loads(f.readline())
     return ContextWrapper(variables=var_dict, functions=func_dict)
 
+
+opMap = {
+    ADD: add,
+    SUBS: sub,
+    MULT: mul,
+    DIV: truediv,
+    MOD: mod,
+    POWER: pow,
+    EQUAL: eq,
+    NOTEQUAL: ne,
+    GREATER: gt,
+    GREATEREQ: ge,
+    LESSER: lt,
+    LESSEREQ: le,
+}
+def handleOperation(memHandler, op, l_val, r_val, res):
+    opFunc = opMap[op]
+    memHandler.update(res, opFunc(l_val, r_val))
+
 def run(obj_file):
     with open(obj_file, 'r') as f:
         ctx = importContext(f)
@@ -30,21 +50,35 @@ def run(obj_file):
     ip = 0
     while ip < len(quads):
         quad = quads[ip]
-        print(ip + 1, '(', end='')
-        print(stringifyToken(quad[0]), *quad[1:], sep=', ', end='')
-        print(')')
+        # print(ip + 1, '(', end='')
+        # print(stringifyToken(quad[0]), *quad[1:], sep=', ', end='')
+        # print(')')
 
         op, l, r, res = quad
+        if l:
+            l_val = memHandler.getValue(l)
+        if r:
+            r_val = memHandler.getValue(r)
+
+        # GOTOs
         if op == GOTO:
             ip = res - 1
             continue
+        # Operations
         elif op == ASSIGN:
-            l_val = memHandler.getValue(l)
             memHandler.update(res, l_val)
-        elif op == MULT:
-            l_val = memHandler.getValue(l)
-            r_val = memHandler.getValue(r)
-            memHandler.update(res, l_val * r_val)
+        elif op in [ADD, SUBS, MULT, DIV, MOD, POWER, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ]:
+            handleOperation(memHandler, op, l_val, r_val, res)
+        elif op == ANDOP: # For some reason these arent implemented in operator pkg, so do them manually
+            memHandler.update(res, l_val and r_val)
+        elif op == OROP:
+            memHandler.update(res, l_val or r_val)
+        elif op in [ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
+            res_val = memHandler.getValue(res)
+            # Move token one pos up, so ADDASSIGN -> ADD, SUBSASSIGN -> SUBS, etc.
+            op -= 1
+            # Applies short-hand operator and stores it in res
+            handleOperation(memHandler, op, res_val, l_val, res)
         elif op == INPUT:
             res_type = memHandler.getAddressType(res)
             tmp = input()
