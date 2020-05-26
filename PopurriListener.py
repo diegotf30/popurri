@@ -285,7 +285,7 @@ class ContextWrapper():
         if ctx not in self.variables:
             return False
 
-        return self.variables[ctx].get(str(var_id), False)
+        return self.variables[ctx].get(str(var_id), None) is not None
 
     def functionExistsInContext(self, func_id, ctx='global'):
         func_id = str(func_id)
@@ -295,7 +295,7 @@ class ContextWrapper():
         if ctx not in self.functions:
             return False
 
-        return self.functions[ctx].get(str(func_id), False)
+        return self.functions[ctx].get(str(func_id), None) is not None
 
     def classExists(self, id):
         id = str(id)
@@ -327,6 +327,8 @@ class Function():
     [id] es el identificador con el que se podra localizar la funcion actual. Ej. func habla() {}. Donde habla es el identificador.
     [return_type] es el tipo de dato que regresara la funcion al terminar su ejecucion. Void es el tipo predeterminado.
     '''
+    era_locals = ()
+    era_tmps = ()
 
     def __init__(self, id, return_type="void", access_type="public"):
         self.id = str(id)
@@ -577,7 +579,12 @@ class PopurriListener(ParseTreeListener):
         self.ctxWrapper.pop()
         self.func_count -= 1
         self.func_returned_val = False  # Reset flag
+
+        # Save req memory and then flush it
+        func.era_local = self.memHandler.count(LOCAL)
+        func.era_tmp = self.memHandler.count(TEMPORAL)
         self.memHandler.flush(LOCAL)
+        self.memHandler.flush(TEMPORAL)
         pass
 
     def getAccessType(self, ctx):
@@ -645,7 +652,7 @@ class PopurriListener(ParseTreeListener):
 
             # Raise error if re-declaration (ignore inherited methods)
             if (self.ctxWrapper.functionExistsInContext(method.ID(0), class_id)
-                and not self.ctxWrapper.functionExistsInContext(method.ID(), parent_id)):
+                and not self.ctxWrapper.functionExistsInContext(method.ID(0), parent_id)):
                 raise error(ctx, FUNC_REDEFINITION.format(str(method.ID(0))))
 
             method = self.createFunction(method)
@@ -698,7 +705,10 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertQuad(Quadruple(
             op=ENDPROC
         ))
+        method.era_local = self.memHandler.count(LOCAL)
+        method.era_tmp = self.memHandler.count(TEMPORAL)
         self.memHandler.restoreSnapshot(LOCAL)
+        self.memHandler.flush(TEMPORAL)
 
     def enterStatement(self, ctx):
         self.statement = True
@@ -1095,8 +1105,8 @@ class PopurriListener(ParseTreeListener):
                 func.id, len(func.paramTypes)))
 
         # Validate call signature with function signature
-        call_signature = tuple(self.quadWrapper.type_stack)
         func_signature = tuple(func.paramTypes)
+        call_signature = tuple(self.quadWrapper.type_stack[-len(func_signature):])
         for func_ty in func_signature[::-1]:
             call_ty = self.quadWrapper.popType()
             if func_ty != call_ty:

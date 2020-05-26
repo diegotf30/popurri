@@ -50,8 +50,8 @@ STRING = 35
 
 # Contexts
 GLOBAL = 36
-TEMPORAL = 37
-LOCAL = 38
+LOCAL = 37
+TEMPORAL = 38
 CONSTANT = 39
 
 # (Internal use only)
