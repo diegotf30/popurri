@@ -32,6 +32,7 @@ class QuadWrapper():
         self.address_stack = []
         self.jump_stack = []
         self.break_stack = []
+        self.dim_stack = []
 
     def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
@@ -69,6 +70,9 @@ class QuadWrapper():
     def popType(self):
         return self.type_stack.pop() if len(self.type_stack) > 0 else None
 
+    def popDim(self):
+        return self.dim_stack.pop() if len(self.dim_stack) > 0 else None
+
     # Flushes jumps until either stack is empty or it encounters a false-bottom
     def flushJumps(self):
         jumps = []
@@ -84,6 +88,9 @@ class QuadWrapper():
 
     def insertAddress(self, address):
         self.address_stack.append(address)
+
+    def insertDim(self, dim):
+        self.dim_stack.append(dim)
 
     def insertOperator(self, operator):
         self.operator_stack.append(tokenize(operator))
@@ -256,13 +263,15 @@ class Variable():
     [value] es el valor inicial que tendra la variable. Ej. var edad = 25. Donde 25 es el valor inicial.
     '''
 
-    def __init__(self, id, access_type="public", type=None, value=None, address=None, isArray=False):
+    def __init__(self, id, access_type="public", type=None, value=None, address=None, isArray=False, lInf=None, lSup=None):
         self.access_type = str(access_type)
         self.id = str(id)
         self.type = str(type)
         self.value = value
         self.address = address
         self.isArray = isArray
+        self.lInf = lInf
+        self.lSup = lSup
 
 
 class Function():
@@ -309,7 +318,7 @@ class PopurriListener(ParseTreeListener):
         self.func_count = -1
         self.func_returned_val = False
         # a[ array_indexation_exp ]
-        self.array_indexation_exp = False
+        self.array_active = False
 
     def enterProgram(self, ctx):
         '''
@@ -408,6 +417,9 @@ class PopurriListener(ParseTreeListener):
                 var.isArray = True
 
                 mem_reservations = self.getConstant(ctx, True) - 1
+
+                var.lInf = 0
+                var.lSup = mem_reservations
 
                 for _ in range(0, mem_reservations):
                     reserved_address = self.memHandler.reserve(
@@ -593,6 +605,22 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterAttribute(self, ctx):
+        # # var is an array
+        # if ctx.CONST_I() is not None:
+
+        #     var.isArray = True
+
+        #     mem_reservations = self.getConstant(ctx, True) - 1
+
+        #     var.lInf = 0
+        #     var.lSup = mem_reservations
+
+        #     for _ in range(0, mem_reservations):
+        #         reserved_address = self.memHandler.reserve(
+        #             context=tokenizeContext(self.ctxWrapper.top()),
+        #             dtype=dtype
+        #         )
+
         if ctx.assignment() is not None:
             var = self.ctxWrapper.getVariable(
                 ctx.ID(), context=self.ctxWrapper.top())
@@ -623,30 +651,26 @@ class PopurriListener(ParseTreeListener):
 
     def enterStatement(self, ctx):
         self.statement = True
-        # Check if Main Start
-        if self.func_count == 0:
-            # Fill GOTO to main start (so funcs dont get executed)
-            self.quadWrapper.fillQuadWith(
-                self.quadWrapper.quads_ptr + 1,
-                at=self.quadWrapper.popJump() - 1
-            )
-            self.func_count = -1  # Reset flag
 
-        self.if_cond = False
-        if ctx.assignment() is not None:
-            var_id = self.validateCalledIds(ctx)
+        if ctx.indexation() is None:
+            # Check if Main Start
+            if self.func_count == 0:
+                # Fill GOTO to main start (so funcs dont get executed)
+                self.quadWrapper.fillQuadWith(
+                    self.quadWrapper.quads_ptr + 1,
+                    at=self.quadWrapper.popJump() - 1
+                )
+                self.func_count = -1  # Reset flag
 
-            # Check if var_id is a single value var, or an array.
+            self.if_cond = False
+            if ctx.assignment() is not None:
+                var_id = self.validateCalledIds(ctx)
 
-            # Before changes, the existence ctx.CONST_I() meant an array was being used as var.
-            #
+                # Check if var_id is a single value var, or an array.
 
-            if ctx.exp() is not None:
-                # array_offset = self.getConstant(ctx, True)
-                # self.quadWrapper.insertAddress(array_offset)
-                self.array_indexation_exp = True
+                # Before changes, the existence ctx.CONST_I() meant an array was being used as var.
 
-            self.quadWrapper.insertAddress(var_id)
+                self.quadWrapper.insertAddress(var_id)
 
     def exitStatement(self, ctx):
         self.statement = False
@@ -932,10 +956,54 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertOperator(ctx.getText())
 
     def enterIndexation(self, ctx):
+        self.array_active = True
+        self.quadWrapper.insertOperator('verify')
         pass
 
     def exitIndexation(self, ctx):
-        pass
+
+        # Need to check if the current array is using an ID as iterable.
+        exp_result = self.quadWrapper.popAddress()
+        array_var_starting_address = self.quadWrapper.popDim()
+
+        var = self.ctxWrapper.getVariableByAddress(array_var_starting_address)
+
+        print(array_var_starting_address)
+
+        # Create verify quad
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op=self.quadWrapper.popOperator(),
+            l=exp_result,
+            r=var.lInf,
+            res=var.lSup))
+
+        # Reserve memory for the literal address. Example: 5000 -> Int
+
+        var_address_address = self.memHandler.reserve(
+            context=CONSTANT,
+            dtype=32,
+            value=var.address
+        )
+
+        tmp = self.memHandler.reserve(
+            context=TEMPORAL,
+            dtype=41,
+        )
+
+        # create (exp_result + base address) quad
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op=8,
+            l=exp_result,
+            r=var_address_address,
+            res=tmp))
+        self.quadWrapper.insertAddress(tmp)
+
+        # Since the enterDeclaration is pushing a type no matter the variable being checked.
+        # This pops the type and pushes the correct type
+        self.quadWrapper.popType()
+        self.quadWrapper.insertType(var.type)
 
     def enterAssignment(self, ctx):
         pass
@@ -946,6 +1014,9 @@ class PopurriListener(ParseTreeListener):
             var_address = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
             var_type = self.quadWrapper.popType()
+
+            array_address = var_address
+            print(var_type, res_type)
 
             var = None
             # Assign resulting type to variable and allocate in memory
@@ -970,22 +1041,30 @@ class PopurriListener(ParseTreeListener):
                     raise error(ctx, TYPE_MISMATCH.format(
                         stringifyToken(op), var_type, res_type))
 
-            if var_type != res_type:
-                raise error(ctx, TYPE_MISMATCH.format(
-                    stringifyToken(op), var_type, res_type))
+            if var is not None:
+                if var_type != res_type:
+                    raise error(ctx, TYPE_MISMATCH.format(
+                        stringifyToken(op), var_type, res_type))
 
-            if var.isArray:
-                self.quadWrapper.insertQuad(Quadruple(
-                    op=op,
-                    l=res_address,
-                    res=var.address + self.quadWrapper.popAddress()
-                ))
-            else:
-                self.quadWrapper.insertQuad(Quadruple(
-                    op=op,
-                    l=res_address,
-                    res=var.address
-                ))
+            # if self.array_active:
+            #     self.quadWrapper.insertQuad(Quadruple(
+            #         op=op,
+            #         l=res_address,
+            #         res=array_address  # + self.quadWrapper.popAddress()
+            #     ))
+            #     self.array_active = False
+            # else:
+            #     self.quadWrapper.insertQuad(Quadruple(
+            #         op=op,
+            #         l=res_address,
+            #         res=var.address
+            #     ))
+
+            self.quadWrapper.insertQuad(Quadruple(
+                op=op,
+                l=res_address,
+                res=var.address if var is not None else var_address
+            ))
 
     def enterFuncCall(self, ctx):
         # TODO replace the id with its address in memory
@@ -1061,6 +1140,12 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterIterable(self, ctx):
+
+        # if array is using ID
+        if ctx.ID() is not None:
+            # unwrap id into var object
+            var = self.ctxWrapper.getVariable(str(ctx.ID()))
+            self.quadWrapper.insertDim(var.address)
         pass
 
     def exitIterable(self, ctx):
