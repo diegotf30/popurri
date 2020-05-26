@@ -758,7 +758,7 @@ class PopurriListener(ParseTreeListener):
         # Fill while gotoF with next quad
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.quads_ptr + 1,
-            at=self.quadWrapper.popJump()
+            at=self.quadWrapper.popJump() - 1
         )
 
         # Fill loop-end goto with loop start
@@ -780,9 +780,11 @@ class PopurriListener(ParseTreeListener):
     def exitBranch(self, ctx):
         self.if_cond = False
 
-        # Ignore jumps inside else
+        # flush jumps inside else (to later be re-added)
         if ctx.elseStmt() is not None:
             else_jumps = self.quadWrapper.flushJumps()
+        else:
+            self.quadWrapper.flushJumps() # Remove false bottom
 
         # Fill if and elseif GOTOs with next quad outside branch
         pending_jumps = []
@@ -812,7 +814,7 @@ class PopurriListener(ParseTreeListener):
         # Fill GOTOF with next quad
         self.quadWrapper.fillQuadWith(
             self.quadWrapper.quads_ptr + 2,
-            at=self.quadWrapper.popJump()
+            at=self.quadWrapper.popJump() - 1
         )
 
         # Re-push pending jumps

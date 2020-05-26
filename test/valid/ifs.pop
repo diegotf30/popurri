@@ -2,12 +2,49 @@ module ifs
 
 var a = 10
 
-if true {
-    a = 2
-} 
-else if false {
-    a = 3
+while true {
+    if true {
+        a = 2
+        break
+    } 
+    else if false {
+        a = 3
+        break
+        break
+        break
+    }
+    else {
+        a = 10
+        break
+    }
+}
+a = 10
+a = 10
+a = 10
+
+if false {
+    a = 11
 }
 else {
-    a = 10
+    a = 12
 }
+
+if true {
+    a = 1
+} else if true {
+    a = 2
+}
+
+if true {
+    a = 3
+}
+
+#1 (= 10 null a)
+#2 (GOTOF true null pending) -- 5
+#3 (= 2 null a)
+#4 (GOTO null null pending) -- 9
+#5 (GOTOF false null pending) -- 8, aqui se rellena 1ero
+#6 (= 3 null a)
+#7 (GOTO null null pending) -- 9
+#8 (= 10 null a) -- aqui se rellena 2o
+#-- exitBranch, se rellenan gotos pendientes

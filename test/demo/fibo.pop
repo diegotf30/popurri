@@ -1,0 +1,25 @@
+module fibonacci
+
+var n : int
+
+func fib(int n) int {
+    var prev : int, fib : int
+    var i : int
+
+    if n < 2 {
+        return n
+    }
+
+    prev = 1
+    fib = 1
+
+    i = 2
+    while i < n {
+        prev = fib
+        fib = fib + prev
+    }
+    return fib
+}
+
+input(n)
+fib(n)

@@ -3,7 +3,7 @@ grammar Popurri;
 // Terminals
 
 WS: [ \t\r\n]+ -> skip;
-COMMENT: '//' .*? '\n' -> skip;
+COMMENT: '#' .*? '\n' -> skip;
 CONST_BOOL: 'true' | 'false';
 CONST_I: [1-9][0-9]* | '0';
 CONST_F: [0-9]* '.' [0-9]+;
