@@ -143,8 +143,8 @@ class ContextWrapper():
     '''
 
     def __init__(self, variables={}, functions={}):
-        self.variables = {}
-        self.functions = {}
+        self.variables = variables
+        self.functions = functions
         self.context_stack = ['global']
         self.loop_stack = []
 
@@ -161,7 +161,7 @@ class ContextWrapper():
         if len(self.context_stack) < 2:
             return False
 
-        return 'class' in self.top() or 'class' in self.context_stack[-2]
+        return 'class ' in self.top() or 'class ' in self.context_stack[-2]
 
     def top(self):
         return self.context_stack[-1]
@@ -170,7 +170,7 @@ class ContextWrapper():
         return self.context_stack.pop()
 
     def push(self, ctx):
-        return self.context_stack.append(str(ctx))
+        return self.context_stack.append(deepcopy(ctx))
 
     def getVariableByAddress(self, address):
         for ctx in self.variables.values(): # Iterate over contexts
@@ -187,11 +187,13 @@ class ContextWrapper():
                     return var
         return None
 
-    def getVariable(self, var_id, context="global"):
-        if context in self.variables:
-            return self.variables[context].get(str(var_id), None)
-        else:
+    def getVariable(self, var_id, context="global", insideClass=False):
+        variables = self.variables[self.getClassContext()] if insideClass else self.variables
+
+        if context not in variables:
             return None
+
+        return self.variables[context].get(str(var_id), None)
 
     def getFunction(self, func_id, context="global"):
         func_id = str(func_id)
@@ -213,15 +215,15 @@ class ContextWrapper():
         if len(self.context_stack) < 2:
             return None
 
-        if 'class' in self.top():
+        if 'class ' in self.top():
             return self.top()
-        elif 'class' in self.context_stack[-2]:
+        elif 'class ' in self.context_stack[-2]:
             return self.context_stack[-2]
 
         return None
 
     def getAttributes(self, class_id):
-        if 'class' not in class_id:
+        if 'class ' not in class_id:
             class_id = 'class ' + class_id
 
         if class_id not in self.variables:
@@ -299,7 +301,7 @@ class ContextWrapper():
 
     def classExists(self, id):
         id = str(id)
-        if 'class' not in id:
+        if 'class ' not in id:
             id = 'class ' + id
 
         return id in self.variables or id in self.functions
@@ -313,12 +315,13 @@ class Variable():
     [value] es el valor inicial que tendra la variable. Ej. var edad = 25. Donde 25 es el valor inicial.
     '''
 
-    def __init__(self, id, access_type="public", type=None, address=None, isArray=False):
+    def __init__(self, id, access_type="public", type=None, address=None, isArray=False, paramNo=None):
         self.access_type = str(access_type)
         self.id = str(id)
         self.type = str(type)
         self.address = address
         self.isArray = isArray
+        self.paramNo = paramNo
 
 
 class Function():
@@ -327,15 +330,15 @@ class Function():
     [id] es el identificador con el que se podra localizar la funcion actual. Ej. func habla() {}. Donde habla es el identificador.
     [return_type] es el tipo de dato que regresara la funcion al terminar su ejecucion. Void es el tipo predeterminado.
     '''
-    era_locals = ()
-    era_tmps = ()
 
-    def __init__(self, id, return_type="void", access_type="public"):
+    def __init__(self, id, return_type="void", access_type="public", quads_range=(-1, -1), paramTypes=None, era_local=(), era_tmp=()):
         self.id = str(id)
         self.return_type = str(return_type)
         self.access_type = str(access_type)
-        self.quads_range = (-1, -1)
-        self.paramTypes = []
+        self.quads_range = quads_range
+        self.paramTypes = paramTypes if paramTypes else []
+        self.era_local = era_local
+        self.era_tmp = era_tmp
 
     def updateQuadsRange(self, start=None, end=None):
         quads_range = list(self.quads_range)
@@ -1216,6 +1219,7 @@ class PopurriListener(ParseTreeListener):
             param = Variable(
                 id=ctx.ID(i),
                 type=ctx.TYPE(i),
+                paramNo=i + 1
             )
             param.address = self.memHandler.reserve(
                 context=LOCAL,

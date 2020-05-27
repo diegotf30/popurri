@@ -1,7 +1,17 @@
 module main
 class mychild {
     private var hola : int
+    func a(string a) {
+        print("ola")
+    }
+    var a : float
+    protected var b : string
+}
+
+class mychild2 {
+    private var hola : int
     func a(int a) {
+        var x : mychild
         print("ola")
     }
     var a : float
@@ -10,4 +20,8 @@ class mychild {
 
 var x : mychild
 
-x.a(1)
+func a(int a, int b) {
+    
+}
+
+x.a("1")

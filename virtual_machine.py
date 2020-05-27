@@ -18,9 +18,27 @@ def importMemory(f):
     return memHandler
 
 def importContext(f):
-    var_dict = json.loads(f.readline())
-    func_dict = json.loads(f.readline())
-    return ContextWrapper(variables=var_dict, functions=func_dict)
+    # Import Variables
+    vars = json.loads(f.readline())
+    for ctx in vars.values(): # Iterate over contexts
+        for k,v in ctx.items():
+            if 'func ' in k or 'self' in v: # Inside method/object varTable
+                for vid, vdict in v.items():
+                    if 'self' in vdict: # Var is object, iterate over attributes
+                        for attrid, attrdict in vdict.items():
+                            vdict[attrid] = Variable(**attrdict)
+                    else:
+                        v[vid] = Variable(**vdict)
+            else:
+                ctx[k] = Variable(**v)
+
+    # Import Functions
+    funcs = json.loads(f.readline())
+    for ctx in funcs.values():
+        for fid, fdict in ctx.items():
+            ctx[fid] = Function(**fdict)
+
+    return ContextWrapper(variables=vars, functions=funcs)
 
 
 opMap = {
@@ -47,7 +65,14 @@ def run(obj_file):
         memHandler = importMemory(f)
         quads = json.loads(f.readline())
 
+    # Reutilizing the ctx_stack in this wrapper to handle memory stacks
+    memCtxWrapper = ContextWrapper()
+    memCtxWrapper.pop() # Remove global context
+    # Flag
+    method_call = False
+    # Instruction Pointer
     ip = 0
+    ip_stack = []
     while ip < len(quads):
         quad = quads[ip]
         # print(ip + 1, '(', end='')
@@ -64,14 +89,10 @@ def run(obj_file):
         if op == GOTO:
             ip = res - 1
             continue
-        elif op == GOTOF:
-            if l_val == False:
-                ip = res - 1
-                continue
-        elif op == GOTOV:
-            if l_val == True:
-                ip = res - 1
-                continue
+        elif (op == GOTOF and l_val == False or
+              op == GOTOV and l_val == True):
+            ip = res - 1
+            continue
 
         # Operations
         elif op == ASSIGN:
@@ -108,8 +129,67 @@ def run(obj_file):
         elif op == PRINT:
             print(memHandler.getValue(res))
 
+        # Classes
+        elif op == ERAC:
+            # Sleep current context
+            memCtxWrapper.push(memHandler)
+            memHandler.flush(LOCAL)
+            memHandler.flush(TEMPORAL)
+
+            class_var = ctx.getVariable(
+                l,
+                context=ctx.top(),
+                insideClass=ctx.top() != 'global'
+            )
+            for attr in class_var.values():
+                if attr.id == 'self': # this attribute only contains the class name
+                    continue
+
+                memHandler.reserve(
+                    context=LOCAL,
+                    dtype=tokenize(attr.type),
+                )
+
+            ctx.push('class ' + class_var['self'].type)
+            method_call = True # Set flag so ERA quad doesnt flush mem
+
         # Function Calls
         elif op == ERA:
-            print('era')
+            # Sleep current context if calling regular function
+            if not method_call:
+                memCtxWrapper.push(memHandler)
+                memHandler.flush(LOCAL)
+                memHandler.flush(TEMPORAL)
+
+            ctx.push('func ' + l)
+            func = ctx.getCurrentFunction()
+
+            # Allocate required function memory
+            ctxs = [LOCAL, TEMPORAL]
+            dtypes = [INT, FLOAT, BOOL, STRING]
+            for i, era in enumerate([func.era_local, func.era_tmp]):
+                for j, type_allocations in enumerate(era):
+                    for _ in range(type_allocations):
+                        memHandler.reserve(
+                            context=ctxs[i],
+                            dtype=dtypes[j],
+                        )
+
+            method_call = False # Reset flag
+        elif op == PARAM:
+            if ctx.insideClass():
+                params = ctx.variables[ctx.getClassContext()][ctx.top()]
+            else:
+                params = ctx.variables[ctx.top()]
+
+            paramNo = int(res.split(' ')[1]) # res is formatted as 'param N'
+            # Update the local param memory with the passed value
+            for param in params.values():
+                if param.paramNo == paramNo:
+                    memHandler.update(
+                        address=param.address,
+                        value=l_val,
+                    )
+                    break
 
         ip += 1
