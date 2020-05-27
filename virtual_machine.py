@@ -183,7 +183,7 @@ def run(obj_file):
                 params = ctx.variables[ctx.top()]
 
             paramNo = int(res.split(' ')[1]) # res is formatted as 'param N'
-            # Update the local param memory with the passed value
+            # Update the local param address with the passed value
             for param in params.values():
                 if param.paramNo == paramNo:
                     memHandler.update(
@@ -191,5 +191,21 @@ def run(obj_file):
                         value=l_val,
                     )
                     break
+
+        elif op == GOSUB:
+            func_id = l.split('.')[-1]
+            func_ctx = ctx.getClassContext() if ctx.insideClass() else 'global'
+            func = ctx.getFunction(func_id, func_ctx)
+            if func.quads_range != (-1, -1):
+                # Gonna return to this ip when returning from func
+                ip_stack.append(ip + 1)
+                # Go to function start
+                ip = func.quads_range[0] - 1
+                continue
+
+        elif op == ENDPROC:
+            # Return to
+            ip = ip_stack.pop()
+            continue
 
         ip += 1
