@@ -142,9 +142,9 @@ class ContextWrapper():
     Antes GlobalContext
     '''
 
-    def __init__(self, variables={}, functions={}):
-        self.variables = variables
-        self.functions = functions
+    def __init__(self, variables=None, functions=None):
+        self.variables = variables if variables else {}
+        self.functions = functions if functions else {}
         self.context_stack = ['global']
         self.loop_stack = []
 
