@@ -64,7 +64,7 @@ exp: add (addOp add)*;
 add: multModDiv (multDivOp multModDiv)*;
 multModDiv: val (expOp val)*;
 val:
-	indexation
+	(ID '.')? indexation
 	| '(' cond ')'
 	| ID ('.' ID)?
 	| funcCall
@@ -90,7 +90,7 @@ constant:
 	| const_arr
 	| 'none';
 const_arr: '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
-iterable: CONST_STR | const_arr | ID;
+iterable: ID | CONST_STR | const_arr;
 
 // Special functions
 printStmt: 'print' '(' condParam? ')';

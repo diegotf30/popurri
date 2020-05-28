@@ -5,7 +5,7 @@ func myFunc() int {
     var b : [string][5]
 
     c[1] = c[1 + 1]
-    return c[1]
+    return 1
 }
 
-myFunc()
+# myFunc()

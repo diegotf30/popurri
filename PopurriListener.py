@@ -196,13 +196,14 @@ class ContextWrapper():
                     return var
         return None
 
-    def getVariable(self, var_id, context="global", insideClass=False):
+    def getVariable(self, var_id, context="global", insideClass=False, isClassArray=False):
         variables = self.variables[self.getClassContext(
         )] if insideClass else self.variables
-
         if context not in variables:
             return None
 
+        if isClassArray:
+            return variables.get(str(var_id), None)
         return variables[context].get(str(var_id), None)
 
     def getFunction(self, func_id, context="global"):
@@ -667,6 +668,19 @@ class PopurriListener(ParseTreeListener):
                     access_type=access_type,
                     address=reserved_address
                 )
+
+                if attr.CONST_I() is not None:
+                    var.isArray = True
+                    mem_reservations = self.getConstant(attr, True) - 1
+
+                    var.lInf = 0
+                    var.lSup = mem_reservations
+
+                    for _ in range(mem_reservations):
+                        reserved_address = self.memHandler.reserve(
+                            context=tokenizeContext(self.ctxWrapper.top()),
+                            dtype=tokenize(attr.TYPE())
+                        )
                 self.ctxWrapper.addVariable(var, class_id)
 
         # Parse class methods
@@ -718,14 +732,14 @@ class PopurriListener(ParseTreeListener):
             )
 
             var = Variable(
-                id=ctx.ID(0),
+                id=ctx.ID(),
                 type=ctx.TYPE(),
                 address=reserved_address
             )
 
             # var is an array
             if ctx.CONST_I() is not None:
-                var.isArray = False
+                var.isArray = True
                 mem_reservations = self.getConstant(ctx, True) - 1
 
                 var.lInf = 0
@@ -738,8 +752,6 @@ class PopurriListener(ParseTreeListener):
                     )
 
         if ctx.assignment() is not None:
-            var = self.ctxWrapper.getVariable(
-                ctx.ID(), context=self.ctxWrapper.top())
             if var.address:
                 self.quadWrapper.insertAddress(var.address)
             else:
@@ -1008,8 +1020,8 @@ class PopurriListener(ParseTreeListener):
     # Helper to validate id(s) being called (be them )
     def validateCalledIds(self, ctx, is_function=False):
         ids = [str(id) for id in ctx.ID()]
-
         if len(ids) == 2:  # class attr/method being called (i.e. myobj.name or myobj.print())
+
             selfAccess = ids[0] == 'self'
             if selfAccess:
                 class_name = self.ctxWrapper.getClassContext()
@@ -1074,7 +1086,8 @@ class PopurriListener(ParseTreeListener):
         if ctx.cond() is not None:  # nested cond
             # Add fake bottom to operator_stack
             self.quadWrapper.insertOperator(FALSEBOTTOM)
-        elif len(ctx.ID()) > 0:  # identifier
+        elif len(ctx.ID()) > 0 and ctx.indexation() is None:  # identifier
+            print('enterVal uwu')
             self.validateCalledIds(ctx)
         elif ctx.constant() is not None:  # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
@@ -1296,8 +1309,13 @@ class PopurriListener(ParseTreeListener):
         # if array is using ID
         if ctx.ID() is not None:
             # unwrap id into var object
+            insideClass = False
+            # check the penultimate context string
+            if len(self.ctxWrapper.context_stack) > 1 and self.ctxWrapper.context_stack[-2][:5] == 'class':
+                insideClass = True
             var = self.ctxWrapper.getVariable(
-                str(ctx.ID()), context=self.ctxWrapper.top())
+                str(ctx.ID()), context=self.ctxWrapper.top(), insideClass=insideClass, isClassArray=insideClass)
+            print('HOLAAAA')
             self.quadWrapper.insertDim(var.address)
 
     def exitIterable(self, ctx):
