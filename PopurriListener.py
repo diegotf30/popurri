@@ -197,8 +197,7 @@ class ContextWrapper():
         return None
 
     def getVariable(self, var_id, context="global", insideClass=False, isClassArray=False):
-        variables = self.variables[self.getClassContext(
-        )] if insideClass else self.variables
+        variables = self.variables[self.getClassContext()] if insideClass else self.variables
         if context not in variables:
             return None
 
