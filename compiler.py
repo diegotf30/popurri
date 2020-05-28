@@ -28,13 +28,15 @@ class Compiler(object):
 
     def exportOvejota(self, listener, filename):
         with open(filename, 'w') as f:
+            variables = listener.ctxWrapper.variables
+            funcs = listener.ctxWrapper.functions
             memory = listener.memHandler.contexts
             quads = listener.quadWrapper.quads
-            for arg in [memory, quads]:
+            for arg in [variables, funcs, memory, quads]:
                 json.dump(arg, f, default=vars)
                 f.write('\n')
 
-    def compile(self, file, export=True):
+    def compile(self, file, export=True, debug_info=False):
         if not isfile(file):
             raise Exception(f'Error: {file} not found')
 
@@ -46,7 +48,7 @@ class Compiler(object):
 
         tree = parser.program()
         walker = ParseTreeWalker()
-        listener = PopurriListener(self.mem_size)
+        listener = PopurriListener(self.mem_size, debug_info=debug_info)
         walker.walk(listener, tree)
 
         if export:

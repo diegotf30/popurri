@@ -1,8 +1,10 @@
 from popurri_tokens import *
+from error_tokens import *
+from copy import deepcopy
 import math
 
 class MemoryHandler():
-    contexts = {}
+    snapshot = None
     context_offset = None
     type_offset = None
 
@@ -20,6 +22,7 @@ class MemoryHandler():
         if self.type_offset % 1 != 0:
             raise Exception('ERROR: \'context_offset\' must be divisible by 4')
 
+        self.contexts = {}
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
             self.contexts[ctx] = Memory(start=context_offset * i, max_size=self.type_offset)
 
@@ -45,12 +48,14 @@ class MemoryHandler():
         '''
 
         address, context = self.getContextAddress(address)
+        dtype = self.getAddressType(address)
 
-        # obtains the data type from the address [INT, FLOAT, BOOL, STRING]
-        dtype = math.floor(address / self.type_offset)
+        if tokenizeByValue(value) != dtype:
+            msg = EXPECTED_TYPE.format(stringifyToken(dtype), stringifyToken(tokenizeByValue(value)))
+            raise Exception(f'ERROR: {msg}')
 
         # obtains the relative address within context address stack [1 -> TYPE_OFFSET]
-        address -= (dtype * self.type_offset)
+        address -= ((dtype - INT) * self.type_offset)
         # Update value
         self.contexts[context].updateAddress(address, dtype, value)
 
@@ -67,23 +72,34 @@ class MemoryHandler():
 
         return (None, None)
 
+    def getAddressType(self, address):
+        'obtains the data type from address [INT, FLOAT, BOOL, STRING]'
+        return math.floor(address / self.type_offset % 4) + INT
+
     def getValue(self, address):
         address, context = self.getContextAddress(address)
-        dtype = math.floor(address / self.type_offset)
-        address -= (dtype * self.type_offset)
-        print(dtype, address)
+        dtype = self.getAddressType(address)
+        address -= ((dtype - INT) * self.type_offset)
 
-        return self.contexts[context].getAddressValue(address, dtype)
+        return self.contexts[context].getValue(address, dtype)
 
-    # def importFromDict(self, s):
+    def saveSnapshot(self, context=LOCAL):
+        self.snapshot = deepcopy(self.contexts[context])
 
+    def restoreSnapshot(self, context=LOCAL):
+        self.contexts[context] = deepcopy(self.snapshot)
+
+    def flush(self, context=LOCAL):
+        start_offset = context - GLOBAL
+        self.contexts[context] = Memory(start=self.context_offset * start_offset, max_size=self.type_offset)
+
+    def count(self, context=LOCAL):
+        'Returns a tuple with the amount of items allocated in each section'
+        memCtx = self.contexts[context].sections
+        return tuple([len(v) for v in memCtx.values()])
 
 
 class Memory():
-    start = None
-    max_size = None
-    sections = {}
-
     def __init__(self, start, max_size):
         self.start = start
         self.sections = {
@@ -102,7 +118,13 @@ class Memory():
         if len(self.sections[dtype]) == self.max_size:
             raise Exception(f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
 
-        self.sections[dtype].append(None)
+        default_val_map = {
+            INT: 0,
+            FLOAT: 0.0,
+            BOOL: False,
+            STRING: ''
+        }
+        self.sections[dtype].append(default_val_map[dtype])
         return len(self.sections[dtype]) - 1
 
     def updateAddress(self, address, dtype=None, value=None):

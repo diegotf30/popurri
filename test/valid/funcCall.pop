@@ -1,0 +1,10 @@
+module funcCall
+
+var a : int
+
+func a(int a, int b) int {
+    a = 10
+    return a + b
+}
+
+a(1,2)

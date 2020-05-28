@@ -1,0 +1,18 @@
+module fibonacci_recursive
+
+var n : int, i = 0
+
+func fibo(int n) int {
+    if n < 2 {
+        return n
+    }
+    else {
+        return fibo(n - 1) + fibo(n - 2)
+    }
+}
+
+input(n)
+while i < n {
+    print(fibo(i))
+    i += 1
+}

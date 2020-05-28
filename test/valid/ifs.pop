@@ -2,12 +2,47 @@ module ifs
 
 var a = 10
 
-if true {
-    a = 2
-} 
-else if false {
-    a = 3
+while true {
+    if false {
+        print('ERROR')
+    } 
+    else if true {
+        print('inside else if')
+        break
+        print('ERROR')
+        break
+        print('ERROR')
+        break
+        print('ERROR')
+    }
+    else {
+        print('ERROR')
+    }
+}
+
+if false {
+    print('ERROR')
 }
 else {
-    a = 10
+    print('inside else')
 }
+
+if true {
+    print('inside if with else')
+} else if true {
+    print('ERROR')
+}
+
+if true {
+    print('inside single if')
+}
+
+#1 (= 10 null a)
+#2 (GOTOF true null pending) -- 5
+#3 (= 2 null a)
+#4 (GOTO null null pending) -- 9
+#5 (GOTOF false null pending) -- 8, aqui se rellena 1ero
+#6 (= 3 null a)
+#7 (GOTO null null pending) -- 9
+#8 (= 10 null a) -- aqui se rellena 2o
+#-- exitBranch, se rellenan gotos pendientes

@@ -2,8 +2,6 @@ module main
 
 var myVar : int, a : float
 
-func a() {
-    input(myVar)
-    a = 10.0
-    print(myVar, 10 * 5, 2, a)
-}
+input(myVar)
+a = 10.0
+print(myVar, 10 * 5, 2, a)

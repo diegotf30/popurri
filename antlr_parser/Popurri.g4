@@ -3,7 +3,7 @@ grammar Popurri;
 // Terminals
 
 WS: [ \t\r\n]+ -> skip;
-COMMENT: '//' .*? '\n' -> skip;
+COMMENT: '#' .*? '\n' -> skip;
 CONST_BOOL: 'true' | 'false';
 CONST_I: [1-9][0-9]* | '0';
 CONST_F: [0-9]* '.' [0-9]+;
@@ -25,16 +25,16 @@ declaration:
 	ID (':' (TYPE | ID | '[' TYPE ']' '[' CONST_I ']'))? assignment?;
 
 function:
-	'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
+	'func' ID '(' funcParams? ')' (TYPE | ID)? '{' declarations* statement* '}';
 
 classDeclaration:
 	'class' parent? ID '{' (attributes | method)+ '}';
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
 attribute:
-	ID (':' (TYPE | '[' TYPE ']' '[' exp ']'))? assignment?;
+	ID (':' (TYPE | '[' TYPE ']' '[' exp ']'))?;
 method:
-	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' statement* '}';
+	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' declarations* statement* '}';
 
 // Statements
 statement: (
@@ -57,11 +57,11 @@ elseStmt: 'else' '{' statement* '}';
 returnStmt: 'return' cond;
 breakStmt: 'break';
 
-cond: (cmp boolOp?)+;
-cmp: (exp cmpOp?)+;
-exp: (add addOp?)+;
-add: (multModDiv multDivOp?)+;
-multModDiv: (val expOp?)+;
+cond : cmp (boolOp cmp)*;
+cmp : exp (cmpOp exp)*;
+exp : add (addOp add)*;
+add : multModDiv (multDivOp multModDiv)*;
+multModDiv : val (expOp val)*;
 val:
 	'(' cond ')'
 	| ID ('.' ID)?
