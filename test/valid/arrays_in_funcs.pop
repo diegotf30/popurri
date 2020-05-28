@@ -1,0 +1,11 @@
+module main
+
+func myFunc() int {
+    var c : [int][2]
+    var b : [string][5]
+
+    c[1] = c[1 + 1]
+    return c[1]
+}
+
+myFunc()

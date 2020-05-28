@@ -705,6 +705,38 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterAttribute(self, ctx):
+        var = None
+        # var has data_type : INT, FLOAT, STRING, BOOL
+        # TODO: Arrays are not yet implemented
+        if ctx.TYPE() is not None:
+
+            dtype = tokenize(ctx.TYPE())
+
+            reserved_address = self.memHandler.reserve(
+                context=tokenizeContext(self.ctxWrapper.top()),
+                dtype=dtype
+            )
+
+            var = Variable(
+                id=ctx.ID(0),
+                type=ctx.TYPE(),
+                address=reserved_address
+            )
+
+            # var is an array
+            if ctx.CONST_I() is not None:
+                var.isArray = False
+                mem_reservations = self.getConstant(ctx, True) - 1
+
+                var.lInf = 0
+                var.lSup = mem_reservations
+
+                for _ in range(mem_reservations):
+                    reserved_address = self.memHandler.reserve(
+                        context=tokenizeContext(self.ctxWrapper.top()),
+                        dtype=dtype
+                    )
+
         if ctx.assignment() is not None:
             var = self.ctxWrapper.getVariable(
                 ctx.ID(), context=self.ctxWrapper.top())
@@ -1082,8 +1114,6 @@ class PopurriListener(ParseTreeListener):
 
         var = self.ctxWrapper.getVariableByAddress(array_var_starting_address)
 
-        print(array_var_starting_address)
-
         # Create verify quad
 
         self.quadWrapper.insertQuad(Quadruple(
@@ -1266,7 +1296,8 @@ class PopurriListener(ParseTreeListener):
         # if array is using ID
         if ctx.ID() is not None:
             # unwrap id into var object
-            var = self.ctxWrapper.getVariable(str(ctx.ID()))
+            var = self.ctxWrapper.getVariable(
+                str(ctx.ID()), context=self.ctxWrapper.top())
             self.quadWrapper.insertDim(var.address)
 
     def exitIterable(self, ctx):
