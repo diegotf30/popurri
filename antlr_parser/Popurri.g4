@@ -38,7 +38,7 @@ method:
 
 // Statements
 statement: (
-		((ID '.')? (indexation | ID)) assignment
+		(ID '.')? ID indexation? assignment
 		| whileLoop
 		| forLoop
 		| branch
@@ -64,12 +64,11 @@ exp: add (addOp add)*;
 add: multModDiv (multDivOp multModDiv)*;
 multModDiv: val (expOp val)*;
 val:
-	(ID '.')? indexation
 	| '(' cond ')'
-	| ID ('.' ID)?
 	| funcCall
+	| ID ('.' ID)? indexation?
 	| constant; // TODO "addOp?"
-indexation: iterable '[' exp ']';
+indexation: '[' exp ']';
 
 // Operators
 boolOp: 'and' | 'or';
@@ -90,7 +89,7 @@ constant:
 	| const_arr
 	| 'none';
 const_arr: '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
-iterable: ID | CONST_STR | const_arr;
+iterable: (ID '.')? ID | CONST_STR | const_arr;
 
 // Special functions
 printStmt: 'print' '(' condParam? ')';

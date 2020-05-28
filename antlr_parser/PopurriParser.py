@@ -8,7 +8,7 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3;")
-        buf.write("\u01f0\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\u01f2\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
         buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31")
@@ -45,31 +45,31 @@ def serializedATN():
         buf.write("\13\26\3\27\3\27\3\27\3\27\7\27\u0163\n\27\f\27\16\27")
         buf.write("\u0166\13\27\3\30\3\30\3\30\3\30\7\30\u016c\n\30\f\30")
         buf.write("\16\30\u016f\13\30\3\31\3\31\3\31\3\31\7\31\u0175\n\31")
-        buf.write("\f\31\16\31\u0178\13\31\3\32\3\32\5\32\u017c\n\32\3\32")
-        buf.write("\3\32\3\32\3\32\3\32\3\32\3\32\3\32\5\32\u0186\n\32\3")
-        buf.write("\32\3\32\5\32\u018a\n\32\3\33\3\33\3\33\3\33\3\33\3\34")
-        buf.write("\3\34\3\35\3\35\3\36\3\36\3\37\3\37\3 \3 \3!\3!\3\"\3")
-        buf.write("\"\3\"\3#\3#\5#\u01a2\n#\3#\3#\3#\5#\u01a7\n#\3#\3#\3")
-        buf.write("$\3$\3$\3$\3$\3$\5$\u01b1\n$\3%\3%\5%\u01b5\n%\3%\3%\3")
-        buf.write("%\3%\3%\5%\u01bc\n%\5%\u01be\n%\3%\3%\3&\3&\3&\5&\u01c5")
-        buf.write("\n&\3\'\3\'\3\'\5\'\u01ca\n\'\3\'\3\'\3(\3(\3(\5(\u01d1")
-        buf.write("\n(\3(\3(\3)\3)\3)\3)\5)\u01d9\n)\3)\3)\3)\3*\3*\3*\7")
-        buf.write("*\u01e1\n*\f*\16*\u01e4\13*\3+\3+\3+\3+\3+\7+\u01eb\n")
-        buf.write("+\f+\16+\u01ee\13+\3+\2\2,\2\4\6\b\n\f\16\20\22\24\26")
+        buf.write("\f\31\16\31\u0178\13\31\3\32\3\32\3\32\3\32\3\32\3\32")
+        buf.write("\3\32\3\32\3\32\5\32\u0183\n\32\3\32\5\32\u0186\n\32\3")
+        buf.write("\32\5\32\u0189\n\32\3\33\3\33\3\33\3\33\3\34\3\34\3\35")
+        buf.write("\3\35\3\36\3\36\3\37\3\37\3 \3 \3!\3!\3\"\3\"\3\"\3#\3")
+        buf.write("#\5#\u01a0\n#\3#\3#\3#\5#\u01a5\n#\3#\3#\3$\3$\3$\3$\3")
+        buf.write("$\3$\5$\u01af\n$\3%\3%\5%\u01b3\n%\3%\3%\3%\3%\3%\5%\u01ba")
+        buf.write("\n%\5%\u01bc\n%\3%\3%\3&\3&\5&\u01c2\n&\3&\3&\3&\5&\u01c7")
+        buf.write("\n&\3\'\3\'\3\'\5\'\u01cc\n\'\3\'\3\'\3(\3(\3(\5(\u01d3")
+        buf.write("\n(\3(\3(\3)\3)\3)\3)\5)\u01db\n)\3)\3)\3)\3*\3*\3*\7")
+        buf.write("*\u01e3\n*\f*\16*\u01e6\13*\3+\3+\3+\3+\3+\7+\u01ed\n")
+        buf.write("+\f+\16+\u01f0\13+\3+\2\2,\2\4\6\b\n\f\16\20\22\24\26")
         buf.write("\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRT\2\b\4")
-        buf.write("\299;;\3\2\31\32\3\2\33 \3\2!\"\3\2#%\3\2\',\2\u020e\2")
+        buf.write("\299;;\3\2\31\32\3\2\33 \3\2!\"\3\2#%\3\2\',\2\u0211\2")
         buf.write("V\3\2\2\2\4o\3\2\2\2\6r\3\2\2\2\b{\3\2\2\2\n\u008c\3\2")
         buf.write("\2\2\f\u00a5\3\2\2\2\16\u00b3\3\2\2\2\20\u00b7\3\2\2\2")
         buf.write("\22\u00c2\3\2\2\2\24\u00d3\3\2\2\2\26\u0100\3\2\2\2\30")
         buf.write("\u0105\3\2\2\2\32\u0110\3\2\2\2\34\u011d\3\2\2\2\36\u0127")
         buf.write("\3\2\2\2 \u0132\3\2\2\2\"\u013d\3\2\2\2$\u0147\3\2\2\2")
         buf.write("&\u014a\3\2\2\2(\u014c\3\2\2\2*\u0155\3\2\2\2,\u015e\3")
-        buf.write("\2\2\2.\u0167\3\2\2\2\60\u0170\3\2\2\2\62\u0189\3\2\2")
-        buf.write("\2\64\u018b\3\2\2\2\66\u0190\3\2\2\28\u0192\3\2\2\2:\u0194")
-        buf.write("\3\2\2\2<\u0196\3\2\2\2>\u0198\3\2\2\2@\u019a\3\2\2\2")
-        buf.write("B\u019c\3\2\2\2D\u01a1\3\2\2\2F\u01b0\3\2\2\2H\u01b2\3")
-        buf.write("\2\2\2J\u01c4\3\2\2\2L\u01c6\3\2\2\2N\u01cd\3\2\2\2P\u01d4")
-        buf.write("\3\2\2\2R\u01dd\3\2\2\2T\u01e5\3\2\2\2VZ\5\4\3\2WY\5\f")
+        buf.write("\2\2\2.\u0167\3\2\2\2\60\u0170\3\2\2\2\62\u0188\3\2\2")
+        buf.write("\2\64\u018a\3\2\2\2\66\u018e\3\2\2\28\u0190\3\2\2\2:\u0192")
+        buf.write("\3\2\2\2<\u0194\3\2\2\2>\u0196\3\2\2\2@\u0198\3\2\2\2")
+        buf.write("B\u019a\3\2\2\2D\u019f\3\2\2\2F\u01ae\3\2\2\2H\u01b0\3")
+        buf.write("\2\2\2J\u01c6\3\2\2\2L\u01c8\3\2\2\2N\u01cf\3\2\2\2P\u01d6")
+        buf.write("\3\2\2\2R\u01df\3\2\2\2T\u01e7\3\2\2\2VZ\5\4\3\2WY\5\f")
         buf.write("\7\2XW\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3\2\2\2[`\3\2\2")
         buf.write("\2\\Z\3\2\2\2]_\5\6\4\2^]\3\2\2\2_b\3\2\2\2`^\3\2\2\2")
         buf.write("`a\3\2\2\2af\3\2\2\2b`\3\2\2\2ce\5\n\6\2dc\3\2\2\2eh\3")
@@ -128,8 +128,8 @@ def serializedATN():
         buf.write("\u00ea\u00ec\3\2\2\2\u00eb\u00e9\3\2\2\2\u00ec\u00ed\7")
         buf.write("\r\2\2\u00ed\25\3\2\2\2\u00ee\u00ef\7;\2\2\u00ef\u00f1")
         buf.write("\7\20\2\2\u00f0\u00ee\3\2\2\2\u00f0\u00f1\3\2\2\2\u00f1")
-        buf.write("\u00f4\3\2\2\2\u00f2\u00f5\5\64\33\2\u00f3\u00f5\7;\2")
-        buf.write("\2\u00f4\u00f2\3\2\2\2\u00f4\u00f3\3\2\2\2\u00f5\u00f6")
+        buf.write("\u00f2\3\2\2\2\u00f2\u00f4\7;\2\2\u00f3\u00f5\5\64\33")
+        buf.write("\2\u00f4\u00f3\3\2\2\2\u00f4\u00f5\3\2\2\2\u00f5\u00f6")
         buf.write("\3\2\2\2\u00f6\u0101\5B\"\2\u00f7\u0101\5\30\r\2\u00f8")
         buf.write("\u0101\5\32\16\2\u00f9\u0101\5\34\17\2\u00fa\u0101\5$")
         buf.write("\23\2\u00fb\u0101\5D#\2\u00fc\u0101\5L\'\2\u00fd\u0101")
@@ -185,62 +185,64 @@ def serializedATN():
         buf.write("\u0176\5\62\32\2\u0171\u0172\5> \2\u0172\u0173\5\62\32")
         buf.write("\2\u0173\u0175\3\2\2\2\u0174\u0171\3\2\2\2\u0175\u0178")
         buf.write("\3\2\2\2\u0176\u0174\3\2\2\2\u0176\u0177\3\2\2\2\u0177")
-        buf.write("\61\3\2\2\2\u0178\u0176\3\2\2\2\u0179\u017a\7;\2\2\u017a")
-        buf.write("\u017c\7\20\2\2\u017b\u0179\3\2\2\2\u017b\u017c\3\2\2")
-        buf.write("\2\u017c\u017d\3\2\2\2\u017d\u018a\5\64\33\2\u017e\u017f")
-        buf.write("\7\n\2\2\u017f\u0180\5(\25\2\u0180\u0181\7\13\2\2\u0181")
-        buf.write("\u018a\3\2\2\2\u0182\u0185\7;\2\2\u0183\u0184\7\20\2\2")
-        buf.write("\u0184\u0186\7;\2\2\u0185\u0183\3\2\2\2\u0185\u0186\3")
-        buf.write("\2\2\2\u0186\u018a\3\2\2\2\u0187\u018a\5D#\2\u0188\u018a")
-        buf.write("\5F$\2\u0189\u017b\3\2\2\2\u0189\u017e\3\2\2\2\u0189\u0182")
-        buf.write("\3\2\2\2\u0189\u0187\3\2\2\2\u0189\u0188\3\2\2\2\u018a")
-        buf.write("\63\3\2\2\2\u018b\u018c\5J&\2\u018c\u018d\7\7\2\2\u018d")
-        buf.write("\u018e\5,\27\2\u018e\u018f\7\b\2\2\u018f\65\3\2\2\2\u0190")
-        buf.write("\u0191\t\3\2\2\u0191\67\3\2\2\2\u0192\u0193\t\4\2\2\u0193")
-        buf.write("9\3\2\2\2\u0194\u0195\t\5\2\2\u0195;\3\2\2\2\u0196\u0197")
-        buf.write("\t\6\2\2\u0197=\3\2\2\2\u0198\u0199\7&\2\2\u0199?\3\2")
-        buf.write("\2\2\u019a\u019b\t\7\2\2\u019bA\3\2\2\2\u019c\u019d\5")
-        buf.write("@!\2\u019d\u019e\5(\25\2\u019eC\3\2\2\2\u019f\u01a0\7")
-        buf.write(";\2\2\u01a0\u01a2\7\20\2\2\u01a1\u019f\3\2\2\2\u01a1\u01a2")
-        buf.write("\3\2\2\2\u01a2\u01a3\3\2\2\2\u01a3\u01a4\7;\2\2\u01a4")
-        buf.write("\u01a6\7\n\2\2\u01a5\u01a7\5R*\2\u01a6\u01a5\3\2\2\2\u01a6")
-        buf.write("\u01a7\3\2\2\2\u01a7\u01a8\3\2\2\2\u01a8\u01a9\7\13\2")
-        buf.write("\2\u01a9E\3\2\2\2\u01aa\u01b1\7\65\2\2\u01ab\u01b1\7\66")
-        buf.write("\2\2\u01ac\u01b1\7\67\2\2\u01ad\u01b1\78\2\2\u01ae\u01b1")
-        buf.write("\5H%\2\u01af\u01b1\7-\2\2\u01b0\u01aa\3\2\2\2\u01b0\u01ab")
-        buf.write("\3\2\2\2\u01b0\u01ac\3\2\2\2\u01b0\u01ad\3\2\2\2\u01b0")
-        buf.write("\u01ae\3\2\2\2\u01b0\u01af\3\2\2\2\u01b1G\3\2\2\2\u01b2")
-        buf.write("\u01bd\7\7\2\2\u01b3\u01b5\5R*\2\u01b4\u01b3\3\2\2\2\u01b4")
-        buf.write("\u01b5\3\2\2\2\u01b5\u01be\3\2\2\2\u01b6\u01b7\5,\27\2")
-        buf.write("\u01b7\u01b8\7.\2\2\u01b8\u01bb\5,\27\2\u01b9\u01ba\7")
-        buf.write("/\2\2\u01ba\u01bc\5,\27\2\u01bb\u01b9\3\2\2\2\u01bb\u01bc")
-        buf.write("\3\2\2\2\u01bc\u01be\3\2\2\2\u01bd\u01b4\3\2\2\2\u01bd")
-        buf.write("\u01b6\3\2\2\2\u01be\u01bf\3\2\2\2\u01bf\u01c0\7\b\2\2")
-        buf.write("\u01c0I\3\2\2\2\u01c1\u01c5\7;\2\2\u01c2\u01c5\78\2\2")
-        buf.write("\u01c3\u01c5\5H%\2\u01c4\u01c1\3\2\2\2\u01c4\u01c2\3\2")
-        buf.write("\2\2\u01c4\u01c3\3\2\2\2\u01c5K\3\2\2\2\u01c6\u01c7\7")
-        buf.write("\60\2\2\u01c7\u01c9\7\n\2\2\u01c8\u01ca\5R*\2\u01c9\u01c8")
-        buf.write("\3\2\2\2\u01c9\u01ca\3\2\2\2\u01ca\u01cb\3\2\2\2\u01cb")
-        buf.write("\u01cc\7\13\2\2\u01ccM\3\2\2\2\u01cd\u01ce\7\61\2\2\u01ce")
-        buf.write("\u01d0\7\n\2\2\u01cf\u01d1\5R*\2\u01d0\u01cf\3\2\2\2\u01d0")
-        buf.write("\u01d1\3\2\2\2\u01d1\u01d2\3\2\2\2\u01d2\u01d3\7\13\2")
-        buf.write("\2\u01d3O\3\2\2\2\u01d4\u01d5\7\62\2\2\u01d5\u01d8\7\n")
-        buf.write("\2\2\u01d6\u01d7\7;\2\2\u01d7\u01d9\7\20\2\2\u01d8\u01d6")
-        buf.write("\3\2\2\2\u01d8\u01d9\3\2\2\2\u01d9\u01da\3\2\2\2\u01da")
-        buf.write("\u01db\7;\2\2\u01db\u01dc\7\13\2\2\u01dcQ\3\2\2\2\u01dd")
-        buf.write("\u01e2\5(\25\2\u01de\u01df\7\5\2\2\u01df\u01e1\5(\25\2")
-        buf.write("\u01e0\u01de\3\2\2\2\u01e1\u01e4\3\2\2\2\u01e2\u01e0\3")
-        buf.write("\2\2\2\u01e2\u01e3\3\2\2\2\u01e3S\3\2\2\2\u01e4\u01e2")
-        buf.write("\3\2\2\2\u01e5\u01e6\79\2\2\u01e6\u01ec\7;\2\2\u01e7\u01e8")
-        buf.write("\7\5\2\2\u01e8\u01e9\79\2\2\u01e9\u01eb\7;\2\2\u01ea\u01e7")
-        buf.write("\3\2\2\2\u01eb\u01ee\3\2\2\2\u01ec\u01ea\3\2\2\2\u01ec")
-        buf.write("\u01ed\3\2\2\2\u01edU\3\2\2\2\u01ee\u01ec\3\2\2\2:Z`f")
-        buf.write("lx\u0085\u0087\u008a\u0090\u0094\u009a\u00a0\u00a7\u00ad")
-        buf.write("\u00af\u00b7\u00bf\u00cb\u00cd\u00d0\u00d3\u00d9\u00dd")
-        buf.write("\u00e3\u00e9\u00f0\u00f4\u0100\u0103\u010b\u0118\u0121")
-        buf.write("\u0125\u012d\u0138\u0142\u0152\u015b\u0164\u016d\u0176")
-        buf.write("\u017b\u0185\u0189\u01a1\u01a6\u01b0\u01b4\u01bb\u01bd")
-        buf.write("\u01c4\u01c9\u01d0\u01d8\u01e2\u01ec")
+        buf.write("\61\3\2\2\2\u0178\u0176\3\2\2\2\u0179\u0189\3\2\2\2\u017a")
+        buf.write("\u017b\7\n\2\2\u017b\u017c\5(\25\2\u017c\u017d\7\13\2")
+        buf.write("\2\u017d\u0189\3\2\2\2\u017e\u0189\5D#\2\u017f\u0182\7")
+        buf.write(";\2\2\u0180\u0181\7\20\2\2\u0181\u0183\7;\2\2\u0182\u0180")
+        buf.write("\3\2\2\2\u0182\u0183\3\2\2\2\u0183\u0185\3\2\2\2\u0184")
+        buf.write("\u0186\5\64\33\2\u0185\u0184\3\2\2\2\u0185\u0186\3\2\2")
+        buf.write("\2\u0186\u0189\3\2\2\2\u0187\u0189\5F$\2\u0188\u0179\3")
+        buf.write("\2\2\2\u0188\u017a\3\2\2\2\u0188\u017e\3\2\2\2\u0188\u017f")
+        buf.write("\3\2\2\2\u0188\u0187\3\2\2\2\u0189\63\3\2\2\2\u018a\u018b")
+        buf.write("\7\7\2\2\u018b\u018c\5,\27\2\u018c\u018d\7\b\2\2\u018d")
+        buf.write("\65\3\2\2\2\u018e\u018f\t\3\2\2\u018f\67\3\2\2\2\u0190")
+        buf.write("\u0191\t\4\2\2\u01919\3\2\2\2\u0192\u0193\t\5\2\2\u0193")
+        buf.write(";\3\2\2\2\u0194\u0195\t\6\2\2\u0195=\3\2\2\2\u0196\u0197")
+        buf.write("\7&\2\2\u0197?\3\2\2\2\u0198\u0199\t\7\2\2\u0199A\3\2")
+        buf.write("\2\2\u019a\u019b\5@!\2\u019b\u019c\5(\25\2\u019cC\3\2")
+        buf.write("\2\2\u019d\u019e\7;\2\2\u019e\u01a0\7\20\2\2\u019f\u019d")
+        buf.write("\3\2\2\2\u019f\u01a0\3\2\2\2\u01a0\u01a1\3\2\2\2\u01a1")
+        buf.write("\u01a2\7;\2\2\u01a2\u01a4\7\n\2\2\u01a3\u01a5\5R*\2\u01a4")
+        buf.write("\u01a3\3\2\2\2\u01a4\u01a5\3\2\2\2\u01a5\u01a6\3\2\2\2")
+        buf.write("\u01a6\u01a7\7\13\2\2\u01a7E\3\2\2\2\u01a8\u01af\7\65")
+        buf.write("\2\2\u01a9\u01af\7\66\2\2\u01aa\u01af\7\67\2\2\u01ab\u01af")
+        buf.write("\78\2\2\u01ac\u01af\5H%\2\u01ad\u01af\7-\2\2\u01ae\u01a8")
+        buf.write("\3\2\2\2\u01ae\u01a9\3\2\2\2\u01ae\u01aa\3\2\2\2\u01ae")
+        buf.write("\u01ab\3\2\2\2\u01ae\u01ac\3\2\2\2\u01ae\u01ad\3\2\2\2")
+        buf.write("\u01afG\3\2\2\2\u01b0\u01bb\7\7\2\2\u01b1\u01b3\5R*\2")
+        buf.write("\u01b2\u01b1\3\2\2\2\u01b2\u01b3\3\2\2\2\u01b3\u01bc\3")
+        buf.write("\2\2\2\u01b4\u01b5\5,\27\2\u01b5\u01b6\7.\2\2\u01b6\u01b9")
+        buf.write("\5,\27\2\u01b7\u01b8\7/\2\2\u01b8\u01ba\5,\27\2\u01b9")
+        buf.write("\u01b7\3\2\2\2\u01b9\u01ba\3\2\2\2\u01ba\u01bc\3\2\2\2")
+        buf.write("\u01bb\u01b2\3\2\2\2\u01bb\u01b4\3\2\2\2\u01bc\u01bd\3")
+        buf.write("\2\2\2\u01bd\u01be\7\b\2\2\u01beI\3\2\2\2\u01bf\u01c0")
+        buf.write("\7;\2\2\u01c0\u01c2\7\20\2\2\u01c1\u01bf\3\2\2\2\u01c1")
+        buf.write("\u01c2\3\2\2\2\u01c2\u01c3\3\2\2\2\u01c3\u01c7\7;\2\2")
+        buf.write("\u01c4\u01c7\78\2\2\u01c5\u01c7\5H%\2\u01c6\u01c1\3\2")
+        buf.write("\2\2\u01c6\u01c4\3\2\2\2\u01c6\u01c5\3\2\2\2\u01c7K\3")
+        buf.write("\2\2\2\u01c8\u01c9\7\60\2\2\u01c9\u01cb\7\n\2\2\u01ca")
+        buf.write("\u01cc\5R*\2\u01cb\u01ca\3\2\2\2\u01cb\u01cc\3\2\2\2\u01cc")
+        buf.write("\u01cd\3\2\2\2\u01cd\u01ce\7\13\2\2\u01ceM\3\2\2\2\u01cf")
+        buf.write("\u01d0\7\61\2\2\u01d0\u01d2\7\n\2\2\u01d1\u01d3\5R*\2")
+        buf.write("\u01d2\u01d1\3\2\2\2\u01d2\u01d3\3\2\2\2\u01d3\u01d4\3")
+        buf.write("\2\2\2\u01d4\u01d5\7\13\2\2\u01d5O\3\2\2\2\u01d6\u01d7")
+        buf.write("\7\62\2\2\u01d7\u01da\7\n\2\2\u01d8\u01d9\7;\2\2\u01d9")
+        buf.write("\u01db\7\20\2\2\u01da\u01d8\3\2\2\2\u01da\u01db\3\2\2")
+        buf.write("\2\u01db\u01dc\3\2\2\2\u01dc\u01dd\7;\2\2\u01dd\u01de")
+        buf.write("\7\13\2\2\u01deQ\3\2\2\2\u01df\u01e4\5(\25\2\u01e0\u01e1")
+        buf.write("\7\5\2\2\u01e1\u01e3\5(\25\2\u01e2\u01e0\3\2\2\2\u01e3")
+        buf.write("\u01e6\3\2\2\2\u01e4\u01e2\3\2\2\2\u01e4\u01e5\3\2\2\2")
+        buf.write("\u01e5S\3\2\2\2\u01e6\u01e4\3\2\2\2\u01e7\u01e8\79\2\2")
+        buf.write("\u01e8\u01ee\7;\2\2\u01e9\u01ea\7\5\2\2\u01ea\u01eb\7")
+        buf.write("9\2\2\u01eb\u01ed\7;\2\2\u01ec\u01e9\3\2\2\2\u01ed\u01f0")
+        buf.write("\3\2\2\2\u01ee\u01ec\3\2\2\2\u01ee\u01ef\3\2\2\2\u01ef")
+        buf.write("U\3\2\2\2\u01f0\u01ee\3\2\2\2;Z`flx\u0085\u0087\u008a")
+        buf.write("\u0090\u0094\u009a\u00a0\u00a7\u00ad\u00af\u00b7\u00bf")
+        buf.write("\u00cb\u00cd\u00d0\u00d3\u00d9\u00dd\u00e3\u00e9\u00f0")
+        buf.write("\u00f4\u0100\u0103\u010b\u0118\u0121\u0125\u012d\u0138")
+        buf.write("\u0142\u0152\u015b\u0164\u016d\u0176\u0182\u0185\u0188")
+        buf.write("\u019f\u01a4\u01ae\u01b2\u01b9\u01bb\u01c1\u01c6\u01cb")
+        buf.write("\u01d2\u01da\u01e4\u01ee")
         return buf.getvalue()
 
 
@@ -492,7 +494,7 @@ class PopurriParser ( Parser ):
             self.state = 106
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 103
                 self.statement()
                 self.state = 108
@@ -801,7 +803,7 @@ class PopurriParser ( Parser ):
             self.state = 158
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 155
                 self.statement()
                 self.state = 160
@@ -1223,7 +1225,7 @@ class PopurriParser ( Parser ):
             self.state = 231
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 228
                 self.statement()
                 self.state = 233
@@ -1245,6 +1247,12 @@ class PopurriParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
+
+        def ID(self, i:int=None):
+            if i is None:
+                return self.getTokens(PopurriParser.ID)
+            else:
+                return self.getToken(PopurriParser.ID, i)
 
         def assignment(self):
             return self.getTypedRuleContext(PopurriParser.AssignmentContext,0)
@@ -1293,12 +1301,6 @@ class PopurriParser ( Parser ):
             return self.getTypedRuleContext(PopurriParser.IndexationContext,0)
 
 
-        def ID(self, i:int=None):
-            if i is None:
-                return self.getTokens(PopurriParser.ID)
-            else:
-                return self.getToken(PopurriParser.ID, i)
-
         def getRuleIndex(self):
             return PopurriParser.RULE_statement
 
@@ -1334,18 +1336,14 @@ class PopurriParser ( Parser ):
                     self.match(PopurriParser.T__13)
 
 
+                self.state = 240
+                self.match(PopurriParser.ID)
                 self.state = 242
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,26,self._ctx)
-                if la_ == 1:
-                    self.state = 240
-                    self.indexation()
-                    pass
-
-                elif la_ == 2:
+                _la = self._input.LA(1)
+                if _la==PopurriParser.T__4:
                     self.state = 241
-                    self.match(PopurriParser.ID)
-                    pass
+                    self.indexation()
 
 
                 self.state = 244
@@ -1461,7 +1459,7 @@ class PopurriParser ( Parser ):
             self.state = 265
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 262
                 self.statement()
                 self.state = 267
@@ -1532,7 +1530,7 @@ class PopurriParser ( Parser ):
             self.state = 278
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 275
                 self.statement()
                 self.state = 280
@@ -1666,7 +1664,7 @@ class PopurriParser ( Parser ):
             self.state = 299
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 296
                 self.statement()
                 self.state = 301
@@ -1730,7 +1728,7 @@ class PopurriParser ( Parser ):
             self.state = 310
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 307
                 self.statement()
                 self.state = 312
@@ -1788,7 +1786,7 @@ class PopurriParser ( Parser ):
             self.state = 320
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__14) | (1 << PopurriParser.T__15) | (1 << PopurriParser.T__17) | (1 << PopurriParser.T__20) | (1 << PopurriParser.T__21) | (1 << PopurriParser.T__45) | (1 << PopurriParser.T__46) | (1 << PopurriParser.T__47) | (1 << PopurriParser.ID))) != 0):
                 self.state = 317
                 self.statement()
                 self.state = 322
@@ -2205,8 +2203,12 @@ class PopurriParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def indexation(self):
-            return self.getTypedRuleContext(PopurriParser.IndexationContext,0)
+        def cond(self):
+            return self.getTypedRuleContext(PopurriParser.CondContext,0)
+
+
+        def funcCall(self):
+            return self.getTypedRuleContext(PopurriParser.FuncCallContext,0)
 
 
         def ID(self, i:int=None):
@@ -2215,12 +2217,8 @@ class PopurriParser ( Parser ):
             else:
                 return self.getToken(PopurriParser.ID, i)
 
-        def cond(self):
-            return self.getTypedRuleContext(PopurriParser.CondContext,0)
-
-
-        def funcCall(self):
-            return self.getTypedRuleContext(PopurriParser.FuncCallContext,0)
+        def indexation(self):
+            return self.getTypedRuleContext(PopurriParser.IndexationContext,0)
 
 
         def constant(self):
@@ -2247,60 +2245,57 @@ class PopurriParser ( Parser ):
         self.enterRule(localctx, 48, self.RULE_val)
         self._la = 0 # Token type
         try:
-            self.state = 391
+            self.state = 390
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,43,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 377
-                self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,41,self._ctx)
-                if la_ == 1:
-                    self.state = 375
-                    self.match(PopurriParser.ID)
-                    self.state = 376
-                    self.match(PopurriParser.T__13)
 
-
-                self.state = 379
-                self.indexation()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 380
+                self.state = 376
                 self.match(PopurriParser.T__7)
-                self.state = 381
+                self.state = 377
                 self.cond()
-                self.state = 382
+                self.state = 378
                 self.match(PopurriParser.T__8)
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 384
-                self.match(PopurriParser.ID)
-                self.state = 387
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                if _la==PopurriParser.T__13:
-                    self.state = 385
-                    self.match(PopurriParser.T__13)
-                    self.state = 386
-                    self.match(PopurriParser.ID)
-
-
+                self.state = 380
+                self.funcCall()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 389
-                self.funcCall()
+                self.state = 381
+                self.match(PopurriParser.ID)
+                self.state = 384
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+                if _la==PopurriParser.T__13:
+                    self.state = 382
+                    self.match(PopurriParser.T__13)
+                    self.state = 383
+                    self.match(PopurriParser.ID)
+
+
+                self.state = 387
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+                if _la==PopurriParser.T__4:
+                    self.state = 386
+                    self.indexation()
+
+
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 390
+                self.state = 389
                 self.constant()
                 pass
 
@@ -2318,10 +2313,6 @@ class PopurriParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
-
-        def iterable(self):
-            return self.getTypedRuleContext(PopurriParser.IterableContext,0)
-
 
         def exp(self):
             return self.getTypedRuleContext(PopurriParser.ExpContext,0)
@@ -2347,13 +2338,11 @@ class PopurriParser ( Parser ):
         self.enterRule(localctx, 50, self.RULE_indexation)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 393
-            self.iterable()
-            self.state = 394
+            self.state = 392
             self.match(PopurriParser.T__4)
-            self.state = 395
+            self.state = 393
             self.exp()
-            self.state = 396
+            self.state = 394
             self.match(PopurriParser.T__5)
         except RecognitionException as re:
             localctx.exception = re
@@ -2391,7 +2380,7 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 398
+            self.state = 396
             _la = self._input.LA(1)
             if not(_la==PopurriParser.T__22 or _la==PopurriParser.T__23):
                 self._errHandler.recoverInline(self)
@@ -2434,7 +2423,7 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 400
+            self.state = 398
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__24) | (1 << PopurriParser.T__25) | (1 << PopurriParser.T__26) | (1 << PopurriParser.T__27) | (1 << PopurriParser.T__28) | (1 << PopurriParser.T__29))) != 0)):
                 self._errHandler.recoverInline(self)
@@ -2477,7 +2466,7 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 402
+            self.state = 400
             _la = self._input.LA(1)
             if not(_la==PopurriParser.T__30 or _la==PopurriParser.T__31):
                 self._errHandler.recoverInline(self)
@@ -2520,7 +2509,7 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 404
+            self.state = 402
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__32) | (1 << PopurriParser.T__33) | (1 << PopurriParser.T__34))) != 0)):
                 self._errHandler.recoverInline(self)
@@ -2562,7 +2551,7 @@ class PopurriParser ( Parser ):
         self.enterRule(localctx, 60, self.RULE_expOp)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 406
+            self.state = 404
             self.match(PopurriParser.T__35)
         except RecognitionException as re:
             localctx.exception = re
@@ -2600,7 +2589,7 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 408
+            self.state = 406
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__36) | (1 << PopurriParser.T__37) | (1 << PopurriParser.T__38) | (1 << PopurriParser.T__39) | (1 << PopurriParser.T__40) | (1 << PopurriParser.T__41))) != 0)):
                 self._errHandler.recoverInline(self)
@@ -2649,9 +2638,9 @@ class PopurriParser ( Parser ):
         self.enterRule(localctx, 64, self.RULE_assignment)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 410
+            self.state = 408
             self.assignOp()
-            self.state = 411
+            self.state = 409
             self.cond()
         except RecognitionException as re:
             localctx.exception = re
@@ -2695,32 +2684,31 @@ class PopurriParser ( Parser ):
 
         localctx = PopurriParser.FuncCallContext(self, self._ctx, self.state)
         self.enterRule(localctx, 66, self.RULE_funcCall)
-        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 415
+            self.state = 413
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,44,self._ctx)
             if la_ == 1:
-                self.state = 413
+                self.state = 411
                 self.match(PopurriParser.ID)
-                self.state = 414
+                self.state = 412
                 self.match(PopurriParser.T__13)
 
 
-            self.state = 417
+            self.state = 415
             self.match(PopurriParser.ID)
-            self.state = 418
+            self.state = 416
             self.match(PopurriParser.T__7)
-            self.state = 420
+            self.state = 418
             self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__7) | (1 << PopurriParser.T__42) | (1 << PopurriParser.CONST_BOOL) | (1 << PopurriParser.CONST_I) | (1 << PopurriParser.CONST_F) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
-                self.state = 419
+            la_ = self._interp.adaptivePredict(self._input,45,self._ctx)
+            if la_ == 1:
+                self.state = 417
                 self.condParam()
 
 
-            self.state = 422
+            self.state = 420
             self.match(PopurriParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -2771,37 +2759,37 @@ class PopurriParser ( Parser ):
         localctx = PopurriParser.ConstantContext(self, self._ctx, self.state)
         self.enterRule(localctx, 68, self.RULE_constant)
         try:
-            self.state = 430
+            self.state = 428
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [PopurriParser.CONST_BOOL]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 424
+                self.state = 422
                 self.match(PopurriParser.CONST_BOOL)
                 pass
             elif token in [PopurriParser.CONST_I]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 425
+                self.state = 423
                 self.match(PopurriParser.CONST_I)
                 pass
             elif token in [PopurriParser.CONST_F]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 426
+                self.state = 424
                 self.match(PopurriParser.CONST_F)
                 pass
             elif token in [PopurriParser.CONST_STR]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 427
+                self.state = 425
                 self.match(PopurriParser.CONST_STR)
                 pass
             elif token in [PopurriParser.T__4]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 428
+                self.state = 426
                 self.const_arr()
                 pass
             elif token in [PopurriParser.T__42]:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 429
+                self.state = 427
                 self.match(PopurriParser.T__42)
                 pass
             else:
@@ -2853,43 +2841,43 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 432
+            self.state = 430
             self.match(PopurriParser.T__4)
-            self.state = 443
+            self.state = 441
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,49,self._ctx)
             if la_ == 1:
-                self.state = 434
+                self.state = 432
                 self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__7) | (1 << PopurriParser.T__42) | (1 << PopurriParser.CONST_BOOL) | (1 << PopurriParser.CONST_I) | (1 << PopurriParser.CONST_F) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
-                    self.state = 433
+                la_ = self._interp.adaptivePredict(self._input,47,self._ctx)
+                if la_ == 1:
+                    self.state = 431
                     self.condParam()
 
 
                 pass
 
             elif la_ == 2:
+                self.state = 434
+                self.exp()
+                self.state = 435
+                self.match(PopurriParser.T__43)
                 self.state = 436
                 self.exp()
-                self.state = 437
-                self.match(PopurriParser.T__43)
-                self.state = 438
-                self.exp()
-                self.state = 441
+                self.state = 439
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==PopurriParser.T__44:
-                    self.state = 439
+                    self.state = 437
                     self.match(PopurriParser.T__44)
-                    self.state = 440
+                    self.state = 438
                     self.exp()
 
 
                 pass
 
 
-            self.state = 445
+            self.state = 443
             self.match(PopurriParser.T__5)
         except RecognitionException as re:
             localctx.exception = re
@@ -2905,8 +2893,11 @@ class PopurriParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def ID(self):
-            return self.getToken(PopurriParser.ID, 0)
+        def ID(self, i:int=None):
+            if i is None:
+                return self.getTokens(PopurriParser.ID)
+            else:
+                return self.getToken(PopurriParser.ID, i)
 
         def CONST_STR(self):
             return self.getToken(PopurriParser.CONST_STR, 0)
@@ -2934,22 +2925,32 @@ class PopurriParser ( Parser ):
         localctx = PopurriParser.IterableContext(self, self._ctx, self.state)
         self.enterRule(localctx, 72, self.RULE_iterable)
         try:
-            self.state = 450
+            self.state = 452
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [PopurriParser.ID]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 447
+                self._errHandler.sync(self)
+                la_ = self._interp.adaptivePredict(self._input,50,self._ctx)
+                if la_ == 1:
+                    self.state = 445
+                    self.match(PopurriParser.ID)
+                    self.state = 446
+                    self.match(PopurriParser.T__13)
+
+
+                self.state = 449
                 self.match(PopurriParser.ID)
                 pass
             elif token in [PopurriParser.CONST_STR]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 448
+                self.state = 450
                 self.match(PopurriParser.CONST_STR)
                 pass
             elif token in [PopurriParser.T__4]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 449
+                self.state = 451
                 self.const_arr()
                 pass
             else:
@@ -2991,22 +2992,21 @@ class PopurriParser ( Parser ):
 
         localctx = PopurriParser.PrintStmtContext(self, self._ctx, self.state)
         self.enterRule(localctx, 74, self.RULE_printStmt)
-        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 452
+            self.state = 454
             self.match(PopurriParser.T__45)
-            self.state = 453
-            self.match(PopurriParser.T__7)
             self.state = 455
+            self.match(PopurriParser.T__7)
+            self.state = 457
             self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__7) | (1 << PopurriParser.T__42) | (1 << PopurriParser.CONST_BOOL) | (1 << PopurriParser.CONST_I) | (1 << PopurriParser.CONST_F) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
-                self.state = 454
+            la_ = self._interp.adaptivePredict(self._input,52,self._ctx)
+            if la_ == 1:
+                self.state = 456
                 self.condParam()
 
 
-            self.state = 457
+            self.state = 459
             self.match(PopurriParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -3044,22 +3044,21 @@ class PopurriParser ( Parser ):
 
         localctx = PopurriParser.PrintlnStmtContext(self, self._ctx, self.state)
         self.enterRule(localctx, 76, self.RULE_printlnStmt)
-        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 459
+            self.state = 461
             self.match(PopurriParser.T__46)
-            self.state = 460
-            self.match(PopurriParser.T__7)
             self.state = 462
+            self.match(PopurriParser.T__7)
+            self.state = 464
             self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << PopurriParser.T__4) | (1 << PopurriParser.T__7) | (1 << PopurriParser.T__42) | (1 << PopurriParser.CONST_BOOL) | (1 << PopurriParser.CONST_I) | (1 << PopurriParser.CONST_F) | (1 << PopurriParser.CONST_STR) | (1 << PopurriParser.ID))) != 0):
-                self.state = 461
+            la_ = self._interp.adaptivePredict(self._input,53,self._ctx)
+            if la_ == 1:
+                self.state = 463
                 self.condParam()
 
 
-            self.state = 464
+            self.state = 466
             self.match(PopurriParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -3101,23 +3100,23 @@ class PopurriParser ( Parser ):
         self.enterRule(localctx, 78, self.RULE_inputStmt)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 466
+            self.state = 468
             self.match(PopurriParser.T__47)
-            self.state = 467
+            self.state = 469
             self.match(PopurriParser.T__7)
-            self.state = 470
+            self.state = 472
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,53,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,54,self._ctx)
             if la_ == 1:
-                self.state = 468
+                self.state = 470
                 self.match(PopurriParser.ID)
-                self.state = 469
+                self.state = 471
                 self.match(PopurriParser.T__13)
 
 
-            self.state = 472
+            self.state = 474
             self.match(PopurriParser.ID)
-            self.state = 473
+            self.state = 475
             self.match(PopurriParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -3161,17 +3160,17 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 475
+            self.state = 477
             self.cond()
-            self.state = 480
+            self.state = 482
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==PopurriParser.T__2:
-                self.state = 476
+                self.state = 478
                 self.match(PopurriParser.T__2)
-                self.state = 477
+                self.state = 479
                 self.cond()
-                self.state = 482
+                self.state = 484
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -3222,21 +3221,21 @@ class PopurriParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 483
+            self.state = 485
             self.match(PopurriParser.TYPE)
-            self.state = 484
+            self.state = 486
             self.match(PopurriParser.ID)
-            self.state = 490
+            self.state = 492
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==PopurriParser.T__2:
-                self.state = 485
-                self.match(PopurriParser.T__2)
-                self.state = 486
-                self.match(PopurriParser.TYPE)
                 self.state = 487
+                self.match(PopurriParser.T__2)
+                self.state = 488
+                self.match(PopurriParser.TYPE)
+                self.state = 489
                 self.match(PopurriParser.ID)
-                self.state = 492
+                self.state = 494
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
