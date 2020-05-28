@@ -33,6 +33,7 @@ class QuadWrapper():
         self.address_stack = []
         self.jump_stack = []
         self.break_stack = []
+        self.dim_stack = []
 
     def insertQuad(self, quad, at=None):
         self.quads_ptr += 1
@@ -70,7 +71,11 @@ class QuadWrapper():
     def popType(self):
         return self.type_stack.pop() if len(self.type_stack) > 0 else None
 
+    def popDim(self):
+        return self.dim_stack.pop() if len(self.dim_stack) > 0 else None
+
     # Flushes jumps until either stack is empty or it encounters a false-bottom
+
     def flushJumps(self):
         jumps = []
         while True:
@@ -86,6 +91,9 @@ class QuadWrapper():
     def insertAddress(self, address):
         self.address_stack.append(address)
 
+    def insertDim(self, dim):
+        self.dim_stack.append(dim)
+
     def insertOperator(self, operator):
         self.operator_stack.append(tokenize(operator))
 
@@ -98,7 +106,8 @@ class QuadWrapper():
         l_type = self.popType()
         res_type = bailaMijaConElSeñor(op, l_type, r_type)
         if res_type is None:
-            raise error(ctx, TYPE_MISMATCH.format(stringifyToken(op), l_type, r_type))
+            raise error(ctx, TYPE_MISMATCH.format(
+                stringifyToken(op), l_type, r_type))
         # Push resulting type into stack
         self.insertType(res_type)
 
@@ -173,11 +182,11 @@ class ContextWrapper():
         return self.context_stack.append(deepcopy(ctx))
 
     def getVariableByAddress(self, address):
-        for ctx in self.variables.values(): # Iterate over contexts
+        for ctx in self.variables.values():  # Iterate over contexts
             for var in ctx.values():
-                if type(var) == dict: # Inside function varTable
+                if type(var) == dict:  # Inside function varTable
                     for var in var.values():
-                        if type(var) == dict: # Var is object, iterate over attributes
+                        if type(var) == dict:  # Var is object, iterate over attributes
                             for attr in var.values():
                                 if address == attr.address:
                                     return attr
@@ -188,7 +197,8 @@ class ContextWrapper():
         return None
 
     def getVariable(self, var_id, context="global", insideClass=False):
-        variables = self.variables[self.getClassContext()] if insideClass else self.variables
+        variables = self.variables[self.getClassContext(
+        )] if insideClass else self.variables
 
         if context not in variables:
             return None
@@ -229,10 +239,11 @@ class ContextWrapper():
         if class_id not in self.variables:
             return None
 
-        return { k:deepcopy(v) for k,v in self.variables[class_id].items() if type(v) != dict}
+        return {k: deepcopy(v) for k, v in self.variables[class_id].items() if type(v) != dict}
 
     def addVariable(self, var, context="global", insideClass=False):
-        variables = self.variables[self.getClassContext()] if insideClass else self.variables
+        variables = self.variables[self.getClassContext(
+        )] if insideClass else self.variables
 
         if context in variables:
             variables[context][var.id] = var
@@ -315,13 +326,15 @@ class Variable():
     [value] es el valor inicial que tendra la variable. Ej. var edad = 25. Donde 25 es el valor inicial.
     '''
 
-    def __init__(self, id, access_type="public", type=None, address=None, isArray=False, paramNo=None):
+    def __init__(self, id, access_type="public", type=None, address=None, isArray=False, paramNo=None, lInf=None, lSup=None):
         self.access_type = str(access_type)
         self.id = str(id)
         self.type = str(type)
         self.address = address
         self.isArray = isArray
         self.paramNo = paramNo
+        self.lInf = lInf
+        self.lSup = lSup
 
 
 class Function():
@@ -370,7 +383,7 @@ class PopurriListener(ParseTreeListener):
         self.func_count = -1
         self.func_returned_val = False
         # a[ array_indexation_exp ]
-        self.array_indexation_exp = False
+        self.array_active = False
         self.debug_info = debug_info
 
     def enterProgram(self, ctx):
@@ -472,9 +485,12 @@ class PopurriListener(ParseTreeListener):
             # var is an array
             if ctx.CONST_I() is not None:
                 var.isArray = True
-                array_size = self.getConstant(ctx, True) - 1
+                mem_reservations = self.getConstant(ctx, True) - 1
 
-                for _ in range(array_size):
+                var.lInf = 0
+                var.lSup = mem_reservations
+
+                for _ in range(mem_reservations):
                     reserved_address = self.memHandler.reserve(
                         context=tokenizeContext(self.ctxWrapper.top()),
                         dtype=dtype
@@ -511,7 +527,7 @@ class PopurriListener(ParseTreeListener):
 
             curr_ctx = self.ctxWrapper.top()
             if curr_ctx not in context_vars:
-                context_vars[curr_ctx] = { var_id: attrs }
+                context_vars[curr_ctx] = {var_id: attrs}
             else:
                 context_vars[curr_ctx][var_id] = attrs
 
@@ -614,7 +630,7 @@ class PopurriListener(ParseTreeListener):
 
             # Inherit attributes
             for attr in self.ctxWrapper.variables[parent_id].values():
-                if (type(attr) != dict # check if it's a method varTable
+                if (type(attr) != dict  # check if it's a method varTable
                         and attr.access_type != 'private'):
                     self.ctxWrapper.addVariable(attr, class_id)
 
@@ -630,7 +646,7 @@ class PopurriListener(ParseTreeListener):
             for attr in declarations.attribute():
                 # Raise error if re-declaration (ignore inherited methods)
                 if (self.ctxWrapper.varExistsInContext(attr.ID(), class_id)
-                    and not self.ctxWrapper.varExistsInContext(attr.ID(), parent_id)):
+                        and not self.ctxWrapper.varExistsInContext(attr.ID(), parent_id)):
                     raise error(ctx, VAR_REDEFINITION.format(attr.ID()))
 
                 reserved_address = None
@@ -659,7 +675,7 @@ class PopurriListener(ParseTreeListener):
 
             # Raise error if re-declaration (ignore inherited methods)
             if (self.ctxWrapper.functionExistsInContext(method.ID(0), class_id)
-                and not self.ctxWrapper.functionExistsInContext(method.ID(0), parent_id)):
+                    and not self.ctxWrapper.functionExistsInContext(method.ID(0), parent_id)):
                 raise error(ctx, FUNC_REDEFINITION.format(str(method.ID(0))))
 
             method = self.createFunction(method)
@@ -689,7 +705,14 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterAttribute(self, ctx):
-        pass
+        if ctx.assignment() is not None:
+            var = self.ctxWrapper.getVariable(
+                ctx.ID(), context=self.ctxWrapper.top())
+            if var.address:
+                self.quadWrapper.insertAddress(var.address)
+            else:
+                self.quadWrapper.insertAddress(var.id)
+            self.quadWrapper.insertType(ctx.TYPE())
 
     def exitAttribute(self, ctx):
         pass
@@ -697,7 +720,8 @@ class PopurriListener(ParseTreeListener):
     def enterMethod(self, ctx):
         class_name = self.ctxWrapper.top()
         self.ctxWrapper.push('func ' + str(ctx.ID(0)))
-        method = self.ctxWrapper.getFunction(self.ctxWrapper.top(), context=class_name)
+        method = self.ctxWrapper.getFunction(
+            self.ctxWrapper.top(), context=class_name)
         method.updateQuadsRange(start=self.quadWrapper.quads_ptr + 1)
 
     def exitMethod(self, ctx):
@@ -721,28 +745,26 @@ class PopurriListener(ParseTreeListener):
 
     def enterStatement(self, ctx):
         self.statement = True
-        # Check if Main Start
-        if self.func_count == 0:
-            # Fill GOTO to main start (so funcs dont get executed)
-            self.quadWrapper.fillQuadWith(
-                self.quadWrapper.quads_ptr + 1,
-                at=self.quadWrapper.popJump() - 1
-            )
-            self.func_count = -1  # Reset flag
 
-        self.if_cond = False
-        if ctx.assignment() is not None:
-            self.validateCalledIds(ctx)
+        if ctx.indexation() is None:
+            # Check if Main Start
+            if self.func_count == 0:
+                # Fill GOTO to main start (so funcs dont get executed)
+                self.quadWrapper.fillQuadWith(
+                    self.quadWrapper.quads_ptr + 1,
+                    at=self.quadWrapper.popJump() - 1
+                )
+                self.func_count = -1  # Reset flag
 
-            # Check if var_id is a single value var, or an array.
+            self.if_cond = False
+            if ctx.assignment() is not None:
+                var_id = self.validateCalledIds(ctx)
 
-            # Before changes, the existence ctx.CONST_I() meant an array was being used as var.
-            #
+                # Check if var_id is a single value var, or an array.
 
-            if ctx.exp() is not None:
-                # array_offset = self.getConstant(ctx, True)
-                # self.quadWrapper.insertAddress(array_offset)
-                self.array_indexation_exp = True
+                # Before changes, the existence ctx.CONST_I() meant an array was being used as var.
+
+                self.quadWrapper.insertAddress(var_id)
 
     def exitStatement(self, ctx):
         self.statement = False
@@ -803,7 +825,7 @@ class PopurriListener(ParseTreeListener):
         if ctx.elseStmt() is not None:
             else_jumps = self.quadWrapper.flushJumps()
         else:
-            self.quadWrapper.flushJumps() # Remove false bottom
+            self.quadWrapper.flushJumps()  # Remove false bottom
 
         # Fill if and elseif GOTOs with next quad outside branch
         pending_jumps = []
@@ -972,7 +994,8 @@ class PopurriListener(ParseTreeListener):
                 class_name = 'class ' + class_var['self'].type
 
             if is_function:
-                method = self.ctxWrapper.getFunction(ids[1], context=class_name)
+                method = self.ctxWrapper.getFunction(
+                    ids[1], context=class_name)
                 if method is None:
                     raise error(ctx, UNDEF_METHOD.format(ids[1], class_name))
                 # Validate that we can access method (if outside class)
@@ -980,12 +1003,14 @@ class PopurriListener(ParseTreeListener):
                     raise error(ctx, NOT_PUBLIC_METHOD.format(
                         method.access_type.upper(), ids[1], class_name))
             else:
-                if selfAccess: # Inside class method, use local memory
-                    attr = self.ctxWrapper.getVariable(ids[1], context=class_name)
-                else: # Accessing attribute outside class
+                if selfAccess:  # Inside class method, use local memory
+                    attr = self.ctxWrapper.getVariable(
+                        ids[1], context=class_name)
+                else:  # Accessing attribute outside class
                     attr = class_var.get(ids[1], None)
                 if attr is None:
-                    raise error(ctx, UNDEF_ATTRIBUTE.format(ids[1], class_name))
+                    raise error(ctx, UNDEF_ATTRIBUTE.format(
+                        ids[1], class_name))
 
                 # Validate that we can access attribute (if outside class)
                 if not selfAccess and attr.access_type != 'public':
@@ -1047,10 +1072,52 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertOperator(ctx.getText())
 
     def enterIndexation(self, ctx):
-        pass
+        self.array_active = True
+        self.quadWrapper.insertOperator('verify')
 
     def exitIndexation(self, ctx):
-        pass
+        # Need to check if the current array is using an ID as iterable.
+        exp_result = self.quadWrapper.popAddress()
+        array_var_starting_address = self.quadWrapper.popDim()
+
+        var = self.ctxWrapper.getVariableByAddress(array_var_starting_address)
+
+        print(array_var_starting_address)
+
+        # Create verify quad
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op=self.quadWrapper.popOperator(),
+            l=exp_result,
+            r=var.lInf,
+            res=var.lSup))
+
+        # Reserve memory for the literal address. Example: 5000 -> Int
+
+        var_address_address = self.memHandler.reserve(
+            context=CONSTANT,
+            dtype=32,
+            value=var.address
+        )
+
+        tmp = self.memHandler.reserve(
+            context=TEMPORAL,
+            dtype=41,
+        )
+
+        # create (exp_result + base address) quad
+
+        self.quadWrapper.insertQuad(Quadruple(
+            op=8,
+            l=exp_result,
+            r=var_address_address,
+            res=tmp))
+        self.quadWrapper.insertAddress(tmp)
+
+        # Since the enterDeclaration is pushing a type no matter the variable being checked.
+        # This pops the type and pushes the correct type
+        self.quadWrapper.popType()
+        self.quadWrapper.insertType(var.type)
 
     def enterAssignment(self, ctx):
         self.statement = False
@@ -1061,6 +1128,8 @@ class PopurriListener(ParseTreeListener):
             var_address = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
             var_type = self.quadWrapper.popType()
+
+            array_address = var_address
 
             var = None
             # Assign resulting type to variable and allocate in memory
@@ -1084,22 +1153,16 @@ class PopurriListener(ParseTreeListener):
                     raise error(ctx, TYPE_MISMATCH.format(
                         stringifyToken(op), var_type, res_type))
 
-            if var_type != res_type:
-                raise error(ctx, TYPE_MISMATCH.format(
-                    stringifyToken(op), var_type, res_type))
+            if var is not None:
+                if var_type != res_type:
+                    raise error(ctx, TYPE_MISMATCH.format(
+                        stringifyToken(op), var_type, res_type))
 
-            if var.isArray:
-                self.quadWrapper.insertQuad(Quadruple(
-                    op=op,
-                    l=res_address,
-                    res=var.address + self.quadWrapper.popAddress()
-                ))
-            else:
-                self.quadWrapper.insertQuad(Quadruple(
-                    op=op,
-                    l=res_address,
-                    res=var.address
-                ))
+            self.quadWrapper.insertQuad(Quadruple(
+                op=op,
+                l=res_address,
+                res=var.address if var is not None else var_address
+            ))
 
     def enterFuncCall(self, ctx):
         ids = self.validateCalledIds(ctx, is_function=True)
@@ -1149,7 +1212,8 @@ class PopurriListener(ParseTreeListener):
 
         # Validate call signature with function signature
         func_signature = tuple(func.paramTypes)
-        call_signature = tuple(self.quadWrapper.type_stack[-len(func_signature):])
+        call_signature = tuple(
+            self.quadWrapper.type_stack[-len(func_signature):])
         for func_ty in func_signature[::-1]:
             call_ty = self.quadWrapper.popType()
             if func_ty != call_ty:
@@ -1199,7 +1263,11 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterIterable(self, ctx):
-        pass
+        # if array is using ID
+        if ctx.ID() is not None:
+            # unwrap id into var object
+            var = self.ctxWrapper.getVariable(str(ctx.ID()))
+            self.quadWrapper.insertDim(var.address)
 
     def exitIterable(self, ctx):
         pass
