@@ -13,14 +13,14 @@ def test_valid(compiler, files):
         # except Exception as e:
         #     print('Failed to compile, got: ', e)
         #     exit(1)
-        compiler.compile(test, export=False)
+        compiler.compile(test, export=False, debug_info=True)
 
 
 def test_malformed(compiler, files):
     for test in test_files:
         print("--------TESTING MALFORMED INPUT", basename(test))
         try:
-            compiler.compile(test, export=False)
+            compiler.compile(test, export=False, debug_info=True)
             # This shouldnt be evaluated if compiler raises error
             print("Failed to detect errors :/")
             exit(1)

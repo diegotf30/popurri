@@ -36,7 +36,7 @@ class Compiler(object):
                 json.dump(arg, f, default=vars)
                 f.write('\n')
 
-    def compile(self, file, export=True):
+    def compile(self, file, export=True, debug_info=False):
         if not isfile(file):
             raise Exception(f'Error: {file} not found')
 
@@ -48,7 +48,7 @@ class Compiler(object):
 
         tree = parser.program()
         walker = ParseTreeWalker()
-        listener = PopurriListener(self.mem_size, debug_info=True)
+        listener = PopurriListener(self.mem_size, debug_info=debug_info)
         walker.walk(listener, tree)
 
         if export:
