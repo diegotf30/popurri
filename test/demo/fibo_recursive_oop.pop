@@ -1,0 +1,27 @@
+module fibonacci_recursive
+
+class Fibonacci {
+    var n : int
+
+    func solve() {
+        var i = 0
+        while i < self.n {
+            print(self.fibo(i))
+            i += 1
+        }
+    }
+
+    private func fibo(int n) int {
+        if n < 2 {
+            return n
+        }
+        else {
+            return self.fibo(n - 1) + self.fibo(n - 2)
+        }
+    }
+}
+
+var solver : Fibonacci
+
+input(solver.n)
+solver.solve()

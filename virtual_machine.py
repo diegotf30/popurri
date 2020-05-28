@@ -98,11 +98,12 @@ def run(obj_file):
         # Operations
         elif op == ASSIGN:
             if type(l) == str: # l is a return value from a function
-                return_var = ctx.getVariable('func ' + l)
+                func_name = 'func ' + l.split('.')[-1]
+                return_var = ctx.getVariable(func_name)
                 l_val = memHandler.getValue(return_var.address)
 
                 # Remove return value from memory & global varTable
-                del ctx.variables['global']['func ' + l]
+                del ctx.variables['global'][func_name]
                 memHandler.contexts[GLOBAL].sections[tokenize(return_var.type)].pop()
 
             memHandler.update(res, l_val)
@@ -146,24 +147,28 @@ def run(obj_file):
             func_mem.flush(LOCAL)
             func_mem.flush(TEMPORAL)
 
-            class_var = ctx.getVariable(
-                l,
-                context=ctx.top(),
-                insideClass=ctx.top() != 'global'
-            )
+            if l == 'self': # Recursive class call
+                class_var = ctx.getAttributes(ctx.getClassContext())
+                ctx.push(ctx.getClassContext())
+            else:
+                class_var = ctx.getVariable(
+                    l,
+                    context=ctx.top(),
+                    insideClass=ctx.top() != 'global'
+                )
+                ctx.push('class ' + class_var['self'].type)
+
             for attr in class_var.values():
                 if attr.id == 'self': # this attribute only contains the class name
                     continue
 
-                prev_ctx = memCtxWrapper.top()
-                attr_val = prev_ctx.getValue(attr.address)
+                attr_val = memHandler.getValue(attr.address)
                 func_mem.reserve(
                     context=LOCAL,
                     dtype=tokenize(attr.type),
                     value=attr_val
                 )
 
-            ctx.push('class ' + class_var['self'].type)
             method_call = True # Set flag so ERA quad doesnt flush mem
 
         # Function Calls

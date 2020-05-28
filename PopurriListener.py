@@ -1124,9 +1124,22 @@ class PopurriListener(ParseTreeListener):
         ids = [str(id) for id in ctx.ID()]
 
         if len(ids) == 2:
-            class_var = self.ctxWrapper.getVariable(ids[0])['self']
+            if ids[0] == 'self':
+                class_name = self.ctxWrapper.getClassContext()
+                if class_name is None:
+                    raise error(ctx, SELF_USE_OUTSIDE_CLASS)
+            else:
+                class_var = self.ctxWrapper.getVariable(
+                    ids[0],
+                    context=self.ctxWrapper.top(),
+                    insideClass=self.ctxWrapper.insideClass()
+                )
+                if class_var is None:
+                    raise error(ctx, UNDEF_VAR.format(ids[0]))
+                class_name = 'class ' + class_var['self'].type
+
             func = self.ctxWrapper.getFunction(
-                ids[1], 'class ' + class_var.type)
+                ids[1], class_name)
         else:
             func = self.ctxWrapper.getFunctionIfExists(ids[0])
 
