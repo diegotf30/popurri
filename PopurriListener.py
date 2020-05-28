@@ -1087,7 +1087,6 @@ class PopurriListener(ParseTreeListener):
             # Add fake bottom to operator_stack
             self.quadWrapper.insertOperator(FALSEBOTTOM)
         elif len(ctx.ID()) > 0 and ctx.indexation() is None:  # identifier
-            print('enterVal uwu')
             self.validateCalledIds(ctx)
         elif ctx.constant() is not None:  # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
@@ -1315,7 +1314,6 @@ class PopurriListener(ParseTreeListener):
                 insideClass = True
             var = self.ctxWrapper.getVariable(
                 str(ctx.ID()), context=self.ctxWrapper.top(), insideClass=insideClass, isClassArray=insideClass)
-            print('HOLAAAA')
             self.quadWrapper.insertDim(var.address)
 
     def exitIterable(self, ctx):

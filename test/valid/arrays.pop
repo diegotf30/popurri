@@ -2,6 +2,5 @@ module main
 
 var a : [ int ] [ 4 ]
 var b : [ string ] [ 5 ]
-var c: int
-a[1] = 2
+
 a[a[1] + a[2]] = 1

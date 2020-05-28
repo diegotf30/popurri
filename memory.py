@@ -91,7 +91,7 @@ class MemoryHandler():
         dtype = self.getAddressType(address)
         address -= ((dtype - INT) * self.type_offset)
 
-        return self.contexts[context].getValue(address, dtype + 33)
+        return self.contexts[context].getValue(address, dtype)
 
     def saveSnapshot(self, context=LOCAL):
         self.snapshot = deepcopy(self.contexts[context])
