@@ -27,13 +27,6 @@ class MemoryHandler():
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
             self.contexts[ctx] = Memory(
                 start=context_offset * i, max_size=self.type_offset)
-            if ctx == TEMPORAL:
-                self.contexts[ctx] = Memory(
-                    start=context_offset * i, max_size=self.type_offset, is_temp=True)
-                continue
-
-            self.contexts[ctx] = Memory(
-                start=context_offset * i, max_size=self.type_offset)
 
     def reserve(self, context, dtype, value=None):
         'reserves an address; assigns value if given'
@@ -111,16 +104,15 @@ class MemoryHandler():
 
 
 class Memory():
-    def __init__(self, start, max_size, is_temp=False):
+    def __init__(self, start, max_size):
         self.start = start
         self.sections = {
             INT: [],
             FLOAT: [],
             BOOL: [],
-            STRING: []
+            STRING: [],
+            POINTER: []
         }
-        if is_temp:
-            self.sections[POINTER] = []
         self.max_size = max_size
 
     def reserveAddress(self, dtype):
@@ -137,7 +129,7 @@ class Memory():
             FLOAT: 0.0,
             BOOL: False,
             STRING: '',
-            POINTER: ''
+            POINTER: None
         }
         self.sections[dtype].append(default_val_map[dtype])
         return len(self.sections[dtype]) - 1

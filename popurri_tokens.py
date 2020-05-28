@@ -65,15 +65,15 @@ POINTER = 42
 FALSEBOTTOM = 999999
 
 tokens = [
-    'GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR', # GOTOs
-    'ERAC', # Classes
-    'ERA', 'PARAM', 'ENDPROC', # Functions
-    '+', '+=', '-', '-=', '*', '*=', '/', '/=', '%', '%=', '**', 'is', 'is not', '>', '>=', '<', '<=', 'and', 'or', '=', # Operators
-    'print', 'println', 'input', # Special Functions
-    '(', ')', # Parenthesis
-    'int', 'float', 'bool', 'string', # Types
-    'global', 'temporal', 'local', 'constant', # Contexts
-    'verify', 'pointer'
+    'GOTO', 'GOTOV', 'GOTOF', 'GOSUB', 'GOTOR',  # GOTOs
+    'ERAC',  # Classes
+    'ERA', 'PARAM', 'ENDPROC',  # Functions
+    '+', '+=', '-', '-=', '*', '*=', '/', '/=', '%', '%=', '**', 'is', 'is not', '>', '>=', '<', '<=', 'and', 'or', '=',  # Operators
+    'print', 'println', 'input',  # Special Functions
+    '(', ')',  # Parenthesis
+    'int', 'float', 'bool', 'string',  # Types
+    'global', 'local', 'temporal', 'constant',  # Contexts
+    'verify', 'pointer'  # Arrays
 ]
 
 
