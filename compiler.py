@@ -48,7 +48,7 @@ class Compiler(object):
 
         tree = parser.program()
         walker = ParseTreeWalker()
-        listener = PopurriListener(self.mem_size)
+        listener = PopurriListener(self.mem_size, debug_info=True)
         walker.walk(listener, tree)
 
         if export:

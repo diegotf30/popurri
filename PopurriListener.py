@@ -98,7 +98,7 @@ class QuadWrapper():
         l_type = self.popType()
         res_type = bailaMijaConElSeñor(op, l_type, r_type)
         if res_type is None:
-            raise error(ctx, TYPE_MISMATCH.format(op, l_type, r_type))
+            raise error(ctx, TYPE_MISMATCH.format(stringifyToken(op), l_type, r_type))
         # Push resulting type into stack
         self.insertType(res_type)
 
@@ -360,7 +360,7 @@ class PopurriListener(ParseTreeListener):
     -Cada funcion 'exit' representa el estado cuando se acaba una regla
     '''
 
-    def __init__(self, mem_size):
+    def __init__(self, mem_size, debug_info=False):
         self.ctxWrapper = ContextWrapper()
         self.quadWrapper = QuadWrapper()
         self.memHandler = MemoryHandler(mem_size)
@@ -371,6 +371,7 @@ class PopurriListener(ParseTreeListener):
         self.func_returned_val = False
         # a[ array_indexation_exp ]
         self.array_indexation_exp = False
+        self.debug_info = debug_info
 
     def enterProgram(self, ctx):
         '''
@@ -388,35 +389,36 @@ class PopurriListener(ParseTreeListener):
         '''
         [Program] marca el final de las reglas de la gramatica. Aqui termina la fase de compilacion.
         '''
-        print("--VARIABLES--")
-        pprint(self.ctxWrapper.variables)
-        print("--FUNCTIONS--")
-        pprint(self.ctxWrapper.functions)
+        if self.debug_info:
+            print("--VARIABLES--")
+            pprint(self.ctxWrapper.variables)
+            print("--FUNCTIONS--")
+            pprint(self.ctxWrapper.functions)
 
-        print('quads_stack = [')
-        for i, x in enumerate(self.quadWrapper.quads, start=1):
-            tmp = list(x)
-            tmp[0] = stringifyToken(x[0])
-            print('\t', i, tuple(tmp))
-        print(']')
+            print('quads_stack = [')
+            for i, x in enumerate(self.quadWrapper.quads, start=1):
+                tmp = list(x)
+                tmp[0] = stringifyToken(x[0])
+                print('\t', i, tuple(tmp))
+            print(']')
 
-        print('address_stack = ', end='')
-        pprint(self.quadWrapper.address_stack)
-        print('operator_stack = ', end='')
-        pprint(self.quadWrapper.operator_stack)
-        print('type_stack = ', end='')
-        pprint(self.quadWrapper.type_stack)
-        print('jump_stack = ', end='')
-        pprint(self.quadWrapper.jump_stack)
-        print('quad_ptr = ', end='')
-        pprint(self.quadWrapper.quads_ptr)
+            print('address_stack = ', end='')
+            pprint(self.quadWrapper.address_stack)
+            print('operator_stack = ', end='')
+            pprint(self.quadWrapper.operator_stack)
+            print('type_stack = ', end='')
+            pprint(self.quadWrapper.type_stack)
+            print('jump_stack = ', end='')
+            pprint(self.quadWrapper.jump_stack)
+            print('quad_ptr = ', end='')
+            pprint(self.quadWrapper.quads_ptr)
 
-        for ctx in [GLOBAL, LOCAL, CONSTANT, TEMPORAL]:
-            context = self.memHandler.contexts[ctx].sections
-            print(stringifyToken(ctx), '= {')
-            for section in context:
-                print('    ', stringifyToken(section), context[section])
-            print('}')
+            for ctx in [GLOBAL, LOCAL, CONSTANT, TEMPORAL]:
+                context = self.memHandler.contexts[ctx].sections
+                print(stringifyToken(ctx), '= {')
+                for section in context:
+                    print('    ', stringifyToken(section), context[section])
+                print('}')
 
     def enterModule(self, ctx):
         '''
