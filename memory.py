@@ -74,7 +74,7 @@ class MemoryHandler():
 
     def getAddressType(self, address):
         'obtains the data type from address [INT, FLOAT, BOOL, STRING]'
-        return math.floor(address / self.type_offset) + INT
+        return math.floor(address / self.type_offset % 4) + INT
 
     def getValue(self, address):
         address, context = self.getContextAddress(address)
@@ -122,7 +122,13 @@ class Memory():
         if len(self.sections[dtype]) == self.max_size:
             raise Exception(f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
 
-        self.sections[dtype].append(None)
+        default_val_map = {
+            INT: 0,
+            FLOAT: 0.0,
+            BOOL: False,
+            STRING: ''
+        }
+        self.sections[dtype].append(default_val_map[dtype])
         return len(self.sections[dtype]) - 1
 
     def updateAddress(self, address, dtype=None, value=None):

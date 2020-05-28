@@ -4,6 +4,7 @@ from popurri_tokens import *
 from error_tokens import *
 from operator import *
 import json
+from copy import deepcopy
 
 def importMemory(f):
     memHandler = MemoryHandler()
@@ -96,6 +97,14 @@ def run(obj_file):
 
         # Operations
         elif op == ASSIGN:
+            if type(l) == str: # l is a return value from a function
+                return_var = ctx.getVariable('func ' + l)
+                l_val = memHandler.getValue(return_var.address)
+
+                # Remove return value from memory & global varTable
+                del ctx.variables['global']['func ' + l]
+                memHandler.contexts[GLOBAL].sections[tokenize(return_var.type)].pop()
+
             memHandler.update(res, l_val)
         elif op in [ADD, SUBS, MULT, DIV, MOD, POWER, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ]:
             handleOperation(memHandler, op, l_val, r_val, res)
@@ -203,9 +212,43 @@ def run(obj_file):
                 ip = func.quads_range[0] - 1
                 continue
 
-        elif op == ENDPROC:
-            # Return to
+        elif op == GOTOR:
+            # Return to previous context
             ip = ip_stack.pop()
+            prev_ctx = memCtxWrapper.pop()
+            # Copy Global memory in case function did any changes
+            prev_ctx.contexts[GLOBAL] = deepcopy(memHandler.contexts[GLOBAL])
+            # Allocate return value as global with func name
+            return_dtype = memHandler.getAddressType(res)
+            return_var = Variable(
+                id=ctx.top(),
+                type=stringifyToken(return_dtype)
+            )
+            return_var.address = prev_ctx.reserve(
+                context=GLOBAL,
+                dtype=return_dtype,
+                value=memHandler.getValue(res)
+            )
+            # And add it to global varTable
+            ctx.addVariable(return_var)
+
+            # Pop function/method context
+            ctx.pop()
+            if 'class ' in ctx.top():
+                ctx.pop()
+            continue
+
+        elif op == ENDPROC:
+            # Return to previous context
+            ip = ip_stack.pop()
+            prev_ctx = memCtxWrapper.pop()
+            # Copy Global memory in case function did any changes
+            prev_ctx.contexts[GLOBAL] = deepcopy(memHandler.contexts[GLOBAL])
+
+            # Pop function/method context
+            ctx.pop()
+            if 'class ' in ctx.top():
+                ctx.pop()
             continue
 
         ip += 1

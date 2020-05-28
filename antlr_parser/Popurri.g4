@@ -57,11 +57,11 @@ elseStmt: 'else' '{' statement* '}';
 returnStmt: 'return' cond;
 breakStmt: 'break';
 
-cond: (cmp boolOp?)+;
-cmp: (exp cmpOp?)+;
-exp: (add addOp?)+;
-add: (multModDiv multDivOp?)+;
-multModDiv: (val expOp?)+;
+cond : cmp (boolOp cmp)*;
+cmp : exp (cmpOp exp)*;
+exp : add (addOp add)*;
+add : multModDiv (multDivOp multModDiv)*;
+multModDiv : val (expOp val)*;
 val:
 	'(' cond ')'
 	| ID ('.' ID)?

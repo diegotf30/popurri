@@ -193,7 +193,7 @@ class ContextWrapper():
         if context not in variables:
             return None
 
-        return self.variables[context].get(str(var_id), None)
+        return variables[context].get(str(var_id), None)
 
     def getFunction(self, func_id, context="global"):
         func_id = str(func_id)
@@ -950,6 +950,7 @@ class PopurriListener(ParseTreeListener):
     # Helper to validate id(s) being called (be them )
     def validateCalledIds(self, ctx, is_function=False):
         ids = [str(id) for id in ctx.ID()]
+
         if len(ids) == 2:  # class attr/method being called (i.e. myobj.name or myobj.print())
             selfAccess = ids[0] == 'self'
             if selfAccess:
@@ -957,7 +958,11 @@ class PopurriListener(ParseTreeListener):
                 if class_name is None:
                     raise error(ctx, SELF_USE_OUTSIDE_CLASS)
             else:
-                class_var = self.ctxWrapper.getVariable(ids[0])
+                class_var = self.ctxWrapper.getVariable(
+                    ids[0],
+                    context=self.ctxWrapper.top(),
+                    insideClass=self.ctxWrapper.insideClass()
+                )
                 if class_var is None:
                     raise error(ctx, UNDEF_VAR.format(ids[0]))
                 class_name = 'class ' + class_var['self'].type
@@ -971,9 +976,13 @@ class PopurriListener(ParseTreeListener):
                     raise error(ctx, NOT_PUBLIC_METHOD.format(
                         method.access_type.upper(), ids[1], class_name))
             else:
-                attr = self.ctxWrapper.getVariable(ids[1], context=class_name)
+                if selfAccess: # Inside class method, use local memory
+                    attr = self.ctxWrapper.getVariable(ids[1], context=class_name)
+                else: # Accessing attribute outside class
+                    attr = class_var.get(ids[1], None)
                 if attr is None:
                     raise error(ctx, UNDEF_ATTRIBUTE.format(ids[1], class_name))
+
                 # Validate that we can access attribute (if outside class)
                 if not selfAccess and attr.access_type != 'public':
                     raise error(ctx, NOT_PUBLIC_ATTRIBUTE.format(
@@ -1040,7 +1049,7 @@ class PopurriListener(ParseTreeListener):
         pass
 
     def enterAssignment(self, ctx):
-        pass
+        self.statement = False
 
     def exitAssignment(self, ctx):
         if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
@@ -1154,6 +1163,7 @@ class PopurriListener(ParseTreeListener):
                 res=tmp
             ))
             self.quadWrapper.insertAddress(tmp)
+            self.quadWrapper.insertType(func.return_type)
 
         # Reset parameter counter flag (So we dont add func quad when exiting a condition)
         self.param_count = -1
