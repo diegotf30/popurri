@@ -1096,19 +1096,19 @@ class PopurriListener(ParseTreeListener):
 
         var_address_address = self.memHandler.reserve(
             context=CONSTANT,
-            dtype=32,
+            dtype=33,
             value=var.address
         )
 
         tmp = self.memHandler.reserve(
             context=TEMPORAL,
-            dtype=41,
+            dtype=42,
         )
 
         # create (exp_result + base address) quad
 
         self.quadWrapper.insertQuad(Quadruple(
-            op=8,
+            op=9,
             l=exp_result,
             r=var_address_address,
             res=tmp))

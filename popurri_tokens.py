@@ -58,6 +58,9 @@ LOCAL = 39
 TEMPORAL = 40
 CONSTANT = 41
 
+VERIFY = 41
+POINTER = 42
+
 # (Internal use only)
 FALSEBOTTOM = 999999
 
@@ -69,14 +72,17 @@ tokens = [
     'print', 'println', 'input', # Special Functions
     '(', ')', # Parenthesis
     'int', 'float', 'bool', 'string', # Types
-    'global', 'temporal', 'local', 'constant' # Contexts
+    'global', 'temporal', 'local', 'constant', # Contexts
+    'verify', 'pointer'
 ]
 
+
 def tokenize(v):
-    if type(v) == int: # Already tokenized
+    if type(v) == int:  # Already tokenized
         return v
 
     return tokens.index(str(v))
+
 
 def tokenizeByValue(val):
     if type(val).__name__ == 'str':
@@ -84,11 +90,13 @@ def tokenizeByValue(val):
 
     return tokens.index(type(val).__name__)
 
+
 def tokenizeContext(ctx_str):
     if ctx_str[:5] == 'class' or ctx_str[:4] == 'func':
         return LOCAL
 
     return GLOBAL
+
 
 def stringifyToken(token):
     return tokens[token]
