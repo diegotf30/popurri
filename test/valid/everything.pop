@@ -7,29 +7,15 @@ class parent {
         print(a + self.ssn)
         print(b + self.name)
     }
-
-    func func2(string a, string b) {
-        print(a + self.ssn)
-        print(b + self.name)
-    }
 }
 
-class parent -> child {
-    func func2() {
-        var x : parent
-        print(self.ssn)
-    }
-}
-
-var p : parent, x : parent
-var i : int = 10, a : int
-
+var p : parent, a : int
 func func1(int a, int b) int {
-    var x : int
     return a + b
 }
 
 p.ssn = "ola"
-p.func1("1","2")
+p.func1("1 ","2 ")
 
 a = func1(1, 2)
+print(a)

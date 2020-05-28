@@ -140,10 +140,11 @@ def run(obj_file):
 
         # Classes
         elif op == ERAC:
-            # Sleep current context
+            # Push function's memory ctx to stack
             memCtxWrapper.push(memHandler)
-            memHandler.flush(LOCAL)
-            memHandler.flush(TEMPORAL)
+            func_mem = memCtxWrapper.top()
+            func_mem.flush(LOCAL)
+            func_mem.flush(TEMPORAL)
 
             class_var = ctx.getVariable(
                 l,
@@ -154,9 +155,12 @@ def run(obj_file):
                 if attr.id == 'self': # this attribute only contains the class name
                     continue
 
-                memHandler.reserve(
+                prev_ctx = memCtxWrapper.top()
+                attr_val = prev_ctx.getValue(attr.address)
+                func_mem.reserve(
                     context=LOCAL,
                     dtype=tokenize(attr.type),
+                    value=attr_val
                 )
 
             ctx.push('class ' + class_var['self'].type)
@@ -164,11 +168,14 @@ def run(obj_file):
 
         # Function Calls
         elif op == ERA:
-            # Sleep current context if calling regular function
+            # Push memory ctx to stack (if calling a regular function)
             if not method_call:
                 memCtxWrapper.push(memHandler)
-                memHandler.flush(LOCAL)
-                memHandler.flush(TEMPORAL)
+                func_mem = memCtxWrapper.top()
+                func_mem.flush(LOCAL)
+                func_mem.flush(TEMPORAL)
+            else:
+                func_mem = memCtxWrapper.top()
 
             ctx.push('func ' + l)
             func = ctx.getCurrentFunction()
@@ -179,7 +186,7 @@ def run(obj_file):
             for i, era in enumerate([func.era_local, func.era_tmp]):
                 for j, type_allocations in enumerate(era):
                     for _ in range(type_allocations):
-                        memHandler.reserve(
+                        func_mem.reserve(
                             context=ctxs[i],
                             dtype=dtypes[j],
                         )
@@ -191,11 +198,12 @@ def run(obj_file):
             else:
                 params = ctx.variables[ctx.top()]
 
-            paramNo = int(res.split(' ')[1]) # res is formatted as 'param N'
             # Update the local param address with the passed value
+            paramNo = int(res.split(' ')[1]) # res is formatted as 'param N'
             for param in params.values():
                 if param.paramNo == paramNo:
-                    memHandler.update(
+                    func_mem = memCtxWrapper.top()
+                    func_mem.update(
                         address=param.address,
                         value=l_val,
                     )
@@ -210,11 +218,13 @@ def run(obj_file):
                 ip_stack.append(ip + 1)
                 # Go to function start
                 ip = func.quads_range[0] - 1
+                # Sleep current context
+                tmp = memHandler
+                memHandler = memCtxWrapper.pop()
+                memCtxWrapper.push(tmp)
                 continue
 
         elif op == GOTOR:
-            # Return to previous context
-            ip = ip_stack.pop()
             prev_ctx = memCtxWrapper.pop()
             # Copy Global memory in case function did any changes
             prev_ctx.contexts[GLOBAL] = deepcopy(memHandler.contexts[GLOBAL])
@@ -231,6 +241,10 @@ def run(obj_file):
             )
             # And add it to global varTable
             ctx.addVariable(return_var)
+
+            # Return to previous context
+            ip = ip_stack.pop()
+            memHandler = prev_ctx
 
             # Pop function/method context
             ctx.pop()

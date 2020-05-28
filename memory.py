@@ -4,8 +4,7 @@ from copy import deepcopy
 import math
 
 class MemoryHandler():
-    contexts = {}
-    snapshot = []
+    snapshot = None
     context_offset = None
     type_offset = None
 
@@ -23,6 +22,7 @@ class MemoryHandler():
         if self.type_offset % 1 != 0:
             raise Exception('ERROR: \'context_offset\' must be divisible by 4')
 
+        self.contexts = {}
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
             self.contexts[ctx] = Memory(start=context_offset * i, max_size=self.type_offset)
 
@@ -100,10 +100,6 @@ class MemoryHandler():
 
 
 class Memory():
-    start = None
-    max_size = None
-    sections = {}
-
     def __init__(self, start, max_size):
         self.start = start
         self.sections = {

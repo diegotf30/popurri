@@ -207,7 +207,7 @@ class ContextWrapper():
 
     def getCurrentFunction(self):
         func_id = self.pop()
-        func_ctx_id = self.top()
+        func_ctx_id = self.top() if self.top() != func_id else 'global'
         self.push(func_id)  # Re-push current context
         return self.getFunction(func_id, context=func_ctx_id)
 
@@ -865,6 +865,8 @@ class PopurriListener(ParseTreeListener):
         if func.return_type == 'void':
             raise error(ctx, RETURN_ON_VOID_FUNC.format(func.id))
 
+        self.statement = False
+
     def exitReturnStmt(self, ctx):
         # Validate return type matches function return type
         func = self.ctxWrapper.getCurrentFunction()
@@ -1115,6 +1117,7 @@ class PopurriListener(ParseTreeListener):
             l=ids
         ))
 
+        self.quadWrapper.insertOperator(FALSEBOTTOM)
         self.param_count = 1
 
     def exitFuncCall(self, ctx):
@@ -1190,6 +1193,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterPrintStmt(self, ctx):
         self.quadWrapper.insertAddress(FALSEBOTTOM)
+        self.statement = False
         pass
 
     def exitPrintStmt(self, ctx):
