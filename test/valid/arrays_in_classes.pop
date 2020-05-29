@@ -1,6 +1,6 @@
 module main
 class arrayClass {
-    private var strVar : [int][4]
+    #private var strVar : [int][4]
     public var b : int
     func arrayManipulation(string a) {
         self.b = 2

@@ -64,7 +64,7 @@ exp: add (addOp add)*;
 add: multModDiv (multDivOp multModDiv)*;
 multModDiv: val (expOp val)*;
 val:
-	| '(' cond ')'
+	'(' cond ')'
 	| funcCall
 	| ID ('.' ID)? indexation?
 	| constant; // TODO "addOp?"

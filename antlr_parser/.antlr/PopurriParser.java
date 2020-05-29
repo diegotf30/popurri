@@ -1856,6 +1856,7 @@ public class PopurriParser extends Parser {
 		try {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(387);
 =======
 			setState(388);
@@ -1863,11 +1864,15 @@ public class PopurriParser extends Parser {
 =======
 			setState(387);
 >>>>>>> Refactor
+=======
+			setState(386);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,43,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(375);
@@ -1889,11 +1894,20 @@ public class PopurriParser extends Parser {
 				indexation();
 =======
 >>>>>>> Refactor
+=======
+				setState(372);
+				match(T__7);
+				setState(373);
+				cond();
+				setState(374);
+				match(T__8);
+>>>>>>> Fixed bug in grammar
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(376);
@@ -1916,6 +1930,10 @@ public class PopurriParser extends Parser {
 				setState(375);
 >>>>>>> Refactor
 				match(T__8);
+=======
+				setState(376);
+				funcCall();
+>>>>>>> Fixed bug in grammar
 				}
 				break;
 			case 3:
@@ -1933,20 +1951,18 @@ public class PopurriParser extends Parser {
 >>>>>>> Implemented array manipulation inside classes.
 =======
 				setState(377);
-				funcCall();
-				}
-				break;
-			case 4:
-				enterOuterAlt(_localctx, 4);
-				{
-				setState(378);
 				match(ID);
+<<<<<<< HEAD
 				setState(381);
 >>>>>>> Refactor
+=======
+				setState(380);
+>>>>>>> Fixed bug in grammar
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__13) {
 					{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 					setState(381);
@@ -1962,16 +1978,21 @@ public class PopurriParser extends Parser {
 					match(T__13);
 					setState(380);
 >>>>>>> Refactor
+=======
+					setState(378);
+					match(T__13);
+					setState(379);
+>>>>>>> Fixed bug in grammar
 					match(ID);
 					}
 				}
 
-				setState(384);
+				setState(383);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__4) {
 					{
-					setState(383);
+					setState(382);
 					indexation();
 					}
 				}
@@ -1991,9 +2012,10 @@ public class PopurriParser extends Parser {
 >>>>>>> Refactor
 				}
 				break;
-			case 5:
-				enterOuterAlt(_localctx, 5);
+			case 4:
+				enterOuterAlt(_localctx, 4);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(386);
@@ -2003,6 +2025,9 @@ public class PopurriParser extends Parser {
 =======
 				setState(386);
 >>>>>>> Refactor
+=======
+				setState(385);
+>>>>>>> Fixed bug in grammar
 				constant();
 				}
 				break;
@@ -2037,6 +2062,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(389);
 			iterable();
 			setState(390);
@@ -2051,15 +2077,22 @@ public class PopurriParser extends Parser {
 =======
 			setState(389);
 >>>>>>> Refactor
+=======
+			setState(388);
+>>>>>>> Fixed bug in grammar
 			match(T__4);
-			setState(390);
+			setState(389);
 			exp();
+<<<<<<< HEAD
 <<<<<<< HEAD
 			setState(393);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 			setState(391);
 >>>>>>> Refactor
+=======
+			setState(390);
+>>>>>>> Fixed bug in grammar
 			match(T__5);
 			}
 		}
@@ -2090,6 +2123,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(394);
 =======
 			setState(395);
@@ -2097,6 +2131,9 @@ public class PopurriParser extends Parser {
 =======
 			setState(393);
 >>>>>>> Refactor
+=======
+			setState(392);
+>>>>>>> Fixed bug in grammar
 			_la = _input.LA(1);
 			if ( !(_la==T__22 || _la==T__23) ) {
 			_errHandler.recoverInline(this);
@@ -2135,6 +2172,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(396);
 =======
 			setState(397);
@@ -2142,6 +2180,9 @@ public class PopurriParser extends Parser {
 =======
 			setState(395);
 >>>>>>> Refactor
+=======
+			setState(394);
+>>>>>>> Fixed bug in grammar
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << T__29))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -2180,6 +2221,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(398);
 =======
 			setState(399);
@@ -2187,6 +2229,9 @@ public class PopurriParser extends Parser {
 =======
 			setState(397);
 >>>>>>> Refactor
+=======
+			setState(396);
+>>>>>>> Fixed bug in grammar
 			_la = _input.LA(1);
 			if ( !(_la==T__30 || _la==T__31) ) {
 			_errHandler.recoverInline(this);
@@ -2225,6 +2270,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(400);
 =======
 			setState(401);
@@ -2232,6 +2278,9 @@ public class PopurriParser extends Parser {
 =======
 			setState(399);
 >>>>>>> Refactor
+=======
+			setState(398);
+>>>>>>> Fixed bug in grammar
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__32) | (1L << T__33) | (1L << T__34))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -2269,6 +2318,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(402);
 =======
 			setState(403);
@@ -2276,6 +2326,9 @@ public class PopurriParser extends Parser {
 =======
 			setState(401);
 >>>>>>> Refactor
+=======
+			setState(400);
+>>>>>>> Fixed bug in grammar
 			match(T__35);
 			}
 		}
@@ -2306,6 +2359,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(404);
 =======
 			setState(405);
@@ -2313,6 +2367,9 @@ public class PopurriParser extends Parser {
 =======
 			setState(403);
 >>>>>>> Refactor
+=======
+			setState(402);
+>>>>>>> Fixed bug in grammar
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__36) | (1L << T__37) | (1L << T__38) | (1L << T__39) | (1L << T__40) | (1L << T__41))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -2356,6 +2413,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(406);
 			assignOp();
 			setState(407);
@@ -2369,6 +2427,11 @@ public class PopurriParser extends Parser {
 			assignOp();
 			setState(406);
 >>>>>>> Refactor
+=======
+			setState(404);
+			assignOp();
+			setState(405);
+>>>>>>> Fixed bug in grammar
 			cond();
 			}
 		}
@@ -2400,9 +2463,11 @@ public class PopurriParser extends Parser {
 	public final FuncCallContext funcCall() throws RecognitionException {
 		FuncCallContext _localctx = new FuncCallContext(_ctx, getState());
 		enterRule(_localctx, 66, RULE_funcCall);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 			setState(411);
@@ -2412,10 +2477,14 @@ public class PopurriParser extends Parser {
 =======
 			setState(410);
 >>>>>>> Refactor
+=======
+			setState(409);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,44,_ctx) ) {
 			case 1:
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(409);
@@ -2431,10 +2500,16 @@ public class PopurriParser extends Parser {
 				match(ID);
 				setState(409);
 >>>>>>> Refactor
+=======
+				setState(407);
+				match(ID);
+				setState(408);
+>>>>>>> Fixed bug in grammar
 				match(T__13);
 				}
 				break;
 			}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 			setState(413);
@@ -2447,19 +2522,27 @@ public class PopurriParser extends Parser {
 =======
 			setState(412);
 >>>>>>> Refactor
+=======
+			setState(411);
+>>>>>>> Fixed bug in grammar
 			match(ID);
-			setState(413);
+			setState(412);
 			match(T__7);
+<<<<<<< HEAD
 <<<<<<< HEAD
 			setState(417);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 			setState(415);
 >>>>>>> Refactor
+=======
+			setState(414);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,45,_ctx) ) {
-			case 1:
+			_la = _input.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(415);
@@ -2469,10 +2552,13 @@ public class PopurriParser extends Parser {
 =======
 				setState(414);
 >>>>>>> Refactor
+=======
+				setState(413);
+>>>>>>> Fixed bug in grammar
 				condParam();
 				}
-				break;
 			}
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 <<<<<<< HEAD
@@ -2483,6 +2569,10 @@ public class PopurriParser extends Parser {
 =======
 			setState(417);
 >>>>>>> Refactor
+=======
+
+			setState(416);
+>>>>>>> Fixed bug in grammar
 			match(T__8);
 			}
 		}
@@ -2517,6 +2607,7 @@ public class PopurriParser extends Parser {
 		try {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(426);
 =======
 			setState(427);
@@ -2524,11 +2615,15 @@ public class PopurriParser extends Parser {
 =======
 			setState(425);
 >>>>>>> Refactor
+=======
+			setState(424);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case CONST_BOOL:
 				enterOuterAlt(_localctx, 1);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(420);
@@ -2538,12 +2633,16 @@ public class PopurriParser extends Parser {
 =======
 				setState(419);
 >>>>>>> Refactor
+=======
+				setState(418);
+>>>>>>> Fixed bug in grammar
 				match(CONST_BOOL);
 				}
 				break;
 			case CONST_I:
 				enterOuterAlt(_localctx, 2);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(421);
@@ -2553,12 +2652,16 @@ public class PopurriParser extends Parser {
 =======
 				setState(420);
 >>>>>>> Refactor
+=======
+				setState(419);
+>>>>>>> Fixed bug in grammar
 				match(CONST_I);
 				}
 				break;
 			case CONST_F:
 				enterOuterAlt(_localctx, 3);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(422);
@@ -2568,12 +2671,16 @@ public class PopurriParser extends Parser {
 =======
 				setState(421);
 >>>>>>> Refactor
+=======
+				setState(420);
+>>>>>>> Fixed bug in grammar
 				match(CONST_F);
 				}
 				break;
 			case CONST_STR:
 				enterOuterAlt(_localctx, 4);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(423);
@@ -2583,12 +2690,16 @@ public class PopurriParser extends Parser {
 =======
 				setState(422);
 >>>>>>> Refactor
+=======
+				setState(421);
+>>>>>>> Fixed bug in grammar
 				match(CONST_STR);
 				}
 				break;
 			case T__4:
 				enterOuterAlt(_localctx, 5);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(424);
@@ -2598,12 +2709,16 @@ public class PopurriParser extends Parser {
 =======
 				setState(423);
 >>>>>>> Refactor
+=======
+				setState(422);
+>>>>>>> Fixed bug in grammar
 				const_arr();
 				}
 				break;
 			case T__42:
 				enterOuterAlt(_localctx, 6);
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(425);
@@ -2613,6 +2728,9 @@ public class PopurriParser extends Parser {
 =======
 				setState(424);
 >>>>>>> Refactor
+=======
+				setState(423);
+>>>>>>> Fixed bug in grammar
 				match(T__42);
 				}
 				break;
@@ -2656,6 +2774,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(428);
 			match(T__4);
 			setState(439);
@@ -2669,10 +2788,16 @@ public class PopurriParser extends Parser {
 			match(T__4);
 			setState(438);
 >>>>>>> Refactor
+=======
+			setState(426);
+			match(T__4);
+			setState(437);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,49,_ctx) ) {
 			case 1:
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(430);
@@ -2682,10 +2807,14 @@ public class PopurriParser extends Parser {
 =======
 				setState(429);
 >>>>>>> Refactor
+=======
+				setState(428);
+>>>>>>> Fixed bug in grammar
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,47,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
 					{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 					setState(429);
@@ -2695,14 +2824,18 @@ public class PopurriParser extends Parser {
 =======
 					setState(428);
 >>>>>>> Refactor
+=======
+					setState(427);
+>>>>>>> Fixed bug in grammar
 					condParam();
 					}
-					break;
 				}
+
 				}
 				break;
 			case 2:
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(432);
@@ -2717,21 +2850,29 @@ public class PopurriParser extends Parser {
 =======
 				setState(431);
 >>>>>>> Refactor
+=======
+				setState(430);
+>>>>>>> Fixed bug in grammar
 				exp();
-				setState(432);
+				setState(431);
 				match(T__43);
-				setState(433);
+				setState(432);
 				exp();
+<<<<<<< HEAD
 <<<<<<< HEAD
 				setState(438);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 				setState(436);
 >>>>>>> Refactor
+=======
+				setState(435);
+>>>>>>> Fixed bug in grammar
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__44) {
 					{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 					setState(435);
@@ -2747,6 +2888,11 @@ public class PopurriParser extends Parser {
 					match(T__44);
 					setState(435);
 >>>>>>> Refactor
+=======
+					setState(433);
+					match(T__44);
+					setState(434);
+>>>>>>> Fixed bug in grammar
 					exp();
 					}
 				}
@@ -2756,6 +2902,7 @@ public class PopurriParser extends Parser {
 			}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(441);
 =======
 			setState(442);
@@ -2763,6 +2910,9 @@ public class PopurriParser extends Parser {
 =======
 			setState(440);
 >>>>>>> Refactor
+=======
+			setState(439);
+>>>>>>> Fixed bug in grammar
 			match(T__5);
 			}
 		}
@@ -2798,6 +2948,7 @@ public class PopurriParser extends Parser {
 		try {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(446);
 =======
 			setState(447);
@@ -2805,28 +2956,35 @@ public class PopurriParser extends Parser {
 =======
 			setState(449);
 >>>>>>> Refactor
+=======
+			setState(448);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
 <<<<<<< HEAD
+<<<<<<< HEAD
 				setState(443);
 				match(CONST_STR);
 =======
 				setState(444);
+=======
+				setState(443);
+>>>>>>> Fixed bug in grammar
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,50,_ctx) ) {
 				case 1:
 					{
-					setState(442);
+					setState(441);
 					match(ID);
-					setState(443);
+					setState(442);
 					match(T__13);
 					}
 					break;
 				}
-				setState(446);
+				setState(445);
 				match(ID);
 >>>>>>> Implemented array manipulation inside classes.
 				}
@@ -2836,6 +2994,7 @@ public class PopurriParser extends Parser {
 				{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 				setState(444);
 				const_arr();
 =======
@@ -2843,6 +3002,9 @@ public class PopurriParser extends Parser {
 =======
 				setState(447);
 >>>>>>> Refactor
+=======
+				setState(446);
+>>>>>>> Fixed bug in grammar
 				match(CONST_STR);
 >>>>>>> Implemented array manipulation inside classes.
 				}
@@ -2852,6 +3014,7 @@ public class PopurriParser extends Parser {
 				{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 				setState(445);
 				match(ID);
 =======
@@ -2859,6 +3022,9 @@ public class PopurriParser extends Parser {
 =======
 				setState(448);
 >>>>>>> Refactor
+=======
+				setState(447);
+>>>>>>> Fixed bug in grammar
 				const_arr();
 >>>>>>> Implemented array manipulation inside classes.
 				}
@@ -2943,6 +3109,7 @@ public class PopurriParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(455);
 			match(T__46);
 			setState(456);
@@ -2963,17 +3130,24 @@ public class PopurriParser extends Parser {
 =======
 			setState(451);
 >>>>>>> Refactor
+=======
+			setState(450);
+>>>>>>> Fixed bug in grammar
 			match(T__45);
-			setState(452);
+			setState(451);
 			match(T__7);
-			setState(453);
+			setState(452);
 			condParam();
+<<<<<<< HEAD
 <<<<<<< HEAD
 			setState(452);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 			setState(454);
 >>>>>>> Refactor
+=======
+			setState(453);
+>>>>>>> Fixed bug in grammar
 			match(T__8);
 			}
 		}
@@ -3007,6 +3181,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(462);
 			match(T__47);
 			setState(463);
@@ -3024,26 +3199,34 @@ public class PopurriParser extends Parser {
 =======
 			setState(456);
 >>>>>>> Refactor
+=======
+			setState(455);
+>>>>>>> Fixed bug in grammar
 			match(T__46);
-			setState(457);
+			setState(456);
 			match(T__7);
-			setState(460);
+			setState(459);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,52,_ctx) ) {
 			case 1:
 				{
-				setState(458);
+				setState(457);
 				match(ID);
+<<<<<<< HEAD
 <<<<<<< HEAD
 				setState(457);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 				setState(459);
 >>>>>>> Refactor
+=======
+				setState(458);
+>>>>>>> Fixed bug in grammar
 				match(T__13);
 				}
 				break;
 			}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 			setState(468);
@@ -3059,6 +3242,11 @@ public class PopurriParser extends Parser {
 			match(ID);
 			setState(463);
 >>>>>>> Refactor
+=======
+			setState(461);
+			match(ID);
+			setState(462);
+>>>>>>> Fixed bug in grammar
 			match(T__8);
 			}
 		}
@@ -3095,6 +3283,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(471);
 			cond();
 			setState(476);
@@ -3108,11 +3297,17 @@ public class PopurriParser extends Parser {
 			cond();
 			setState(470);
 >>>>>>> Refactor
+=======
+			setState(464);
+			cond();
+			setState(469);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__2) {
 				{
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(472);
@@ -3127,17 +3322,24 @@ public class PopurriParser extends Parser {
 =======
 				setState(466);
 >>>>>>> Refactor
+=======
+				setState(465);
+>>>>>>> Fixed bug in grammar
 				match(T__2);
-				setState(467);
+				setState(466);
 				cond();
 				}
 				}
+<<<<<<< HEAD
 <<<<<<< HEAD
 				setState(470);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 				setState(472);
 >>>>>>> Refactor
+=======
+				setState(471);
+>>>>>>> Fixed bug in grammar
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3178,6 +3380,7 @@ public class PopurriParser extends Parser {
 			{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			setState(479);
 			match(TYPE);
 			setState(480);
@@ -3188,20 +3391,28 @@ public class PopurriParser extends Parser {
 =======
 			setState(473);
 >>>>>>> Refactor
+=======
+			setState(472);
+>>>>>>> Fixed bug in grammar
 			match(TYPE);
-			setState(474);
+			setState(473);
 			match(ID);
+<<<<<<< HEAD
 <<<<<<< HEAD
 			setState(478);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 			setState(480);
 >>>>>>> Refactor
+=======
+			setState(479);
+>>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__2) {
 				{
 				{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 				setState(481);
@@ -3218,19 +3429,26 @@ public class PopurriParser extends Parser {
 =======
 				setState(475);
 >>>>>>> Refactor
+=======
+				setState(474);
+>>>>>>> Fixed bug in grammar
 				match(T__2);
-				setState(476);
+				setState(475);
 				match(TYPE);
-				setState(477);
+				setState(476);
 				match(ID);
 				}
 				}
+<<<<<<< HEAD
 <<<<<<< HEAD
 				setState(480);
 >>>>>>> Implemented array manipulation inside classes.
 =======
 				setState(482);
 >>>>>>> Refactor
+=======
+				setState(481);
+>>>>>>> Fixed bug in grammar
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3250,6 +3468,7 @@ public class PopurriParser extends Parser {
 	public static final String _serializedATN =
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3;\u01ec\4\2\t\2\4"+
 =======
 		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3:\u01e4\4\2\t\2\4"+
@@ -3257,6 +3476,9 @@ public class PopurriParser extends Parser {
 =======
 		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3:\u01e6\4\2\t\2\4"+
 >>>>>>> Refactor
+=======
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3:\u01e5\4\2\t\2\4"+
+>>>>>>> Fixed bug in grammar
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -3462,64 +3684,64 @@ public class PopurriParser extends Parser {
 		"\3\27\3\27\3\27\3\27\7\27\u0160\n\27\f\27\16\27\u0163\13\27\3\30\3\30"+
 		"\3\30\3\30\7\30\u0169\n\30\f\30\16\30\u016c\13\30\3\31\3\31\3\31\3\31"+
 		"\7\31\u0172\n\31\f\31\16\31\u0175\13\31\3\32\3\32\3\32\3\32\3\32\3\32"+
-		"\3\32\3\32\3\32\5\32\u0180\n\32\3\32\5\32\u0183\n\32\3\32\5\32\u0186\n"+
-		"\32\3\33\3\33\3\33\3\33\3\34\3\34\3\35\3\35\3\36\3\36\3\37\3\37\3 \3 "+
-		"\3!\3!\3\"\3\"\3\"\3#\3#\5#\u019d\n#\3#\3#\3#\5#\u01a2\n#\3#\3#\3$\3$"+
-		"\3$\3$\3$\3$\5$\u01ac\n$\3%\3%\5%\u01b0\n%\3%\3%\3%\3%\3%\5%\u01b7\n%"+
-		"\5%\u01b9\n%\3%\3%\3&\3&\5&\u01bf\n&\3&\3&\3&\5&\u01c4\n&\3\'\3\'\3\'"+
-		"\3\'\3\'\3(\3(\3(\3(\5(\u01cf\n(\3(\3(\3(\3)\3)\3)\7)\u01d7\n)\f)\16)"+
-		"\u01da\13)\3*\3*\3*\3*\3*\7*\u01e1\n*\f*\16*\u01e4\13*\3*\2\2+\2\4\6\b"+
-		"\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPR\2\b"+
-		"\4\288::\3\2\31\32\3\2\33 \3\2!\"\3\2#%\3\2\',\2\u0203\2T\3\2\2\2\4m\3"+
-		"\2\2\2\6p\3\2\2\2\by\3\2\2\2\n\u008a\3\2\2\2\f\u00a3\3\2\2\2\16\u00b1"+
-		"\3\2\2\2\20\u00b5\3\2\2\2\22\u00c0\3\2\2\2\24\u00d1\3\2\2\2\26\u00fd\3"+
-		"\2\2\2\30\u0102\3\2\2\2\32\u010d\3\2\2\2\34\u011a\3\2\2\2\36\u0124\3\2"+
-		"\2\2 \u012f\3\2\2\2\"\u013a\3\2\2\2$\u0144\3\2\2\2&\u0147\3\2\2\2(\u0149"+
-		"\3\2\2\2*\u0152\3\2\2\2,\u015b\3\2\2\2.\u0164\3\2\2\2\60\u016d\3\2\2\2"+
-		"\62\u0185\3\2\2\2\64\u0187\3\2\2\2\66\u018b\3\2\2\28\u018d\3\2\2\2:\u018f"+
-		"\3\2\2\2<\u0191\3\2\2\2>\u0193\3\2\2\2@\u0195\3\2\2\2B\u0197\3\2\2\2D"+
-		"\u019c\3\2\2\2F\u01ab\3\2\2\2H\u01ad\3\2\2\2J\u01c3\3\2\2\2L\u01c5\3\2"+
-		"\2\2N\u01ca\3\2\2\2P\u01d3\3\2\2\2R\u01db\3\2\2\2TX\5\4\3\2UW\5\f\7\2"+
-		"VU\3\2\2\2WZ\3\2\2\2XV\3\2\2\2XY\3\2\2\2Y^\3\2\2\2ZX\3\2\2\2[]\5\6\4\2"+
-		"\\[\3\2\2\2]`\3\2\2\2^\\\3\2\2\2^_\3\2\2\2_d\3\2\2\2`^\3\2\2\2ac\5\n\6"+
-		"\2ba\3\2\2\2cf\3\2\2\2db\3\2\2\2de\3\2\2\2ej\3\2\2\2fd\3\2\2\2gi\5\26"+
-		"\f\2hg\3\2\2\2il\3\2\2\2jh\3\2\2\2jk\3\2\2\2k\3\3\2\2\2lj\3\2\2\2mn\7"+
-		"\3\2\2no\7:\2\2o\5\3\2\2\2pq\7\4\2\2qv\5\b\5\2rs\7\5\2\2su\5\b\5\2tr\3"+
-		"\2\2\2ux\3\2\2\2vt\3\2\2\2vw\3\2\2\2w\7\3\2\2\2xv\3\2\2\2y\u0085\7:\2"+
-		"\2z\u0083\7\6\2\2{\u0084\78\2\2|\u0084\7:\2\2}~\7\7\2\2~\177\78\2\2\177"+
-		"\u0080\7\b\2\2\u0080\u0081\7\7\2\2\u0081\u0082\7\65\2\2\u0082\u0084\7"+
-		"\b\2\2\u0083{\3\2\2\2\u0083|\3\2\2\2\u0083}\3\2\2\2\u0084\u0086\3\2\2"+
-		"\2\u0085z\3\2\2\2\u0085\u0086\3\2\2\2\u0086\u0088\3\2\2\2\u0087\u0089"+
-		"\5B\"\2\u0088\u0087\3\2\2\2\u0088\u0089\3\2\2\2\u0089\t\3\2\2\2\u008a"+
-		"\u008b\7\t\2\2\u008b\u008c\7:\2\2\u008c\u008e\7\n\2\2\u008d\u008f\5R*"+
-		"\2\u008e\u008d\3\2\2\2\u008e\u008f\3\2\2\2\u008f\u0090\3\2\2\2\u0090\u0092"+
-		"\7\13\2\2\u0091\u0093\t\2\2\2\u0092\u0091\3\2\2\2\u0092\u0093\3\2\2\2"+
-		"\u0093\u0094\3\2\2\2\u0094\u0098\7\f\2\2\u0095\u0097\5\6\4\2\u0096\u0095"+
-		"\3\2\2\2\u0097\u009a\3\2\2\2\u0098\u0096\3\2\2\2\u0098\u0099\3\2\2\2\u0099"+
-		"\u009e\3\2\2\2\u009a\u0098\3\2\2\2\u009b\u009d\5\26\f\2\u009c\u009b\3"+
-		"\2\2\2\u009d\u00a0\3\2\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2\2\2\u009f"+
-		"\u00a1\3\2\2\2\u00a0\u009e\3\2\2\2\u00a1\u00a2\7\r\2\2\u00a2\13\3\2\2"+
-		"\2\u00a3\u00a5\7\16\2\2\u00a4\u00a6\5\16\b\2\u00a5\u00a4\3\2\2\2\u00a5"+
-		"\u00a6\3\2\2\2\u00a6\u00a7\3\2\2\2\u00a7\u00a8\7:\2\2\u00a8\u00ab\7\f"+
-		"\2\2\u00a9\u00ac\5\20\t\2\u00aa\u00ac\5\24\13\2\u00ab\u00a9\3\2\2\2\u00ab"+
-		"\u00aa\3\2\2\2\u00ac\u00ad\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ae\3\2"+
-		"\2\2\u00ae\u00af\3\2\2\2\u00af\u00b0\7\r\2\2\u00b0\r\3\2\2\2\u00b1\u00b2"+
-		"\7:\2\2\u00b2\u00b3\7\17\2\2\u00b3\17\3\2\2\2\u00b4\u00b6\79\2\2\u00b5"+
-		"\u00b4\3\2\2\2\u00b5\u00b6\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\u00b8\7\4"+
-		"\2\2\u00b8\u00bd\5\22\n\2\u00b9\u00ba\7\5\2\2\u00ba\u00bc\5\22\n\2\u00bb"+
-		"\u00b9\3\2\2\2\u00bc\u00bf\3\2\2\2\u00bd\u00bb\3\2\2\2\u00bd\u00be\3\2"+
-		"\2\2\u00be\21\3\2\2\2\u00bf\u00bd\3\2\2\2\u00c0\u00cb\7:\2\2\u00c1\u00c9"+
-		"\7\6\2\2\u00c2\u00ca\78\2\2\u00c3\u00c4\7\7\2\2\u00c4\u00c5\78\2\2\u00c5"+
-		"\u00c6\7\b\2\2\u00c6\u00c7\7\7\2\2\u00c7\u00c8\7\65\2\2\u00c8\u00ca\7"+
-		"\b\2\2\u00c9\u00c2\3\2\2\2\u00c9\u00c3\3\2\2\2\u00ca\u00cc\3\2\2\2\u00cb"+
-		"\u00c1\3\2\2\2\u00cb\u00cc\3\2\2\2\u00cc\u00ce\3\2\2\2\u00cd\u00cf\5B"+
-		"\"\2\u00ce\u00cd\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf\23\3\2\2\2\u00d0\u00d2"+
-		"\79\2\2\u00d1\u00d0\3\2\2\2\u00d1\u00d2\3\2\2\2\u00d2\u00d3\3\2\2\2\u00d3"+
-		"\u00d4\7\t\2\2\u00d4\u00d5\7:\2\2\u00d5\u00d7\7\n\2\2\u00d6\u00d8\5R*"+
-		"\2\u00d7\u00d6\3\2\2\2\u00d7\u00d8\3\2\2\2\u00d8\u00d9\3\2\2\2\u00d9\u00db"+
-		"\7\13\2\2\u00da\u00dc\t\2\2\2\u00db\u00da\3\2\2\2\u00db\u00dc\3\2\2\2"+
-		"\u00dc\u00dd\3\2\2\2\u00dd\u00e1\7\f\2\2\u00de\u00e0\5\6\4\2\u00df\u00de"+
-		"\3\2\2\2\u00e0\u00e3\3\2\2\2\u00e1\u00df\3\2\2\2\u00e1\u00e2\3\2\2\2\u00e2"+
+		"\3\32\3\32\5\32\u017f\n\32\3\32\5\32\u0182\n\32\3\32\5\32\u0185\n\32\3"+
+		"\33\3\33\3\33\3\33\3\34\3\34\3\35\3\35\3\36\3\36\3\37\3\37\3 \3 \3!\3"+
+		"!\3\"\3\"\3\"\3#\3#\5#\u019c\n#\3#\3#\3#\5#\u01a1\n#\3#\3#\3$\3$\3$\3"+
+		"$\3$\3$\5$\u01ab\n$\3%\3%\5%\u01af\n%\3%\3%\3%\3%\3%\5%\u01b6\n%\5%\u01b8"+
+		"\n%\3%\3%\3&\3&\5&\u01be\n&\3&\3&\3&\5&\u01c3\n&\3\'\3\'\3\'\3\'\3\'\3"+
+		"(\3(\3(\3(\5(\u01ce\n(\3(\3(\3(\3)\3)\3)\7)\u01d6\n)\f)\16)\u01d9\13)"+
+		"\3*\3*\3*\3*\3*\7*\u01e0\n*\f*\16*\u01e3\13*\3*\2\2+\2\4\6\b\n\f\16\20"+
+		"\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPR\2\b\4\288::\3"+
+		"\2\31\32\3\2\33 \3\2!\"\3\2#%\3\2\',\2\u0201\2T\3\2\2\2\4m\3\2\2\2\6p"+
+		"\3\2\2\2\by\3\2\2\2\n\u008a\3\2\2\2\f\u00a3\3\2\2\2\16\u00b1\3\2\2\2\20"+
+		"\u00b5\3\2\2\2\22\u00c0\3\2\2\2\24\u00d1\3\2\2\2\26\u00fd\3\2\2\2\30\u0102"+
+		"\3\2\2\2\32\u010d\3\2\2\2\34\u011a\3\2\2\2\36\u0124\3\2\2\2 \u012f\3\2"+
+		"\2\2\"\u013a\3\2\2\2$\u0144\3\2\2\2&\u0147\3\2\2\2(\u0149\3\2\2\2*\u0152"+
+		"\3\2\2\2,\u015b\3\2\2\2.\u0164\3\2\2\2\60\u016d\3\2\2\2\62\u0184\3\2\2"+
+		"\2\64\u0186\3\2\2\2\66\u018a\3\2\2\28\u018c\3\2\2\2:\u018e\3\2\2\2<\u0190"+
+		"\3\2\2\2>\u0192\3\2\2\2@\u0194\3\2\2\2B\u0196\3\2\2\2D\u019b\3\2\2\2F"+
+		"\u01aa\3\2\2\2H\u01ac\3\2\2\2J\u01c2\3\2\2\2L\u01c4\3\2\2\2N\u01c9\3\2"+
+		"\2\2P\u01d2\3\2\2\2R\u01da\3\2\2\2TX\5\4\3\2UW\5\f\7\2VU\3\2\2\2WZ\3\2"+
+		"\2\2XV\3\2\2\2XY\3\2\2\2Y^\3\2\2\2ZX\3\2\2\2[]\5\6\4\2\\[\3\2\2\2]`\3"+
+		"\2\2\2^\\\3\2\2\2^_\3\2\2\2_d\3\2\2\2`^\3\2\2\2ac\5\n\6\2ba\3\2\2\2cf"+
+		"\3\2\2\2db\3\2\2\2de\3\2\2\2ej\3\2\2\2fd\3\2\2\2gi\5\26\f\2hg\3\2\2\2"+
+		"il\3\2\2\2jh\3\2\2\2jk\3\2\2\2k\3\3\2\2\2lj\3\2\2\2mn\7\3\2\2no\7:\2\2"+
+		"o\5\3\2\2\2pq\7\4\2\2qv\5\b\5\2rs\7\5\2\2su\5\b\5\2tr\3\2\2\2ux\3\2\2"+
+		"\2vt\3\2\2\2vw\3\2\2\2w\7\3\2\2\2xv\3\2\2\2y\u0085\7:\2\2z\u0083\7\6\2"+
+		"\2{\u0084\78\2\2|\u0084\7:\2\2}~\7\7\2\2~\177\78\2\2\177\u0080\7\b\2\2"+
+		"\u0080\u0081\7\7\2\2\u0081\u0082\7\65\2\2\u0082\u0084\7\b\2\2\u0083{\3"+
+		"\2\2\2\u0083|\3\2\2\2\u0083}\3\2\2\2\u0084\u0086\3\2\2\2\u0085z\3\2\2"+
+		"\2\u0085\u0086\3\2\2\2\u0086\u0088\3\2\2\2\u0087\u0089\5B\"\2\u0088\u0087"+
+		"\3\2\2\2\u0088\u0089\3\2\2\2\u0089\t\3\2\2\2\u008a\u008b\7\t\2\2\u008b"+
+		"\u008c\7:\2\2\u008c\u008e\7\n\2\2\u008d\u008f\5R*\2\u008e\u008d\3\2\2"+
+		"\2\u008e\u008f\3\2\2\2\u008f\u0090\3\2\2\2\u0090\u0092\7\13\2\2\u0091"+
+		"\u0093\t\2\2\2\u0092\u0091\3\2\2\2\u0092\u0093\3\2\2\2\u0093\u0094\3\2"+
+		"\2\2\u0094\u0098\7\f\2\2\u0095\u0097\5\6\4\2\u0096\u0095\3\2\2\2\u0097"+
+		"\u009a\3\2\2\2\u0098\u0096\3\2\2\2\u0098\u0099\3\2\2\2\u0099\u009e\3\2"+
+		"\2\2\u009a\u0098\3\2\2\2\u009b\u009d\5\26\f\2\u009c\u009b\3\2\2\2\u009d"+
+		"\u00a0\3\2\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a1\3\2"+
+		"\2\2\u00a0\u009e\3\2\2\2\u00a1\u00a2\7\r\2\2\u00a2\13\3\2\2\2\u00a3\u00a5"+
+		"\7\16\2\2\u00a4\u00a6\5\16\b\2\u00a5\u00a4\3\2\2\2\u00a5\u00a6\3\2\2\2"+
+		"\u00a6\u00a7\3\2\2\2\u00a7\u00a8\7:\2\2\u00a8\u00ab\7\f\2\2\u00a9\u00ac"+
+		"\5\20\t\2\u00aa\u00ac\5\24\13\2\u00ab\u00a9\3\2\2\2\u00ab\u00aa\3\2\2"+
+		"\2\u00ac\u00ad\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae\u00af"+
+		"\3\2\2\2\u00af\u00b0\7\r\2\2\u00b0\r\3\2\2\2\u00b1\u00b2\7:\2\2\u00b2"+
+		"\u00b3\7\17\2\2\u00b3\17\3\2\2\2\u00b4\u00b6\79\2\2\u00b5\u00b4\3\2\2"+
+		"\2\u00b5\u00b6\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\u00b8\7\4\2\2\u00b8\u00bd"+
+		"\5\22\n\2\u00b9\u00ba\7\5\2\2\u00ba\u00bc\5\22\n\2\u00bb\u00b9\3\2\2\2"+
+		"\u00bc\u00bf\3\2\2\2\u00bd\u00bb\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\21"+
+		"\3\2\2\2\u00bf\u00bd\3\2\2\2\u00c0\u00cb\7:\2\2\u00c1\u00c9\7\6\2\2\u00c2"+
+		"\u00ca\78\2\2\u00c3\u00c4\7\7\2\2\u00c4\u00c5\78\2\2\u00c5\u00c6\7\b\2"+
+		"\2\u00c6\u00c7\7\7\2\2\u00c7\u00c8\7\65\2\2\u00c8\u00ca\7\b\2\2\u00c9"+
+		"\u00c2\3\2\2\2\u00c9\u00c3\3\2\2\2\u00ca\u00cc\3\2\2\2\u00cb\u00c1\3\2"+
+		"\2\2\u00cb\u00cc\3\2\2\2\u00cc\u00ce\3\2\2\2\u00cd\u00cf\5B\"\2\u00ce"+
+		"\u00cd\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf\23\3\2\2\2\u00d0\u00d2\79\2\2"+
+		"\u00d1\u00d0\3\2\2\2\u00d1\u00d2\3\2\2\2\u00d2\u00d3\3\2\2\2\u00d3\u00d4"+
+		"\7\t\2\2\u00d4\u00d5\7:\2\2\u00d5\u00d7\7\n\2\2\u00d6\u00d8\5R*\2\u00d7"+
+		"\u00d6\3\2\2\2\u00d7\u00d8\3\2\2\2\u00d8\u00d9\3\2\2\2\u00d9\u00db\7\13"+
+		"\2\2\u00da\u00dc\t\2\2\2\u00db\u00da\3\2\2\2\u00db\u00dc\3\2\2\2\u00dc"+
+		"\u00dd\3\2\2\2\u00dd\u00e1\7\f\2\2\u00de\u00e0\5\6\4\2\u00df\u00de\3\2"+
+		"\2\2\u00e0\u00e3\3\2\2\2\u00e1\u00df\3\2\2\2\u00e1\u00e2\3\2\2\2\u00e2"+
 		"\u00e7\3\2\2\2\u00e3\u00e1\3\2\2\2\u00e4\u00e6\5\26\f\2\u00e5\u00e4\3"+
 		"\2\2\2\u00e6\u00e9\3\2\2\2\u00e7\u00e5\3\2\2\2\u00e7\u00e8\3\2\2\2\u00e8"+
 		"\u00ea\3\2\2\2\u00e9\u00e7\3\2\2\2\u00ea\u00eb\7\r\2\2\u00eb\25\3\2\2"+
@@ -3568,6 +3790,7 @@ public class PopurriParser extends Parser {
 		"\u016c\u016a\3\2\2\2\u016d\u0173\5\62\32\2\u016e\u016f\5> \2\u016f\u0170"+
 		"\5\62\32\2\u0170\u0172\3\2\2\2\u0171\u016e\3\2\2\2\u0172\u0175\3\2\2\2"+
 		"\u0173\u0171\3\2\2\2\u0173\u0174\3\2\2\2\u0174\61\3\2\2\2\u0175\u0173"+
+<<<<<<< HEAD
 <<<<<<< HEAD
 		"\3\2\2\2\u0176\u0177\7:\2\2\u0177\u0179\7\20\2\2\u0178\u0176\3\2\2\2\u0178"+
 		"\u0179\3\2\2\2\u0179\u017a\3\2\2\2\u017a\u0187\5\64\33\2\u017b\u017c\7"+
@@ -3653,6 +3876,49 @@ public class PopurriParser extends Parser {
 		"\u0158\u0161\u016a\u0173\u017f\u0182\u0185\u019c\u01a1\u01ab\u01af\u01b6"+
 		"\u01b8\u01be\u01c3\u01ce\u01d8\u01e2";
 >>>>>>> Refactor
+=======
+		"\3\2\2\2\u0176\u0177\7\n\2\2\u0177\u0178\5(\25\2\u0178\u0179\7\13\2\2"+
+		"\u0179\u0185\3\2\2\2\u017a\u0185\5D#\2\u017b\u017e\7:\2\2\u017c\u017d"+
+		"\7\20\2\2\u017d\u017f\7:\2\2\u017e\u017c\3\2\2\2\u017e\u017f\3\2\2\2\u017f"+
+		"\u0181\3\2\2\2\u0180\u0182\5\64\33\2\u0181\u0180\3\2\2\2\u0181\u0182\3"+
+		"\2\2\2\u0182\u0185\3\2\2\2\u0183\u0185\5F$\2\u0184\u0176\3\2\2\2\u0184"+
+		"\u017a\3\2\2\2\u0184\u017b\3\2\2\2\u0184\u0183\3\2\2\2\u0185\63\3\2\2"+
+		"\2\u0186\u0187\7\7\2\2\u0187\u0188\5,\27\2\u0188\u0189\7\b\2\2\u0189\65"+
+		"\3\2\2\2\u018a\u018b\t\3\2\2\u018b\67\3\2\2\2\u018c\u018d\t\4\2\2\u018d"+
+		"9\3\2\2\2\u018e\u018f\t\5\2\2\u018f;\3\2\2\2\u0190\u0191\t\6\2\2\u0191"+
+		"=\3\2\2\2\u0192\u0193\7&\2\2\u0193?\3\2\2\2\u0194\u0195\t\7\2\2\u0195"+
+		"A\3\2\2\2\u0196\u0197\5@!\2\u0197\u0198\5(\25\2\u0198C\3\2\2\2\u0199\u019a"+
+		"\7:\2\2\u019a\u019c\7\20\2\2\u019b\u0199\3\2\2\2\u019b\u019c\3\2\2\2\u019c"+
+		"\u019d\3\2\2\2\u019d\u019e\7:\2\2\u019e\u01a0\7\n\2\2\u019f\u01a1\5P)"+
+		"\2\u01a0\u019f\3\2\2\2\u01a0\u01a1\3\2\2\2\u01a1\u01a2\3\2\2\2\u01a2\u01a3"+
+		"\7\13\2\2\u01a3E\3\2\2\2\u01a4\u01ab\7\64\2\2\u01a5\u01ab\7\65\2\2\u01a6"+
+		"\u01ab\7\66\2\2\u01a7\u01ab\7\67\2\2\u01a8\u01ab\5H%\2\u01a9\u01ab\7-"+
+		"\2\2\u01aa\u01a4\3\2\2\2\u01aa\u01a5\3\2\2\2\u01aa\u01a6\3\2\2\2\u01aa"+
+		"\u01a7\3\2\2\2\u01aa\u01a8\3\2\2\2\u01aa\u01a9\3\2\2\2\u01abG\3\2\2\2"+
+		"\u01ac\u01b7\7\7\2\2\u01ad\u01af\5P)\2\u01ae\u01ad\3\2\2\2\u01ae\u01af"+
+		"\3\2\2\2\u01af\u01b8\3\2\2\2\u01b0\u01b1\5,\27\2\u01b1\u01b2\7.\2\2\u01b2"+
+		"\u01b5\5,\27\2\u01b3\u01b4\7/\2\2\u01b4\u01b6\5,\27\2\u01b5\u01b3\3\2"+
+		"\2\2\u01b5\u01b6\3\2\2\2\u01b6\u01b8\3\2\2\2\u01b7\u01ae\3\2\2\2\u01b7"+
+		"\u01b0\3\2\2\2\u01b8\u01b9\3\2\2\2\u01b9\u01ba\7\b\2\2\u01baI\3\2\2\2"+
+		"\u01bb\u01bc\7:\2\2\u01bc\u01be\7\20\2\2\u01bd\u01bb\3\2\2\2\u01bd\u01be"+
+		"\3\2\2\2\u01be\u01bf\3\2\2\2\u01bf\u01c3\7:\2\2\u01c0\u01c3\7\67\2\2\u01c1"+
+		"\u01c3\5H%\2\u01c2\u01bd\3\2\2\2\u01c2\u01c0\3\2\2\2\u01c2\u01c1\3\2\2"+
+		"\2\u01c3K\3\2\2\2\u01c4\u01c5\7\60\2\2\u01c5\u01c6\7\n\2\2\u01c6\u01c7"+
+		"\5P)\2\u01c7\u01c8\7\13\2\2\u01c8M\3\2\2\2\u01c9\u01ca\7\61\2\2\u01ca"+
+		"\u01cd\7\n\2\2\u01cb\u01cc\7:\2\2\u01cc\u01ce\7\20\2\2\u01cd\u01cb\3\2"+
+		"\2\2\u01cd\u01ce\3\2\2\2\u01ce\u01cf\3\2\2\2\u01cf\u01d0\7:\2\2\u01d0"+
+		"\u01d1\7\13\2\2\u01d1O\3\2\2\2\u01d2\u01d7\5(\25\2\u01d3\u01d4\7\5\2\2"+
+		"\u01d4\u01d6\5(\25\2\u01d5\u01d3\3\2\2\2\u01d6\u01d9\3\2\2\2\u01d7\u01d5"+
+		"\3\2\2\2\u01d7\u01d8\3\2\2\2\u01d8Q\3\2\2\2\u01d9\u01d7\3\2\2\2\u01da"+
+		"\u01db\78\2\2\u01db\u01e1\7:\2\2\u01dc\u01dd\7\5\2\2\u01dd\u01de\78\2"+
+		"\2\u01de\u01e0\7:\2\2\u01df\u01dc\3\2\2\2\u01e0\u01e3\3\2\2\2\u01e1\u01df"+
+		"\3\2\2\2\u01e1\u01e2\3\2\2\2\u01e2S\3\2\2\2\u01e3\u01e1\3\2\2\29X^djv"+
+		"\u0083\u0085\u0088\u008e\u0092\u0098\u009e\u00a5\u00ab\u00ad\u00b5\u00bd"+
+		"\u00c9\u00cb\u00ce\u00d1\u00d7\u00db\u00e1\u00e7\u00ee\u00f2\u00fd\u0100"+
+		"\u0108\u0115\u011e\u0122\u012a\u0135\u013f\u014f\u0158\u0161\u016a\u0173"+
+		"\u017e\u0181\u0184\u019b\u01a0\u01aa\u01ae\u01b5\u01b7\u01bd\u01c2\u01cd"+
+		"\u01d7\u01e1";
+>>>>>>> Fixed bug in grammar
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -379,7 +379,7 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper = QuadWrapper()
         self.memHandler = MemoryHandler(mem_size)
         self.if_cond = False
-        self.statement = False
+        self.inside_expression = False
         self.param_count = -1
         self.func_count = -1
         self.func_returned_val = False
@@ -403,40 +403,43 @@ class PopurriListener(ParseTreeListener):
             self.func_count += len(klass.method())
         pass
 
+    def printDebug(self):
+        print("--VARIABLES--")
+        pprint(self.ctxWrapper.variables)
+        print("--FUNCTIONS--")
+        pprint(self.ctxWrapper.functions)
+
+        print('quads_stack = [')
+        for i, x in enumerate(self.quadWrapper.quads, start=1):
+            tmp = list(x)
+            tmp[0] = stringifyToken(x[0])
+            print('\t', i, tuple(tmp))
+        print(']')
+
+        print('address_stack = ', end='')
+        pprint(self.quadWrapper.address_stack)
+        print('operator_stack = ', end='')
+        pprint(self.quadWrapper.operator_stack)
+        print('type_stack = ', end='')
+        pprint(self.quadWrapper.type_stack)
+        print('jump_stack = ', end='')
+        pprint(self.quadWrapper.jump_stack)
+        print('quad_ptr = ', end='')
+        pprint(self.quadWrapper.quads_ptr)
+
+        for ctx in [GLOBAL, LOCAL, CONSTANT, TEMPORAL]:
+            context = self.memHandler.contexts[ctx].sections
+            print(stringifyToken(ctx), '= {')
+            for section in context:
+                print('    ', stringifyToken(section), context[section])
+            print('}')
+
     def exitProgram(self, ctx):
         '''
         [Program] marca el final de las reglas de la gramatica. Aqui termina la fase de compilacion.
         '''
         if self.debug_info:
-            print("--VARIABLES--")
-            pprint(self.ctxWrapper.variables)
-            print("--FUNCTIONS--")
-            pprint(self.ctxWrapper.functions)
-
-            print('quads_stack = [')
-            for i, x in enumerate(self.quadWrapper.quads, start=1):
-                tmp = list(x)
-                tmp[0] = stringifyToken(x[0])
-                print('\t', i, tuple(tmp))
-            print(']')
-
-            print('address_stack = ', end='')
-            pprint(self.quadWrapper.address_stack)
-            print('operator_stack = ', end='')
-            pprint(self.quadWrapper.operator_stack)
-            print('type_stack = ', end='')
-            pprint(self.quadWrapper.type_stack)
-            print('jump_stack = ', end='')
-            pprint(self.quadWrapper.jump_stack)
-            print('quad_ptr = ', end='')
-            pprint(self.quadWrapper.quads_ptr)
-
-            for ctx in [GLOBAL, LOCAL, CONSTANT, TEMPORAL]:
-                context = self.memHandler.contexts[ctx].sections
-                print(stringifyToken(ctx), '= {')
-                for section in context:
-                    print('    ', stringifyToken(section), context[section])
-                print('}')
+            self.printDebug()
 
     def enterModule(self, ctx):
         '''
@@ -749,7 +752,7 @@ class PopurriListener(ParseTreeListener):
         self.memHandler.flush(TEMPORAL)
 
     def enterStatement(self, ctx):
-        self.statement = True
+        self.inside_expression = False
 
         # Check if Main Start
         if self.func_count == 0:
@@ -761,11 +764,10 @@ class PopurriListener(ParseTreeListener):
             self.func_count = -1  # Reset flag
 
         if ctx.indexation() is not None or ctx.assignment() is not None:
-            self.if_cond = False
             self.validateCalledIds(ctx)
 
     def exitStatement(self, ctx):
-        self.statement = False
+        self.inside_expression = False
 
     def enterBreakStmt(self, ctx):
         self.quadWrapper.insertJump()
@@ -977,7 +979,7 @@ class PopurriListener(ParseTreeListener):
         if func.return_type == 'void':
             raise error(ctx, RETURN_ON_VOID_FUNC.format(func.id))
 
-        self.statement = False
+        self.inside_expression = True
 
     def exitReturnStmt(self, ctx):
         # Validate return type matches function return type
@@ -1010,6 +1012,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertJump()
             # False bottom for filling breaks inside if/loop
             self.quadWrapper.insertJump(FALSEBOTTOM)
+            self.if_cond = False # Reset flag
 
         # Function call
         if self.param_count != -1:
@@ -1212,7 +1215,7 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertType(var.type)
 
     def enterAssignment(self, ctx):
-        self.statement = False
+        self.inside_expression = True
 
     def exitAssignment(self, ctx):
         if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
@@ -1220,8 +1223,6 @@ class PopurriListener(ParseTreeListener):
             var_address = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
             var_type = self.quadWrapper.popType()
-
-            array_address = var_address
 
             var = None
             # Assign resulting type to variable and allocate in memory
@@ -1320,7 +1321,7 @@ class PopurriListener(ParseTreeListener):
         ))
 
         # Allocate return value if using funcCall in expression (and if function returns something)
-        if not self.statement:
+        if self.inside_expression:
             # Trying to use void function inside expression
             if func.return_type == 'void':
                 raise error(
