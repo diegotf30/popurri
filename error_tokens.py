@@ -42,3 +42,4 @@ SELF_USE_OUTSIDE_CLASS = 'CANNOT USE keyword \'self\' outside class context'
 # Runtime Error
 EXPECTED_TYPE = 'ERROR: Expected "{}" value but got "{}"'
 CANNOT_CAST = 'ERROR: Cannot cast input "{}" to "{}"'
+OUT_OF_RANGE = 'ERROR: {} out of range '
