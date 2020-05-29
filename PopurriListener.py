@@ -197,7 +197,8 @@ class ContextWrapper():
         return None
 
     def getVariable(self, var_id, context="global", insideClass=False):
-        variables = self.variables[self.getClassContext()] if insideClass else self.variables
+        variables = self.variables[self.getClassContext(
+        )] if insideClass else self.variables
         if context not in variables:
             return None
 
@@ -240,7 +241,8 @@ class ContextWrapper():
         return {k: deepcopy(v) for k, v in self.variables[class_id].items() if type(v) != dict}
 
     def addVariable(self, var, context="global", insideClass=False):
-        variables = self.variables[self.getClassContext()] if insideClass else self.variables
+        variables = self.variables[self.getClassContext(
+        )] if insideClass else self.variables
 
         if context in variables:
             variables[context][var.id] = var
@@ -323,13 +325,14 @@ class Variable():
     [value] es el valor inicial que tendra la variable. Ej. var edad = 25. Donde 25 es el valor inicial.
     '''
 
-    def __init__(self, id, access_type="public", type=None, address=None, paramNo=None, arraySize=None):
+    def __init__(self, id, access_type="public", type=None, address=None, paramNo=None, arraySize=None, steps=None):
         self.access_type = str(access_type)
         self.id = str(id)
         self.type = str(type)
         self.address = address
         self.paramNo = paramNo
         self.arraySize = arraySize
+        self.steps = steps
 
     def isArray(self):
         return self.arraySize != None
@@ -383,6 +386,10 @@ class PopurriListener(ParseTreeListener):
         # a[ array_indexation_exp ]
         self.array_active = False
         self.debug_info = debug_info
+        self.for_loop_iter_var = None
+        # (iter, array)
+        self.for_loop_stack = []
+        self.if_for = False
 
     def enterProgram(self, ctx):
         '''
@@ -800,10 +807,102 @@ class PopurriListener(ParseTreeListener):
         )
 
     def enterForLoop(self, ctx):
+        var_id = str(ctx.ID())
+        if self.ctxWrapper.varExistsInContext(var_id, ctx=self.ctxWrapper.top()):
+            raise error(ctx, VAR_REDEFINITION.format(var_id))
+        # Creates variable prototype for the current forloop iter id
+        steps_addr = self.memHandler.reserve(
+            context=TEMPORAL,
+            dtype=INT,
+            value=0
+        )
+        self.for_loop_iter_var = Variable(
+            id=var_id,
+            type=None,
+            steps=1
+        )
+
+        # insert the jump pointing the first for-loop body quad
+        self.quadWrapper.insertJump()
         pass
 
     def exitForLoop(self, ctx):
-        pass
+
+        iter, iterable = self.for_loop_stack.pop()
+
+        # reserver memory for array index
+        index_array = self.memHandler.reserve(
+            context=TEMPORAL,
+            dtype=INT,
+            value=0)
+
+        # [quad] check if the iter is lesser than the Upper limit of the array
+        # self.limits.end (?)
+
+        tmp = self.memHandler.reserve(
+            context=TEMPORAL,
+            dtype=BOOL)
+
+        self.quadWrapper.insertQuad(
+            Quadruple(
+                op=LESSER,
+                l=index_array,  # placeholder
+                r=iterable.arraySize,  # placeholder
+                res=tmp
+            )
+        )
+
+        # [quad] GOTOF generation
+        self.quadWrapper.insertJump()
+        gotof_quad = Quadruple(GOTOF, l=tmp)
+        self.quadWrapper.insertQuad(gotof_quad)
+
+        # [quad] move iter to the next position in array
+
+        self.quadWrapper.insertQuad(
+            Quadruple(
+                op=ADDASSIGN,
+                l=iter.steps,  # placeholder
+                res=index_array
+            )
+        )
+
+        tmp = self.memHandler.reserve(
+            context=TEMPORAL,
+            dtype=POINTER)
+
+        self.quadWrapper.insertQuad(
+            Quadruple(
+                op=ADD,
+                l=index_array,  # placeholder
+                r=iterable.address,  # placeholder
+                res=tmp
+            )
+        )
+
+        self.quadWrapper.insertQuad(
+            Quadruple(
+                op=ASSIGN,
+                l=tmp,  # placeholder
+                res=iter.address
+            )
+        )
+
+        # [quad] GOTO generation
+        goto_quad = Quadruple(GOTO)
+        self.quadWrapper.insertQuad(goto_quad)
+
+        # fill For loop GOTOF with next quad
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.quads_ptr + 1,
+            at=self.quadWrapper.popJump()
+        )
+
+        # fill For loop GOTO with forloop start
+        self.quadWrapper.fillQuadWith(
+            self.quadWrapper.popJump() + 1,
+            at=self.quadWrapper.quads_ptr - 1
+        )
 
     def enterBranch(self, ctx):
         self.quadWrapper.insertJump(FALSEBOTTOM)
@@ -1082,7 +1181,7 @@ class PopurriListener(ParseTreeListener):
         self.quadWrapper.insertQuad(Quadruple(
             op=self.quadWrapper.popOperator(),
             l=exp_result,
-            r=0, # arrays start at 0
+            r=0,  # arrays start at 0
             res=var.arraySize - 1))
 
         # Reserve memory for the literal address. Example: 5000 -> Int
@@ -1257,7 +1356,31 @@ class PopurriListener(ParseTreeListener):
 
     def enterIterable(self, ctx):
         if ctx.ID() is not None:
-            self.validateCalledIds(ctx)
+            returned_ids = self.validateCalledIds(ctx)
+            if type(returned_ids) is int:
+                print(returned_ids)
+                print(self.ctxWrapper.getVariableByAddress(returned_ids).type)
+
+                array_var = self.ctxWrapper.getVariableByAddress(returned_ids)
+                self.for_loop_iter_var.type = array_var.type
+
+                self.for_loop_iter_var.address = self.memHandler.reserve(
+                    context=TEMPORAL,
+                    dtype=tokenize(self.for_loop_iter_var.type)
+                )
+
+                self.ctxWrapper.addVariable(
+                    self.for_loop_iter_var,
+                    context=self.ctxWrapper.top(),
+                    insideClass=self.ctxWrapper.insideClass()
+                )
+
+                print(self.for_loop_iter_var)
+                self.for_loop_stack.append((self.for_loop_iter_var, array_var))
+            else:
+                # aqui va todo lo que no sea ID en iterable
+                print('nel')
+                pass
 
     def exitIterable(self, ctx):
         pass

@@ -1,4 +1,4 @@
-// Generated from /Users/diegotf/Documents/popurri/antlr_parser/Popurri.g4 by ANTLR 4.7.1
+// Generated from /mnt/c/Users/danya/Documents/Universidad/8 semestre/Diseño de compiladores/Compiler-v2/popurri/antlr_parser/Popurri.g4 by ANTLR 4.7.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

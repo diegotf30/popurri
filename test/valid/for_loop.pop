@@ -1,1 +1,10 @@
 module main
+
+var a : [int][5]
+var b : [int][10]
+
+for i in a{
+    for c in b{
+        print(i)
+    }
+}
