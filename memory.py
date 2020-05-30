@@ -61,12 +61,14 @@ class MemoryHandler():
             raise Exception(f'ERROR: {msg}')
 
         if dtype == 42:
+            print('POINTER')
             address -= ((37 - INT) * self.type_offset)
         else:
             address -= ((dtype - INT) * self.type_offset)
         # obtains the relative address within context address stack [1 -> TYPE_OFFSET]
 
         # Update value
+        print(address, dtype, value)
         self.contexts[context].updateAddress(address, dtype, value)
 
     def getContextAddress(self, address):

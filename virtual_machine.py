@@ -112,10 +112,6 @@ def run(obj_file):
                 memHandler.contexts[GLOBAL].sections[tokenize(
                     return_var.type)].pop()
 
-            if res >= 28000 and res <= 30000:
-                res_type = memHandler.getAddressType(res)
-                if res_type == POINTER:
-                    res = memHandler.getValue(res)
             if l_val >= 28000 and l_val <= 30000:
                 val_type = memHandler.getAddressType(l_val)
                 if val_type == POINTER:
@@ -124,6 +120,7 @@ def run(obj_file):
                 res_type = memHandler.getAddressType(res)
                 if res_type == POINTER:
                     res = memHandler.getValue(res)
+            print(res, l_val, 'IP : ', ip + 1)
             memHandler.update(res, l_val)
         elif op in [ADD, SUBS, MULT, DIV, MOD, POWER, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ]:
 

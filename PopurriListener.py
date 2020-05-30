@@ -810,19 +810,18 @@ class PopurriListener(ParseTreeListener):
 
     def enterForLoop(self, ctx):
         var_id = str(ctx.ID())
+        print(var_id, self.ctxWrapper.top())
         if self.ctxWrapper.varExistsInContext(var_id, ctx=self.ctxWrapper.top()):
             raise error(ctx, VAR_REDEFINITION.format(var_id))
+
         # Creates variable prototype for the current forloop iter id
-        steps_addr = self.memHandler.reserve(
-            context=TEMPORAL,
-            dtype=INT,
-            value=0
-        )
         self.for_loop_iter_var = Variable(
             id=var_id,
-            type=None,
+            type=INT,
             steps=1
         )
+
+        # self.ctxWrapper.addVariable(self.for_loop_iter_var)
 
         # insert the jump pointing the first for-loop body quad
         self.quadWrapper.insertJump()
@@ -1398,13 +1397,11 @@ class PopurriListener(ParseTreeListener):
     def enterIterable(self, ctx):
         if ctx.ID() is not None:
             returned_ids = self.validateCalledIds(ctx)
+            print(returned_ids)
             if type(returned_ids) is int:
-                # testing
-                # print(returned_ids)
-                # print(self.ctxWrapper.getVariableByAddress(returned_ids).type)
 
                 array_var = self.ctxWrapper.getVariableByAddress(returned_ids)
-                self.for_loop_iter_var.type = array_var.type
+                self.for_loop_iter_var.type = INT
 
                 self.for_loop_iter_var.address = self.memHandler.reserve(
                     context=TEMPORAL,
@@ -1419,6 +1416,23 @@ class PopurriListener(ParseTreeListener):
 
                 self.for_loop_stack.append((self.for_loop_iter_var, array_var))
             else:
+                array_var = self.ctxWrapper.getVariable(
+                    str(ctx.ID()[1]))[str(ctx.ID()[1])]
+                # print(array_var[str(ctx.ID()[1])].arraySize)
+                self.for_loop_iter_var.type = INT
+
+                self.for_loop_iter_var.address = self.memHandler.reserve(
+                    context=TEMPORAL,
+                    dtype=tokenize(self.for_loop_iter_var.type)
+                )
+
+                self.ctxWrapper.addVariable(
+                    self.for_loop_iter_var,
+                    context=self.ctxWrapper.top(),
+                    insideClass=self.ctxWrapper.insideClass()
+                )
+
+                self.for_loop_stack.append((self.for_loop_iter_var, array_var))
                 # aqui va todo lo que no sea ID en iterable
                 pass
 
