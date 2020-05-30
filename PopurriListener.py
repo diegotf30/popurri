@@ -1204,12 +1204,7 @@ class PopurriListener(ParseTreeListener):
     def exitIterable(self, ctx):
         pass
 
-    def enterPrintStmt(self, ctx):
-        self.quadWrapper.insertAddress(FALSEBOTTOM)
-        self.statement = False
-        pass
-
-    def exitPrintStmt(self, ctx):
+    def handlePrint(self, PRINT_OP):
         print_quads = []
         while True:
             address = self.quadWrapper.popAddress()
@@ -1218,13 +1213,29 @@ class PopurriListener(ParseTreeListener):
 
             self.quadWrapper.popType()
             print_quads.append(Quadruple(
-                op=PRINT,
+                op=PRINT_OP,
                 res=address
             ))
+
+        if not print_quads:
+            self.quadWrapper.insertQuad(Quadruple(PRINT_OP))
 
         # Quads are generated in inverse order (due to being in stack), so push them end to start
         for quad in print_quads[::-1]:
             self.quadWrapper.insertQuad(quad)
+
+    def enterPrintStmt(self, ctx):
+        self.quadWrapper.insertAddress(FALSEBOTTOM)
+        self.statement = False
+
+    def exitPrintStmt(self, ctx):
+        self.handlePrint(PRINT)
+
+    def enterPrintlnStmt(self, ctx):
+        self.enterPrintStmt(ctx) # Same as print
+
+    def exitPrintlnStmt(self, ctx):
+        self.handlePrint(PRINTLN)
 
     def enterInputStmt(self, ctx):
         self.validateCalledIds(ctx)

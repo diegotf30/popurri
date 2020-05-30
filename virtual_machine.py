@@ -136,8 +136,8 @@ def run(obj_file):
                 raise Exception(CANNOT_CAST.format(tmp, stringifyToken(res_type)))
 
             memHandler.update(res, tmp)
-        elif op == PRINT:
-            print(memHandler.getValue(res))
+        elif op == PRINT or op == PRINTLN:
+            print(memHandler.getValue(res), end=' ' if PRINT else '\n')
 
         # Classes
         elif op == ERAC:

@@ -45,6 +45,7 @@ statement: (
 		| returnStmt
 		| funcCall
 		| printStmt
+		| printlnStmt
 		| inputStmt
 		| breakStmt
 	) COMMENT?;
@@ -92,7 +93,9 @@ const_arr: '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
 iterable: CONST_STR | const_arr | ID;
 
 // Special functions
-printStmt: 'print' '(' condParam ')';
+printStmt: 'print' '(' condParam? ')';
+printlnStmt: 'println' '(' condParam? ')';
+
 inputStmt: 'input' '(' (ID '.')? ID ')';
 
 // Parameters

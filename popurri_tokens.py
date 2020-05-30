@@ -39,23 +39,24 @@ ASSIGN = 28
 
 # Special functions
 PRINT = 29
-INPUT = 30
+PRINTLN = 30
+INPUT = 31
 
 # Parenthesis
-OPENPAREN = 31
-CLOSEPAREN = 32
+OPENPAREN = 32
+CLOSEPAREN = 33
 
 # Types
-INT = 33
-FLOAT = 34
-BOOL = 35
-STRING = 36
+INT = 34
+FLOAT = 35
+BOOL = 36
+STRING = 37
 
 # Contexts
-GLOBAL = 37
-LOCAL = 38
-TEMPORAL = 39
-CONSTANT = 40
+GLOBAL = 38
+LOCAL = 39
+TEMPORAL = 40
+CONSTANT = 41
 
 # (Internal use only)
 FALSEBOTTOM = 999999
@@ -65,7 +66,7 @@ tokens = [
     'ERAC', # Classes
     'ERA', 'PARAM', 'ENDPROC', # Functions
     '+', '+=', '-', '-=', '*', '*=', '/', '/=', '%', '%=', '**', 'is', 'is not', '>', '>=', '<', '<=', 'and', 'or', '=', # Operators
-    'print', 'input', # Special Functions
+    'print', 'println', 'input', # Special Functions
     '(', ')', # Parenthesis
     'int', 'float', 'bool', 'string', # Types
     'global', 'temporal', 'local', 'constant' # Contexts
