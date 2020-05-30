@@ -106,6 +106,14 @@ class MemoryHandler():
 
 
 class Memory():
+    default_val_map = {
+        INT: 0,
+        FLOAT: 0.0,
+        BOOL: False,
+        STRING: '',
+        POINTER: None
+    }
+
     def __init__(self, start, max_size):
         self.start = start
         self.sections = {
@@ -115,6 +123,12 @@ class Memory():
             STRING: [],
             POINTER: []
         }
+        self.allocations = {
+            INT: 0,
+            FLOAT: 0,
+            BOOL: 0,
+            STRING: 0
+        }
         self.max_size = max_size
 
     def reserveAddress(self, dtype):
@@ -122,19 +136,12 @@ class Memory():
         Increase the list size of the given type (INT, FLOAT, BOOL, STRING).
         returns the local address of the reserved space
         '''
-        if len(self.sections[dtype]) == self.max_size:
+        if self.allocations[dtype] == self.max_size:
             raise Exception(
                 f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
 
-        default_val_map = {
-            INT: 0,
-            FLOAT: 0.0,
-            BOOL: False,
-            STRING: '',
-            POINTER: 0
-        }
-
-        self.sections[dtype].append(default_val_map[dtype])
+        self.sections[dtype].append(self.default_val_map[dtype])
+        self.allocations[dtype] += 1
         return len(self.sections[dtype]) - 1
 
     def updateAddress(self, address, dtype=None, value=None):

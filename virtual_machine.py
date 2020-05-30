@@ -169,8 +169,10 @@ def run(obj_file):
             # Push function's memory ctx to stack
             memCtxWrapper.push(memHandler)
             func_mem = memCtxWrapper.top()
-            func_mem.flush(LOCAL)
-            func_mem.flush(TEMPORAL)
+            # Flush allocated values from memory, but keep count of how many have been allocated
+            for context in [LOCAL, TEMPORAL]:
+                func_mem.flush(context)
+                func_mem.contexts[context].allocations = memHandler.contexts[context].allocations
 
             if l == 'self':  # Recursive class call
                 class_var = ctx.getAttributes(ctx.getClassContext())
@@ -210,8 +212,10 @@ def run(obj_file):
             if not method_call:
                 memCtxWrapper.push(memHandler)
                 func_mem = memCtxWrapper.top()
-                func_mem.flush(LOCAL)
-                func_mem.flush(TEMPORAL)
+                # Flush allocated values from memory, but keep count of how many have been allocated
+                for context in [LOCAL, TEMPORAL]:
+                    func_mem.flush(context)
+                    func_mem.contexts[context].allocations = memHandler.contexts[context].allocations
             else:
                 func_mem = memCtxWrapper.top()
 
