@@ -832,7 +832,10 @@ class PopurriListener(ParseTreeListener):
 
         iter, iterable = self.for_loop_stack.pop()
 
-        # reserver memory for array index
+        # testing
+        # print(iter.address, iterable.address)
+
+        # reserve memory for array index
         index_array = self.memHandler.reserve(
             context=TEMPORAL,
             dtype=INT,
@@ -845,11 +848,16 @@ class PopurriListener(ParseTreeListener):
             context=TEMPORAL,
             dtype=BOOL)
 
+        size_constant = self.memHandler.reserve(
+            context=CONSTANT,
+            dtype=INT,
+            value=iterable.arraySize - 1)
+
         self.quadWrapper.insertQuad(
             Quadruple(
                 op=LESSER,
                 l=index_array,  # placeholder
-                r=iterable.arraySize,  # placeholder
+                r=size_constant,  # placeholder
                 res=tmp
             )
         )
@@ -861,23 +869,44 @@ class PopurriListener(ParseTreeListener):
 
         # [quad] move iter to the next position in array
 
+        iter_steps = self.memHandler.reserve(
+            context=CONSTANT,
+            dtype=INT,
+            value=iter.steps)
+
+        tmp = self.memHandler.reserve(
+            context=TEMPORAL,
+            dtype=INT)
+
         self.quadWrapper.insertQuad(
             Quadruple(
-                op=ADDASSIGN,
-                l=iter.steps,  # placeholder
-                res=index_array
-            )
+                op=ADD,
+                l=iter_steps,  # placeholder
+                r=index_array,
+                res=tmp)
+        )
+
+        self.quadWrapper.insertQuad(
+            Quadruple(
+                op=ASSIGN,
+                l=tmp,  # placeholder
+                res=index_array)
         )
 
         tmp = self.memHandler.reserve(
             context=TEMPORAL,
             dtype=POINTER)
 
+        iterable_address_constant = self.memHandler.reserve(
+            context=CONSTANT,
+            dtype=INT,
+            value=iterable.address)
+
         self.quadWrapper.insertQuad(
             Quadruple(
                 op=ADD,
                 l=index_array,  # placeholder
-                r=iterable.address,  # placeholder
+                r=iterable_address_constant,  # placeholder
                 res=tmp
             )
         )
@@ -1012,7 +1041,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.insertJump()
             # False bottom for filling breaks inside if/loop
             self.quadWrapper.insertJump(FALSEBOTTOM)
-            self.if_cond = False # Reset flag
+            self.if_cond = False  # Reset flag
 
         # Function call
         if self.param_count != -1:
@@ -1181,11 +1210,22 @@ class PopurriListener(ParseTreeListener):
 
         # Create verify quad
 
+        lInf = self.memHandler.reserve(
+            context=CONSTANT,
+            dtype=INT,
+            value=0
+        )
+
+        lSup = self.memHandler.reserve(
+            context=CONSTANT,
+            dtype=INT,
+            value=var.arraySize - 1
+        )
         self.quadWrapper.insertQuad(Quadruple(
             op=self.quadWrapper.popOperator(),
             l=exp_result,
-            r=0,  # arrays start at 0
-            res=var.arraySize - 1))
+            r=lInf,  # arrays start at 0
+            res=lSup))
 
         # Reserve memory for the literal address. Example: 5000 -> Int
 
@@ -1207,12 +1247,12 @@ class PopurriListener(ParseTreeListener):
             l=exp_result,
             r=var_address_address,
             res=tmp))
+        self.quadWrapper.popAddress()
         self.quadWrapper.insertAddress(tmp)
-
         # Since the enterDeclaration is pushing a type no matter the variable being checked.
         # This pops the type and pushes the correct type
         self.quadWrapper.popType()
-        self.quadWrapper.insertType(var.type)
+        # self.quadWrapper.insertType(var.type)
 
     def enterAssignment(self, ctx):
         self.inside_expression = True
@@ -1359,8 +1399,9 @@ class PopurriListener(ParseTreeListener):
         if ctx.ID() is not None:
             returned_ids = self.validateCalledIds(ctx)
             if type(returned_ids) is int:
-                print(returned_ids)
-                print(self.ctxWrapper.getVariableByAddress(returned_ids).type)
+                # testing
+                # print(returned_ids)
+                # print(self.ctxWrapper.getVariableByAddress(returned_ids).type)
 
                 array_var = self.ctxWrapper.getVariableByAddress(returned_ids)
                 self.for_loop_iter_var.type = array_var.type
@@ -1376,11 +1417,9 @@ class PopurriListener(ParseTreeListener):
                     insideClass=self.ctxWrapper.insideClass()
                 )
 
-                print(self.for_loop_iter_var)
                 self.for_loop_stack.append((self.for_loop_iter_var, array_var))
             else:
                 # aqui va todo lo que no sea ID en iterable
-                print('nel')
                 pass
 
     def exitIterable(self, ctx):

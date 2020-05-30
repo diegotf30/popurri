@@ -18,7 +18,7 @@ class MemoryHandler():
         30000 -> 39999 : CONSTANT
         '''
         self.context_offset = context_offset
-        self.type_offset = int(context_offset / 4)
+        self.type_offset = int(context_offset / 5)
 
         if self.type_offset % 1 != 0:
             raise Exception('ERROR: \'context_offset\' must be divisible by 4')
@@ -41,6 +41,9 @@ class MemoryHandler():
             )
 
         dtype -= INT
+        # Es algo hacky pero tendria que mover demasiado para fixear el problema
+        if dtype == 9:
+            dtype = 4
         return ctxMemory.start + reserved_address + (self.type_offset * dtype)
 
     def update(self, address, value):
@@ -52,13 +55,17 @@ class MemoryHandler():
         address, context = self.getContextAddress(address)
         dtype = self.getAddressType(address)
 
-        if tokenizeByValue(value) != dtype:
+        if tokenizeByValue(value) != dtype and dtype is not POINTER:
             msg = EXPECTED_TYPE.format(stringifyToken(
                 dtype), stringifyToken(tokenizeByValue(value)))
             raise Exception(f'ERROR: {msg}')
 
+        if dtype == 42:
+            address -= ((37 - INT) * self.type_offset)
+        else:
+            address -= ((dtype - INT) * self.type_offset)
         # obtains the relative address within context address stack [1 -> TYPE_OFFSET]
-        address -= ((dtype - INT) * self.type_offset)
+
         # Update value
         self.contexts[context].updateAddress(address, dtype, value)
 
@@ -67,6 +74,7 @@ class MemoryHandler():
         given the address return the address without offset (GLOBAL, LOCAL, TEMPORAL or CONSTANT)
         and its respective context.
         '''
+
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
             start = self.context_offset * i
             end = self.context_offset * (i + 1) - 1
@@ -77,12 +85,18 @@ class MemoryHandler():
 
     def getAddressType(self, address):
         'obtains the data type from address [INT, FLOAT, BOOL, STRING]'
-        return math.floor(address / self.type_offset % 4) + INT
+        returning_type = math.floor(address / self.type_offset % 5) + INT
+        if returning_type == 37:
+            return 42
+        return math.floor(address / self.type_offset % 5) + INT
 
     def getValue(self, address):
         address, context = self.getContextAddress(address)
         dtype = self.getAddressType(address)
-        address -= ((dtype - INT) * self.type_offset)
+        if dtype == 42:
+            address -= ((37 - INT) * self.type_offset)
+        else:
+            address -= ((dtype - INT) * self.type_offset)
 
         return self.contexts[context].getValue(address, dtype)
 
@@ -129,8 +143,9 @@ class Memory():
             FLOAT: 0.0,
             BOOL: False,
             STRING: '',
-            POINTER: None
+            POINTER: 0
         }
+
         self.sections[dtype].append(default_val_map[dtype])
         return len(self.sections[dtype]) - 1
 
