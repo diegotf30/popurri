@@ -46,7 +46,7 @@ def importContext(f):
 
 opMap = {
     ADD: add,
-    SUBS: sub,
+    MINUS: sub,
     MULT: mul,
     DIV: truediv,
     MOD: mod,
@@ -57,12 +57,18 @@ opMap = {
     GREATEREQ: ge,
     LESSER: lt,
     LESSEREQ: le,
+    UNARYADD: pos,
+    UNARYMINUS: neg,
 }
 
 
-def handleOperation(memHandler, op, l_val, r_val, res):
+def handleBinaryOperation(memHandler, op, l_val, r_val, res):
     opFunc = opMap[op]
     memHandler.update(res, opFunc(l_val, r_val))
+
+def handleUnaryOperation(memHandler, op, r_val, res):
+    opFunc = opMap[op]
+    memHandler.update(res, opFunc(r_val))
 
 
 def run(obj_file):
@@ -120,33 +126,21 @@ def run(obj_file):
                 res_type = memHandler.getAddressType(res)
                 if res_type == POINTER:
                     res = memHandler.getValue(res)
-            print(res, l_val, 'IP : ', ip + 1)
             memHandler.update(res, l_val)
-        elif op in [ADD, SUBS, MULT, DIV, MOD, POWER, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ]:
-
-            # print(memHandler.getAddressType(l_val))
-            # print(memHandler.getAddressType(r_val))
-            # print(memHandler.getAddressType(res))
-
-            # if res >= 28000 and res <= 30000:
-            #     res_type = memHandler.getAddressType(res)
-            #     if res_type == POINTER:
-            #         res = memHandler.getValue(res)
-
-            # print(op, l_val, r_val, res)
-
-            handleOperation(memHandler, op, l_val, r_val, res)
-
+        elif op in [ADD, MINUS, MULT, DIV, MOD, POWER, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ]:
+            handleBinaryOperation(memHandler, op, l_val, r_val, res)
+        elif op in [UNARYADD, UNARYMINUS]:
+            handleUnaryOperation(memHandler, op, r_val, res)
         elif op == ANDOP:  # For some reason these arent implemented in operator pkg, so do them manually
             memHandler.update(res, l_val and r_val)
         elif op == OROP:
             memHandler.update(res, l_val or r_val)
-        elif op in [ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
+        elif op in [ADDASSIGN, MINUSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
             res_val = memHandler.getValue(res)
-            # Move token one pos up, so ADDASSIGN -> ADD, SUBSASSIGN -> SUBS, etc.
+            # Move token one pos up, so ADDASSIGN -> ADD, MINUSASSIGN -> MINUS, etc.
             op -= 1
             # Applies short-hand operator and stores it in res
-            handleOperation(memHandler, op, res_val, l_val, res)
+            handleBinaryOperation(memHandler, op, res_val, l_val, res)
 
         # Special Functions
         elif op == INPUT:

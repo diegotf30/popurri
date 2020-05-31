@@ -1,4 +1,4 @@
-// Generated from /mnt/c/Users/danya/Documents/Universidad/8 semestre/Diseño de compiladores/Compiler-v2/popurri/antlr_parser/Popurri.g4 by ANTLR 4.7.1
+// Generated from /Users/diegotf/Documents/popurri/antlr_parser/Popurri.g4 by ANTLR 4.7.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -22,8 +22,8 @@ public class PopurriParser extends Parser {
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
 		T__31=32, T__32=33, T__33=34, T__34=35, T__35=36, T__36=37, T__37=38, 
 		T__38=39, T__39=40, T__40=41, T__41=42, T__42=43, T__43=44, T__44=45, 
-		T__45=46, T__46=47, T__47=48, WS=49, COMMENT=50, CONST_BOOL=51, CONST_I=52, 
-		CONST_F=53, CONST_STR=54, TYPE=55, ACCESS_TYPE=56, ID=57;
+		T__45=46, WS=47, COMMENT=48, CONST_BOOL=49, CONST_I=50, CONST_F=51, CONST_STR=52, 
+		TYPE=53, ACCESS_TYPE=54, ID=55;
 	public static final int
 		RULE_program = 0, RULE_module = 1, RULE_declarations = 2, RULE_declaration = 3, 
 		RULE_function = 4, RULE_classDeclaration = 5, RULE_parent = 6, RULE_attributes = 7, 
@@ -32,18 +32,18 @@ public class PopurriParser extends Parser {
 		RULE_elseStmt = 16, RULE_returnStmt = 17, RULE_breakStmt = 18, RULE_cond = 19, 
 		RULE_cmp = 20, RULE_exp = 21, RULE_add = 22, RULE_multModDiv = 23, RULE_val = 24, 
 		RULE_indexation = 25, RULE_boolOp = 26, RULE_cmpOp = 27, RULE_addOp = 28, 
-		RULE_multDivOp = 29, RULE_expOp = 30, RULE_assignOp = 31, RULE_assignment = 32, 
-		RULE_funcCall = 33, RULE_constant = 34, RULE_const_arr = 35, RULE_iterable = 36, 
-		RULE_printStmt = 37, RULE_printlnStmt = 38, RULE_inputStmt = 39, RULE_condParam = 40, 
-		RULE_funcParams = 41;
+		RULE_unaryAddOp = 29, RULE_multDivOp = 30, RULE_expOp = 31, RULE_assignOp = 32, 
+		RULE_assignment = 33, RULE_funcCall = 34, RULE_constant = 35, RULE_const_arr = 36, 
+		RULE_iterable = 37, RULE_printStmt = 38, RULE_printlnStmt = 39, RULE_inputStmt = 40, 
+		RULE_condParam = 41, RULE_funcParams = 42;
 	public static final String[] ruleNames = {
 		"program", "module", "declarations", "declaration", "function", "classDeclaration", 
 		"parent", "attributes", "attribute", "method", "statement", "whileLoop", 
 		"forLoop", "branch", "ifStmt", "elseIf", "elseStmt", "returnStmt", "breakStmt", 
 		"cond", "cmp", "exp", "add", "multModDiv", "val", "indexation", "boolOp", 
-		"cmpOp", "addOp", "multDivOp", "expOp", "assignOp", "assignment", "funcCall", 
-		"constant", "const_arr", "iterable", "printStmt", "printlnStmt", "inputStmt", 
-		"condParam", "funcParams"
+		"cmpOp", "addOp", "unaryAddOp", "multDivOp", "expOp", "assignOp", "assignment", 
+		"funcCall", "constant", "const_arr", "iterable", "printStmt", "printlnStmt", 
+		"inputStmt", "condParam", "funcParams"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -52,15 +52,15 @@ public class PopurriParser extends Parser {
 		"'if'", "'else if'", "'else'", "'return'", "'break'", "'and'", "'or'", 
 		"'<'", "'<='", "'>'", "'>='", "'is'", "'is not'", "'+'", "'-'", "'*'", 
 		"'/'", "'%'", "'**'", "'='", "'+='", "'-='", "'*='", "'/='", "'%='", "'none'", 
-		"'to'", "'by'", "'print'", "'println'", "'input'"
+		"'print'", "'println'", "'input'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, "WS", "COMMENT", "CONST_BOOL", "CONST_I", "CONST_F", "CONST_STR", 
-		"TYPE", "ACCESS_TYPE", "ID"
+		null, null, null, null, null, null, null, null, null, null, null, "WS", 
+		"COMMENT", "CONST_BOOL", "CONST_I", "CONST_F", "CONST_STR", "TYPE", "ACCESS_TYPE", 
+		"ID"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -152,65 +152,61 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(84);
+			setState(86);
 			module();
-			setState(88);
+			setState(90);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__11) {
 				{
 				{
-				setState(85);
+				setState(87);
 				classDeclaration();
 				}
 				}
-				setState(90);
+				setState(92);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(94);
+			setState(96);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(91);
+				setState(93);
 				declarations();
 				}
 				}
-				setState(96);
+				setState(98);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(100);
+			setState(102);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__6) {
 				{
 				{
-				setState(97);
+				setState(99);
 				function();
 				}
 				}
-				setState(102);
+				setState(104);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(106);
+			setState(108);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(103);
+				setState(105);
 				statement();
 				}
 				}
-				setState(108);
+				setState(110);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -241,9 +237,9 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(109);
+			setState(111);
 			match(T__0);
-			setState(110);
+			setState(112);
 			match(ID);
 			}
 		}
@@ -278,23 +274,23 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(112);
+			setState(114);
 			match(T__1);
-			setState(113);
+			setState(115);
 			declaration();
-			setState(118);
+			setState(120);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__2) {
 				{
 				{
-				setState(114);
+				setState(116);
 				match(T__2);
-				setState(115);
+				setState(117);
 				declaration();
 				}
 				}
-				setState(120);
+				setState(122);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -334,43 +330,43 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(121);
+			setState(123);
 			match(ID);
-			setState(133);
+			setState(135);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__3) {
 				{
-				setState(122);
+				setState(124);
 				match(T__3);
-				setState(131);
+				setState(133);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case TYPE:
 					{
-					setState(123);
+					setState(125);
 					match(TYPE);
 					}
 					break;
 				case ID:
 					{
-					setState(124);
+					setState(126);
 					match(ID);
 					}
 					break;
 				case T__4:
 					{
-					setState(125);
-					match(T__4);
-					setState(126);
-					match(TYPE);
 					setState(127);
-					match(T__5);
-					setState(128);
 					match(T__4);
+					setState(128);
+					match(TYPE);
 					setState(129);
-					match(CONST_I);
+					match(T__5);
 					setState(130);
+					match(T__4);
+					setState(131);
+					match(CONST_I);
+					setState(132);
 					match(T__5);
 					}
 					break;
@@ -380,12 +376,12 @@ public class PopurriParser extends Parser {
 				}
 			}
 
-			setState(136);
+			setState(138);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__36) | (1L << T__37) | (1L << T__38) | (1L << T__39) | (1L << T__40) | (1L << T__41))) != 0)) {
 				{
-				setState(135);
+				setState(137);
 				assignment();
 				}
 			}
@@ -437,30 +433,30 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(138);
-			match(T__6);
-			setState(139);
-			match(ID);
 			setState(140);
-			match(T__7);
+			match(T__6);
+			setState(141);
+			match(ID);
 			setState(142);
+			match(T__7);
+			setState(144);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==TYPE) {
 				{
-				setState(141);
+				setState(143);
 				funcParams();
 				}
 			}
 
-			setState(144);
-			match(T__8);
 			setState(146);
+			match(T__8);
+			setState(148);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==TYPE || _la==ID) {
 				{
-				setState(145);
+				setState(147);
 				_la = _input.LA(1);
 				if ( !(_la==TYPE || _la==ID) ) {
 				_errHandler.recoverInline(this);
@@ -473,41 +469,37 @@ public class PopurriParser extends Parser {
 				}
 			}
 
-			setState(148);
+			setState(150);
 			match(T__9);
-			setState(152);
+			setState(154);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(149);
+				setState(151);
 				declarations();
 				}
 				}
-				setState(154);
+				setState(156);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(158);
+			setState(160);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(155);
+				setState(157);
 				statement();
 				}
 				}
-				setState(160);
+				setState(162);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(161);
+			setState(163);
 			match(T__10);
 			}
 		}
@@ -552,49 +544,49 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(163);
-			match(T__11);
 			setState(165);
+			match(T__11);
+			setState(167);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
 				{
-				setState(164);
+				setState(166);
 				parent();
 				}
 				break;
 			}
-			setState(167);
+			setState(169);
 			match(ID);
-			setState(168);
+			setState(170);
 			match(T__9);
-			setState(171); 
+			setState(173); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
-				setState(171);
+				setState(173);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 				case 1:
 					{
-					setState(169);
+					setState(171);
 					attributes();
 					}
 					break;
 				case 2:
 					{
-					setState(170);
+					setState(172);
 					method();
 					}
 					break;
 				}
 				}
-				setState(173); 
+				setState(175); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__1) | (1L << T__6) | (1L << ACCESS_TYPE))) != 0) );
-			setState(175);
+			setState(177);
 			match(T__10);
 			}
 		}
@@ -623,9 +615,9 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(177);
+			setState(179);
 			match(ID);
-			setState(178);
+			setState(180);
 			match(T__12);
 			}
 		}
@@ -661,33 +653,33 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(181);
+			setState(183);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ACCESS_TYPE) {
 				{
-				setState(180);
+				setState(182);
 				match(ACCESS_TYPE);
 				}
 			}
 
-			setState(183);
+			setState(185);
 			match(T__1);
-			setState(184);
+			setState(186);
 			attribute();
-			setState(189);
+			setState(191);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__2) {
 				{
 				{
-				setState(185);
+				setState(187);
 				match(T__2);
-				setState(186);
+				setState(188);
 				attribute();
 				}
 				}
-				setState(191);
+				setState(193);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -724,37 +716,37 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(192);
+			setState(194);
 			match(ID);
-			setState(203);
+			setState(205);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__3) {
 				{
-				setState(193);
+				setState(195);
 				match(T__3);
-				setState(201);
+				setState(203);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case TYPE:
 					{
-					setState(194);
+					setState(196);
 					match(TYPE);
 					}
 					break;
 				case T__4:
 					{
-					setState(195);
-					match(T__4);
-					setState(196);
-					match(TYPE);
 					setState(197);
-					match(T__5);
-					setState(198);
 					match(T__4);
+					setState(198);
+					match(TYPE);
 					setState(199);
-					match(CONST_I);
+					match(T__5);
 					setState(200);
+					match(T__4);
+					setState(201);
+					match(CONST_I);
+					setState(202);
 					match(T__5);
 					}
 					break;
@@ -764,12 +756,12 @@ public class PopurriParser extends Parser {
 				}
 			}
 
-			setState(206);
+			setState(208);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__36) | (1L << T__37) | (1L << T__38) | (1L << T__39) | (1L << T__40) | (1L << T__41))) != 0)) {
 				{
-				setState(205);
+				setState(207);
 				assignment();
 				}
 			}
@@ -822,40 +814,40 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(209);
+			setState(211);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ACCESS_TYPE) {
 				{
-				setState(208);
+				setState(210);
 				match(ACCESS_TYPE);
 				}
 			}
 
-			setState(211);
-			match(T__6);
-			setState(212);
-			match(ID);
 			setState(213);
-			match(T__7);
+			match(T__6);
+			setState(214);
+			match(ID);
 			setState(215);
+			match(T__7);
+			setState(217);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==TYPE) {
 				{
-				setState(214);
+				setState(216);
 				funcParams();
 				}
 			}
 
-			setState(217);
-			match(T__8);
 			setState(219);
+			match(T__8);
+			setState(221);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==TYPE || _la==ID) {
 				{
-				setState(218);
+				setState(220);
 				_la = _input.LA(1);
 				if ( !(_la==TYPE || _la==ID) ) {
 				_errHandler.recoverInline(this);
@@ -868,41 +860,37 @@ public class PopurriParser extends Parser {
 				}
 			}
 
-			setState(221);
+			setState(223);
 			match(T__9);
-			setState(225);
+			setState(227);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(222);
+				setState(224);
 				declarations();
 				}
 				}
-				setState(227);
+				setState(229);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(231);
+			setState(233);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(228);
+				setState(230);
 				statement();
 				}
 				}
-				setState(233);
+				setState(235);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(234);
+			setState(236);
 			match(T__10);
 			}
 		}
@@ -969,125 +957,100 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(254);
+			setState(256);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,27,_ctx) ) {
 			case 1:
 				{
-<<<<<<< HEAD
-				{
-				setState(238);
-=======
-				setState(236);
->>>>>>> Refactor
+				setState(240);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,25,_ctx) ) {
 				case 1:
 					{
-					setState(236);
+					setState(238);
 					match(ID);
-					setState(237);
+					setState(239);
 					match(T__13);
 					}
 					break;
 				}
-<<<<<<< HEAD
 				setState(242);
-				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,26,_ctx) ) {
-				case 1:
-					{
-					setState(240);
-					indexation();
-					}
-					break;
-				case 2:
-					{
-					setState(241);
-					match(ID);
-=======
-				setState(238);
 				match(ID);
-				setState(240);
+				setState(244);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__4) {
 					{
-					setState(239);
+					setState(243);
 					indexation();
->>>>>>> Refactor
 					}
 				}
-<<<<<<< HEAD
-				setState(244);
-=======
 
-				setState(242);
->>>>>>> Refactor
+				setState(246);
 				assignment();
 				}
 				break;
 			case 2:
 				{
-				setState(245);
+				setState(247);
 				whileLoop();
 				}
 				break;
 			case 3:
 				{
-				setState(246);
+				setState(248);
 				forLoop();
 				}
 				break;
 			case 4:
 				{
-				setState(247);
+				setState(249);
 				branch();
 				}
 				break;
 			case 5:
 				{
-				setState(248);
+				setState(250);
 				returnStmt();
 				}
 				break;
 			case 6:
 				{
-				setState(249);
+				setState(251);
 				funcCall();
 				}
 				break;
 			case 7:
 				{
-				setState(250);
+				setState(252);
 				printStmt();
 				}
 				break;
 			case 8:
 				{
-				setState(251);
+				setState(253);
 				printlnStmt();
 				}
 				break;
 			case 9:
 				{
-				setState(252);
+				setState(254);
 				inputStmt();
 				}
 				break;
 			case 10:
 				{
-				setState(253);
+				setState(255);
 				breakStmt();
 				}
 				break;
 			}
-			setState(257);
+			setState(259);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==COMMENT) {
 				{
-				setState(256);
+				setState(258);
 				match(COMMENT);
 				}
 			}
@@ -1128,31 +1091,27 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(259);
-			match(T__14);
-			setState(260);
-			cond();
 			setState(261);
+			match(T__14);
+			setState(262);
+			cond();
+			setState(263);
 			match(T__9);
-			setState(265);
+			setState(267);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(262);
+				setState(264);
 				statement();
 				}
 				}
-				setState(267);
+				setState(269);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(268);
+			setState(270);
 			match(T__10);
 			}
 		}
@@ -1191,35 +1150,31 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(270);
-			match(T__15);
-			setState(271);
-			match(ID);
 			setState(272);
-			match(T__16);
+			match(T__15);
 			setState(273);
-			iterable();
+			match(ID);
 			setState(274);
+			match(T__16);
+			setState(275);
+			iterable();
+			setState(276);
 			match(T__9);
-			setState(278);
+			setState(280);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(275);
+				setState(277);
 				statement();
 				}
 				}
-				setState(280);
+				setState(282);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(281);
+			setState(283);
 			match(T__10);
 			}
 		}
@@ -1260,28 +1215,28 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(283);
+			setState(285);
 			ifStmt();
-			setState(287);
+			setState(289);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__18) {
 				{
 				{
-				setState(284);
+				setState(286);
 				elseIf();
 				}
 				}
-				setState(289);
+				setState(291);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(291);
+			setState(293);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__19) {
 				{
-				setState(290);
+				setState(292);
 				elseStmt();
 				}
 			}
@@ -1322,31 +1277,27 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(293);
-			match(T__17);
-			setState(294);
-			cond();
 			setState(295);
+			match(T__17);
+			setState(296);
+			cond();
+			setState(297);
 			match(T__9);
-			setState(299);
+			setState(301);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(296);
+				setState(298);
 				statement();
 				}
 				}
-				setState(301);
+				setState(303);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(302);
+			setState(304);
 			match(T__10);
 			}
 		}
@@ -1384,31 +1335,27 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(304);
-			match(T__18);
-			setState(305);
-			cond();
 			setState(306);
+			match(T__18);
+			setState(307);
+			cond();
+			setState(308);
 			match(T__9);
-			setState(310);
+			setState(312);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(307);
+				setState(309);
 				statement();
 				}
 				}
-				setState(312);
+				setState(314);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(313);
+			setState(315);
 			match(T__10);
 			}
 		}
@@ -1443,29 +1390,25 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(315);
+			setState(317);
 			match(T__19);
-			setState(316);
+			setState(318);
 			match(T__9);
-			setState(320);
+			setState(322);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-<<<<<<< HEAD
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << T__47) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-=======
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__45) | (1L << T__46) | (1L << ID))) != 0)) {
->>>>>>> Refactor
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__17) | (1L << T__20) | (1L << T__21) | (1L << T__43) | (1L << T__44) | (1L << T__45) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(317);
+				setState(319);
 				statement();
 				}
 				}
-				setState(322);
+				setState(324);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(323);
+			setState(325);
 			match(T__10);
 			}
 		}
@@ -1496,9 +1439,9 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(325);
+			setState(327);
 			match(T__20);
-			setState(326);
+			setState(328);
 			cond();
 			}
 		}
@@ -1526,7 +1469,7 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(328);
+			setState(330);
 			match(T__21);
 			}
 		}
@@ -1567,21 +1510,21 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(330);
+			setState(332);
 			cmp();
-			setState(336);
+			setState(338);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__22 || _la==T__23) {
 				{
 				{
-				setState(331);
+				setState(333);
 				boolOp();
-				setState(332);
+				setState(334);
 				cmp();
 				}
 				}
-				setState(338);
+				setState(340);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1624,21 +1567,21 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(339);
+			setState(341);
 			exp();
-			setState(345);
+			setState(347);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << T__29))) != 0)) {
 				{
 				{
-				setState(340);
+				setState(342);
 				cmpOp();
-				setState(341);
+				setState(343);
 				exp();
 				}
 				}
-				setState(347);
+				setState(349);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1681,21 +1624,21 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(348);
+			setState(350);
 			add();
-			setState(354);
+			setState(356);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__30 || _la==T__31) {
 				{
 				{
-				setState(349);
+				setState(351);
 				addOp();
-				setState(350);
+				setState(352);
 				add();
 				}
 				}
-				setState(356);
+				setState(358);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1738,21 +1681,21 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(357);
+			setState(359);
 			multModDiv();
-			setState(363);
+			setState(365);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__32) | (1L << T__33) | (1L << T__34))) != 0)) {
 				{
 				{
-				setState(358);
+				setState(360);
 				multDivOp();
-				setState(359);
+				setState(361);
 				multModDiv();
 				}
 				}
-				setState(365);
+				setState(367);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1795,21 +1738,21 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(366);
+			setState(368);
 			val();
-			setState(372);
+			setState(374);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__35) {
 				{
 				{
-				setState(367);
+				setState(369);
 				expOp();
-				setState(368);
+				setState(370);
 				val();
 				}
 				}
-				setState(374);
+				setState(376);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1837,11 +1780,14 @@ public class PopurriParser extends Parser {
 		public TerminalNode ID(int i) {
 			return getToken(PopurriParser.ID, i);
 		}
-		public IndexationContext indexation() {
-			return getRuleContext(IndexationContext.class,0);
-		}
 		public ConstantContext constant() {
 			return getRuleContext(ConstantContext.class,0);
+		}
+		public UnaryAddOpContext unaryAddOp() {
+			return getRuleContext(UnaryAddOpContext.class,0);
+		}
+		public IndexationContext indexation() {
+			return getRuleContext(IndexationContext.class,0);
 		}
 		public ValContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1854,183 +1800,72 @@ public class PopurriParser extends Parser {
 		enterRule(_localctx, 48, RULE_val);
 		int _la;
 		try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(387);
-=======
-			setState(388);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(387);
->>>>>>> Refactor
-=======
-			setState(386);
->>>>>>> Fixed bug in grammar
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(378);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,43,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
+			_la = _input.LA(1);
+			if (_la==T__30 || _la==T__31) {
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(375);
-=======
-				setState(374);
-				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,41,_ctx) ) {
-				case 1:
-					{
-					setState(372);
-					match(ID);
-					setState(373);
-					match(T__13);
-					}
-					break;
+				setState(377);
+				unaryAddOp();
 				}
-				setState(376);
->>>>>>> Implemented array manipulation inside classes.
-				indexation();
-=======
->>>>>>> Refactor
-=======
-				setState(372);
+			}
+
+			setState(394);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,44,_ctx) ) {
+			case 1:
+				{
+				setState(380);
 				match(T__7);
-				setState(373);
+				setState(381);
 				cond();
-				setState(374);
+				setState(382);
 				match(T__8);
->>>>>>> Fixed bug in grammar
 				}
 				break;
 			case 2:
-				enterOuterAlt(_localctx, 2);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(376);
-				match(T__7);
-				setState(377);
-				cond();
-				setState(378);
-=======
-				setState(377);
-=======
-				setState(373);
->>>>>>> Refactor
-				match(T__7);
-				setState(374);
-				cond();
-<<<<<<< HEAD
-				setState(379);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(375);
->>>>>>> Refactor
-				match(T__8);
-=======
-				setState(376);
+				setState(384);
 				funcCall();
->>>>>>> Fixed bug in grammar
 				}
 				break;
 			case 3:
-				enterOuterAlt(_localctx, 3);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(380);
+				setState(385);
 				match(ID);
-				setState(383);
-=======
-				setState(381);
-				match(ID);
-				setState(384);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(377);
-				match(ID);
-<<<<<<< HEAD
-				setState(381);
->>>>>>> Refactor
-=======
-				setState(380);
->>>>>>> Fixed bug in grammar
+				setState(388);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__13) {
 					{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-					setState(381);
+					setState(386);
 					match(T__13);
-					setState(382);
-=======
-					setState(382);
-					match(T__13);
-					setState(383);
->>>>>>> Implemented array manipulation inside classes.
-=======
-					setState(379);
-					match(T__13);
-					setState(380);
->>>>>>> Refactor
-=======
-					setState(378);
-					match(T__13);
-					setState(379);
->>>>>>> Fixed bug in grammar
+					setState(387);
 					match(ID);
 					}
 				}
 
-				setState(383);
+				setState(391);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__4) {
 					{
-					setState(382);
+					setState(390);
 					indexation();
 					}
 				}
-<<<<<<< HEAD
-				break;
-			case 4:
-				enterOuterAlt(_localctx, 4);
-				{
-<<<<<<< HEAD
-				setState(385);
-=======
-				setState(386);
->>>>>>> Implemented array manipulation inside classes.
-				funcCall();
-=======
 
->>>>>>> Refactor
 				}
 				break;
 			case 4:
-				enterOuterAlt(_localctx, 4);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(386);
-=======
-				setState(387);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(386);
->>>>>>> Refactor
-=======
-				setState(385);
->>>>>>> Fixed bug in grammar
+				setState(393);
 				constant();
 				}
 				break;
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -2060,39 +1895,11 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(389);
-			iterable();
-			setState(390);
+			setState(396);
 			match(T__4);
-			setState(391);
+			setState(397);
 			exp();
-			setState(392);
-=======
-			setState(390);
-			iterable();
-			setState(391);
-=======
-			setState(389);
->>>>>>> Refactor
-=======
-			setState(388);
->>>>>>> Fixed bug in grammar
-			match(T__4);
-			setState(389);
-			exp();
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(393);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(391);
->>>>>>> Refactor
-=======
-			setState(390);
->>>>>>> Fixed bug in grammar
+			setState(398);
 			match(T__5);
 			}
 		}
@@ -2121,19 +1928,7 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(394);
-=======
-			setState(395);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(393);
->>>>>>> Refactor
-=======
-			setState(392);
->>>>>>> Fixed bug in grammar
+			setState(400);
 			_la = _input.LA(1);
 			if ( !(_la==T__22 || _la==T__23) ) {
 			_errHandler.recoverInline(this);
@@ -2170,19 +1965,7 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(396);
-=======
-			setState(397);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(395);
->>>>>>> Refactor
-=======
-			setState(394);
->>>>>>> Fixed bug in grammar
+			setState(402);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << T__29))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -2219,19 +2002,44 @@ public class PopurriParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(398);
-=======
-			setState(399);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(397);
->>>>>>> Refactor
-=======
-			setState(396);
->>>>>>> Fixed bug in grammar
+			setState(404);
+			_la = _input.LA(1);
+			if ( !(_la==T__30 || _la==T__31) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class UnaryAddOpContext extends ParserRuleContext {
+		public UnaryAddOpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_unaryAddOp; }
+	}
+
+	public final UnaryAddOpContext unaryAddOp() throws RecognitionException {
+		UnaryAddOpContext _localctx = new UnaryAddOpContext(_ctx, getState());
+		enterRule(_localctx, 58, RULE_unaryAddOp);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(406);
 			_la = _input.LA(1);
 			if ( !(_la==T__30 || _la==T__31) ) {
 			_errHandler.recoverInline(this);
@@ -2263,24 +2071,12 @@ public class PopurriParser extends Parser {
 
 	public final MultDivOpContext multDivOp() throws RecognitionException {
 		MultDivOpContext _localctx = new MultDivOpContext(_ctx, getState());
-		enterRule(_localctx, 58, RULE_multDivOp);
+		enterRule(_localctx, 60, RULE_multDivOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(400);
-=======
-			setState(401);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(399);
->>>>>>> Refactor
-=======
-			setState(398);
->>>>>>> Fixed bug in grammar
+			setState(408);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__32) | (1L << T__33) | (1L << T__34))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -2312,23 +2108,11 @@ public class PopurriParser extends Parser {
 
 	public final ExpOpContext expOp() throws RecognitionException {
 		ExpOpContext _localctx = new ExpOpContext(_ctx, getState());
-		enterRule(_localctx, 60, RULE_expOp);
+		enterRule(_localctx, 62, RULE_expOp);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(402);
-=======
-			setState(403);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(401);
->>>>>>> Refactor
-=======
-			setState(400);
->>>>>>> Fixed bug in grammar
+			setState(410);
 			match(T__35);
 			}
 		}
@@ -2352,24 +2136,12 @@ public class PopurriParser extends Parser {
 
 	public final AssignOpContext assignOp() throws RecognitionException {
 		AssignOpContext _localctx = new AssignOpContext(_ctx, getState());
-		enterRule(_localctx, 62, RULE_assignOp);
+		enterRule(_localctx, 64, RULE_assignOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(404);
-=======
-			setState(405);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(403);
->>>>>>> Refactor
-=======
-			setState(402);
->>>>>>> Fixed bug in grammar
+			setState(412);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__36) | (1L << T__37) | (1L << T__38) | (1L << T__39) | (1L << T__40) | (1L << T__41))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -2407,31 +2179,13 @@ public class PopurriParser extends Parser {
 
 	public final AssignmentContext assignment() throws RecognitionException {
 		AssignmentContext _localctx = new AssignmentContext(_ctx, getState());
-		enterRule(_localctx, 64, RULE_assignment);
+		enterRule(_localctx, 66, RULE_assignment);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(406);
+			setState(414);
 			assignOp();
-			setState(407);
-=======
-			setState(407);
-			assignOp();
-			setState(408);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(405);
-			assignOp();
-			setState(406);
->>>>>>> Refactor
-=======
-			setState(404);
-			assignOp();
-			setState(405);
->>>>>>> Fixed bug in grammar
+			setState(415);
 			cond();
 			}
 		}
@@ -2462,117 +2216,38 @@ public class PopurriParser extends Parser {
 
 	public final FuncCallContext funcCall() throws RecognitionException {
 		FuncCallContext _localctx = new FuncCallContext(_ctx, getState());
-		enterRule(_localctx, 66, RULE_funcCall);
+		enterRule(_localctx, 68, RULE_funcCall);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(411);
-=======
-			setState(412);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(410);
->>>>>>> Refactor
-=======
-			setState(409);
->>>>>>> Fixed bug in grammar
+			setState(419);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,44,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,45,_ctx) ) {
 			case 1:
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(409);
+				setState(417);
 				match(ID);
-				setState(410);
-=======
-				setState(410);
-				match(ID);
-				setState(411);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(408);
-				match(ID);
-				setState(409);
->>>>>>> Refactor
-=======
-				setState(407);
-				match(ID);
-				setState(408);
->>>>>>> Fixed bug in grammar
+				setState(418);
 				match(T__13);
 				}
 				break;
 			}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(413);
+			setState(421);
 			match(ID);
-			setState(414);
+			setState(422);
 			match(T__7);
-			setState(416);
-=======
-			setState(414);
-=======
-			setState(412);
->>>>>>> Refactor
-=======
-			setState(411);
->>>>>>> Fixed bug in grammar
-			match(ID);
-			setState(412);
-			match(T__7);
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(417);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(415);
->>>>>>> Refactor
-=======
-			setState(414);
->>>>>>> Fixed bug in grammar
+			setState(424);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__30) | (1L << T__31) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(415);
-=======
-				setState(416);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(414);
->>>>>>> Refactor
-=======
-				setState(413);
->>>>>>> Fixed bug in grammar
+				setState(423);
 				condParam();
 				}
 			}
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-			setState(418);
-=======
-			setState(419);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(417);
->>>>>>> Refactor
-=======
-
-			setState(416);
->>>>>>> Fixed bug in grammar
+			setState(426);
 			match(T__8);
 			}
 		}
@@ -2603,134 +2278,50 @@ public class PopurriParser extends Parser {
 
 	public final ConstantContext constant() throws RecognitionException {
 		ConstantContext _localctx = new ConstantContext(_ctx, getState());
-		enterRule(_localctx, 68, RULE_constant);
+		enterRule(_localctx, 70, RULE_constant);
 		try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(426);
-=======
-			setState(427);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(425);
->>>>>>> Refactor
-=======
-			setState(424);
->>>>>>> Fixed bug in grammar
+			setState(434);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case CONST_BOOL:
 				enterOuterAlt(_localctx, 1);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(420);
-=======
-				setState(421);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(419);
->>>>>>> Refactor
-=======
-				setState(418);
->>>>>>> Fixed bug in grammar
+				setState(428);
 				match(CONST_BOOL);
 				}
 				break;
 			case CONST_I:
 				enterOuterAlt(_localctx, 2);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(421);
-=======
-				setState(422);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(420);
->>>>>>> Refactor
-=======
-				setState(419);
->>>>>>> Fixed bug in grammar
+				setState(429);
 				match(CONST_I);
 				}
 				break;
 			case CONST_F:
 				enterOuterAlt(_localctx, 3);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(422);
-=======
-				setState(423);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(421);
->>>>>>> Refactor
-=======
-				setState(420);
->>>>>>> Fixed bug in grammar
+				setState(430);
 				match(CONST_F);
 				}
 				break;
 			case CONST_STR:
 				enterOuterAlt(_localctx, 4);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(423);
-=======
-				setState(424);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(422);
->>>>>>> Refactor
-=======
-				setState(421);
->>>>>>> Fixed bug in grammar
+				setState(431);
 				match(CONST_STR);
 				}
 				break;
 			case T__4:
 				enterOuterAlt(_localctx, 5);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(424);
-=======
-				setState(425);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(423);
->>>>>>> Refactor
-=======
-				setState(422);
->>>>>>> Fixed bug in grammar
+				setState(432);
 				const_arr();
 				}
 				break;
 			case T__42:
 				enterOuterAlt(_localctx, 6);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(425);
-=======
-				setState(426);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(424);
->>>>>>> Refactor
-=======
-				setState(423);
->>>>>>> Fixed bug in grammar
+				setState(433);
 				match(T__42);
 				}
 				break;
@@ -2750,12 +2341,6 @@ public class PopurriParser extends Parser {
 	}
 
 	public static class Const_arrContext extends ParserRuleContext {
-		public List<ExpContext> exp() {
-			return getRuleContexts(ExpContext.class);
-		}
-		public ExpContext exp(int i) {
-			return getRuleContext(ExpContext.class,i);
-		}
 		public CondParamContext condParam() {
 			return getRuleContext(CondParamContext.class,0);
 		}
@@ -2767,152 +2352,24 @@ public class PopurriParser extends Parser {
 
 	public final Const_arrContext const_arr() throws RecognitionException {
 		Const_arrContext _localctx = new Const_arrContext(_ctx, getState());
-		enterRule(_localctx, 70, RULE_const_arr);
+		enterRule(_localctx, 72, RULE_const_arr);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(428);
-			match(T__4);
-			setState(439);
-=======
-			setState(429);
-			match(T__4);
-			setState(440);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(427);
+			setState(436);
 			match(T__4);
 			setState(438);
->>>>>>> Refactor
-=======
-			setState(426);
-			match(T__4);
-			setState(437);
->>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,49,_ctx) ) {
-			case 1:
+			_la = _input.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__30) | (1L << T__31) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(430);
-=======
-				setState(431);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(429);
->>>>>>> Refactor
-=======
-				setState(428);
->>>>>>> Fixed bug in grammar
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
-					{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-					setState(429);
-=======
-					setState(430);
->>>>>>> Implemented array manipulation inside classes.
-=======
-					setState(428);
->>>>>>> Refactor
-=======
-					setState(427);
->>>>>>> Fixed bug in grammar
-					condParam();
-					}
-				}
-
-				}
-				break;
-			case 2:
-				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(432);
-				exp();
-				setState(433);
-				match(T__43);
-				setState(434);
-				exp();
 				setState(437);
-=======
-				setState(433);
-=======
-				setState(431);
->>>>>>> Refactor
-=======
-				setState(430);
->>>>>>> Fixed bug in grammar
-				exp();
-				setState(431);
-				match(T__43);
-				setState(432);
-				exp();
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(438);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(436);
->>>>>>> Refactor
-=======
-				setState(435);
->>>>>>> Fixed bug in grammar
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if (_la==T__44) {
-					{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-					setState(435);
-					match(T__44);
-					setState(436);
-=======
-					setState(436);
-					match(T__44);
-					setState(437);
->>>>>>> Implemented array manipulation inside classes.
-=======
-					setState(434);
-					match(T__44);
-					setState(435);
->>>>>>> Refactor
-=======
-					setState(433);
-					match(T__44);
-					setState(434);
->>>>>>> Fixed bug in grammar
-					exp();
-					}
+				condParam();
 				}
-
-				}
-				break;
 			}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(441);
-=======
-			setState(442);
->>>>>>> Implemented array manipulation inside classes.
-=======
+
 			setState(440);
->>>>>>> Refactor
-=======
-			setState(439);
->>>>>>> Fixed bug in grammar
 			match(T__5);
 			}
 		}
@@ -2944,89 +2401,42 @@ public class PopurriParser extends Parser {
 
 	public final IterableContext iterable() throws RecognitionException {
 		IterableContext _localctx = new IterableContext(_ctx, getState());
-		enterRule(_localctx, 72, RULE_iterable);
+		enterRule(_localctx, 74, RULE_iterable);
 		try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(446);
-=======
-			setState(447);
->>>>>>> Implemented array manipulation inside classes.
-=======
 			setState(449);
->>>>>>> Refactor
-=======
-			setState(448);
->>>>>>> Fixed bug in grammar
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(443);
-				match(CONST_STR);
-=======
 				setState(444);
-=======
-				setState(443);
->>>>>>> Fixed bug in grammar
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,50,_ctx) ) {
+				switch ( getInterpreter().adaptivePredict(_input,49,_ctx) ) {
 				case 1:
 					{
-					setState(441);
-					match(ID);
 					setState(442);
+					match(ID);
+					setState(443);
 					match(T__13);
 					}
 					break;
 				}
-				setState(445);
+				setState(446);
 				match(ID);
->>>>>>> Implemented array manipulation inside classes.
 				}
 				break;
 			case CONST_STR:
 				enterOuterAlt(_localctx, 2);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(444);
-				const_arr();
-=======
-				setState(445);
-=======
 				setState(447);
->>>>>>> Refactor
-=======
-				setState(446);
->>>>>>> Fixed bug in grammar
 				match(CONST_STR);
->>>>>>> Implemented array manipulation inside classes.
 				}
 				break;
 			case T__4:
 				enterOuterAlt(_localctx, 3);
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(445);
-				match(ID);
-=======
-				setState(446);
-=======
 				setState(448);
->>>>>>> Refactor
-=======
-				setState(447);
->>>>>>> Fixed bug in grammar
 				const_arr();
->>>>>>> Implemented array manipulation inside classes.
 				}
 				break;
 			default:
@@ -3056,27 +2466,26 @@ public class PopurriParser extends Parser {
 
 	public final PrintStmtContext printStmt() throws RecognitionException {
 		PrintStmtContext _localctx = new PrintStmtContext(_ctx, getState());
-		enterRule(_localctx, 74, RULE_printStmt);
+		enterRule(_localctx, 76, RULE_printStmt);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-			setState(448);
-			match(T__45);
-			setState(449);
-			match(T__7);
 			setState(451);
+			match(T__43);
+			setState(452);
+			match(T__7);
+			setState(454);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__30) | (1L << T__31) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
 				{
-				setState(450);
+				setState(453);
 				condParam();
 				}
 			}
 
-			setState(453);
+			setState(456);
 			match(T__8);
 			}
 		}
@@ -3103,51 +2512,26 @@ public class PopurriParser extends Parser {
 
 	public final PrintlnStmtContext printlnStmt() throws RecognitionException {
 		PrintlnStmtContext _localctx = new PrintlnStmtContext(_ctx, getState());
-		enterRule(_localctx, 76, RULE_printlnStmt);
+		enterRule(_localctx, 78, RULE_printlnStmt);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(455);
-			match(T__46);
-			setState(456);
-			match(T__7);
 			setState(458);
+			match(T__44);
+			setState(459);
+			match(T__7);
+			setState(461);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__30) | (1L << T__31) | (1L << T__42) | (1L << CONST_BOOL) | (1L << CONST_I) | (1L << CONST_F) | (1L << CONST_STR) | (1L << ID))) != 0)) {
 				{
-				setState(457);
+				setState(460);
 				condParam();
 				}
 			}
 
-			setState(460);
-=======
-			setState(449);
-=======
-			setState(451);
->>>>>>> Refactor
-=======
-			setState(450);
->>>>>>> Fixed bug in grammar
-			match(T__45);
-			setState(451);
-			match(T__7);
-			setState(452);
-			condParam();
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(452);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(454);
->>>>>>> Refactor
-=======
-			setState(453);
->>>>>>> Fixed bug in grammar
+			setState(463);
 			match(T__8);
 			}
 		}
@@ -3175,78 +2559,29 @@ public class PopurriParser extends Parser {
 
 	public final InputStmtContext inputStmt() throws RecognitionException {
 		InputStmtContext _localctx = new InputStmtContext(_ctx, getState());
-		enterRule(_localctx, 78, RULE_inputStmt);
+		enterRule(_localctx, 80, RULE_inputStmt);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(462);
-			match(T__47);
-			setState(463);
-			match(T__7);
+			setState(465);
+			match(T__45);
 			setState(466);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,52,_ctx) ) {
-			case 1:
-				{
-				setState(464);
-				match(ID);
-				setState(465);
-=======
-			setState(454);
-=======
-			setState(456);
->>>>>>> Refactor
-=======
-			setState(455);
->>>>>>> Fixed bug in grammar
-			match(T__46);
-			setState(456);
 			match(T__7);
-			setState(459);
+			setState(469);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,52,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,53,_ctx) ) {
 			case 1:
 				{
-				setState(457);
+				setState(467);
 				match(ID);
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(457);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(459);
->>>>>>> Refactor
-=======
-				setState(458);
->>>>>>> Fixed bug in grammar
+				setState(468);
 				match(T__13);
 				}
 				break;
 			}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(468);
+			setState(471);
 			match(ID);
-			setState(469);
-=======
-			setState(460);
-			match(ID);
-			setState(461);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(462);
-			match(ID);
-			setState(463);
->>>>>>> Refactor
-=======
-			setState(461);
-			match(ID);
-			setState(462);
->>>>>>> Fixed bug in grammar
+			setState(472);
 			match(T__8);
 			}
 		}
@@ -3276,70 +2611,26 @@ public class PopurriParser extends Parser {
 
 	public final CondParamContext condParam() throws RecognitionException {
 		CondParamContext _localctx = new CondParamContext(_ctx, getState());
-		enterRule(_localctx, 80, RULE_condParam);
+		enterRule(_localctx, 82, RULE_condParam);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(471);
+			setState(474);
 			cond();
-			setState(476);
-=======
-			setState(463);
-			cond();
-			setState(468);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(465);
-			cond();
-			setState(470);
->>>>>>> Refactor
-=======
-			setState(464);
-			cond();
-			setState(469);
->>>>>>> Fixed bug in grammar
+			setState(479);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__2) {
 				{
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(472);
+				setState(475);
 				match(T__2);
-				setState(473);
+				setState(476);
 				cond();
 				}
 				}
-				setState(478);
-=======
-				setState(464);
-=======
-				setState(466);
->>>>>>> Refactor
-=======
-				setState(465);
->>>>>>> Fixed bug in grammar
-				match(T__2);
-				setState(466);
-				cond();
-				}
-				}
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(470);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(472);
->>>>>>> Refactor
-=======
-				setState(471);
->>>>>>> Fixed bug in grammar
+				setState(481);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3373,82 +2664,30 @@ public class PopurriParser extends Parser {
 
 	public final FuncParamsContext funcParams() throws RecognitionException {
 		FuncParamsContext _localctx = new FuncParamsContext(_ctx, getState());
-		enterRule(_localctx, 82, RULE_funcParams);
+		enterRule(_localctx, 84, RULE_funcParams);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(479);
+			setState(482);
 			match(TYPE);
-			setState(480);
+			setState(483);
 			match(ID);
-			setState(486);
-=======
-			setState(471);
-=======
-			setState(473);
->>>>>>> Refactor
-=======
-			setState(472);
->>>>>>> Fixed bug in grammar
-			match(TYPE);
-			setState(473);
-			match(ID);
-<<<<<<< HEAD
-<<<<<<< HEAD
-			setState(478);
->>>>>>> Implemented array manipulation inside classes.
-=======
-			setState(480);
->>>>>>> Refactor
-=======
-			setState(479);
->>>>>>> Fixed bug in grammar
+			setState(489);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__2) {
 				{
 				{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(481);
+				setState(484);
 				match(T__2);
-				setState(482);
+				setState(485);
 				match(TYPE);
-				setState(483);
+				setState(486);
 				match(ID);
 				}
 				}
-				setState(488);
-=======
-				setState(473);
-=======
-				setState(475);
->>>>>>> Refactor
-=======
-				setState(474);
->>>>>>> Fixed bug in grammar
-				match(T__2);
-				setState(475);
-				match(TYPE);
-				setState(476);
-				match(ID);
-				}
-				}
-<<<<<<< HEAD
-<<<<<<< HEAD
-				setState(480);
->>>>>>> Implemented array manipulation inside classes.
-=======
-				setState(482);
->>>>>>> Refactor
-=======
-				setState(481);
->>>>>>> Fixed bug in grammar
+				setState(491);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3466,459 +2705,186 @@ public class PopurriParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3;\u01ec\4\2\t\2\4"+
-=======
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3:\u01e4\4\2\t\2\4"+
->>>>>>> Implemented array manipulation inside classes.
-=======
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3:\u01e6\4\2\t\2\4"+
->>>>>>> Refactor
-=======
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3:\u01e5\4\2\t\2\4"+
->>>>>>> Fixed bug in grammar
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\39\u01ef\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
-<<<<<<< HEAD
-		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\4(\t(\4)\t)\4*\t*\4+\t+\3"+
-		"\2\3\2\7\2Y\n\2\f\2\16\2\\\13\2\3\2\7\2_\n\2\f\2\16\2b\13\2\3\2\7\2e\n"+
-		"\2\f\2\16\2h\13\2\3\2\7\2k\n\2\f\2\16\2n\13\2\3\3\3\3\3\3\3\4\3\4\3\4"+
-		"\3\4\7\4w\n\4\f\4\16\4z\13\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5"+
-		"\5\u0086\n\5\5\5\u0088\n\5\3\5\5\5\u008b\n\5\3\6\3\6\3\6\3\6\5\6\u0091"+
-		"\n\6\3\6\3\6\5\6\u0095\n\6\3\6\3\6\7\6\u0099\n\6\f\6\16\6\u009c\13\6\3"+
-		"\6\7\6\u009f\n\6\f\6\16\6\u00a2\13\6\3\6\3\6\3\7\3\7\5\7\u00a8\n\7\3\7"+
-		"\3\7\3\7\3\7\6\7\u00ae\n\7\r\7\16\7\u00af\3\7\3\7\3\b\3\b\3\b\3\t\5\t"+
-		"\u00b8\n\t\3\t\3\t\3\t\3\t\7\t\u00be\n\t\f\t\16\t\u00c1\13\t\3\n\3\n\3"+
-		"\n\3\n\3\n\3\n\3\n\3\n\3\n\5\n\u00cc\n\n\5\n\u00ce\n\n\3\n\5\n\u00d1\n"+
-		"\n\3\13\5\13\u00d4\n\13\3\13\3\13\3\13\3\13\5\13\u00da\n\13\3\13\3\13"+
-		"\5\13\u00de\n\13\3\13\3\13\7\13\u00e2\n\13\f\13\16\13\u00e5\13\13\3\13"+
-		"\7\13\u00e8\n\13\f\13\16\13\u00eb\13\13\3\13\3\13\3\f\3\f\5\f\u00f1\n"+
-		"\f\3\f\3\f\5\f\u00f5\n\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u0101"+
-		"\n\f\3\f\5\f\u0104\n\f\3\r\3\r\3\r\3\r\7\r\u010a\n\r\f\r\16\r\u010d\13"+
-		"\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\7\16\u0117\n\16\f\16\16\16\u011a"+
-		"\13\16\3\16\3\16\3\17\3\17\7\17\u0120\n\17\f\17\16\17\u0123\13\17\3\17"+
-		"\5\17\u0126\n\17\3\20\3\20\3\20\3\20\7\20\u012c\n\20\f\20\16\20\u012f"+
-		"\13\20\3\20\3\20\3\21\3\21\3\21\3\21\7\21\u0137\n\21\f\21\16\21\u013a"+
-		"\13\21\3\21\3\21\3\22\3\22\3\22\7\22\u0141\n\22\f\22\16\22\u0144\13\22"+
-		"\3\22\3\22\3\23\3\23\3\23\3\24\3\24\3\25\3\25\3\25\3\25\7\25\u0151\n\25"+
-		"\f\25\16\25\u0154\13\25\3\26\3\26\3\26\3\26\7\26\u015a\n\26\f\26\16\26"+
-		"\u015d\13\26\3\27\3\27\3\27\3\27\7\27\u0163\n\27\f\27\16\27\u0166\13\27"+
-		"\3\30\3\30\3\30\3\30\7\30\u016c\n\30\f\30\16\30\u016f\13\30\3\31\3\31"+
-		"\3\31\3\31\7\31\u0175\n\31\f\31\16\31\u0178\13\31\3\32\3\32\3\32\3\32"+
-		"\3\32\3\32\3\32\3\32\5\32\u0182\n\32\3\32\3\32\5\32\u0186\n\32\3\33\3"+
-		"\33\3\33\3\33\3\33\3\34\3\34\3\35\3\35\3\36\3\36\3\37\3\37\3 \3 \3!\3"+
-		"!\3\"\3\"\3\"\3#\3#\5#\u019e\n#\3#\3#\3#\5#\u01a3\n#\3#\3#\3$\3$\3$\3"+
-		"$\3$\3$\5$\u01ad\n$\3%\3%\5%\u01b1\n%\3%\3%\3%\3%\3%\5%\u01b8\n%\5%\u01ba"+
-		"\n%\3%\3%\3&\3&\3&\5&\u01c1\n&\3\'\3\'\3\'\5\'\u01c6\n\'\3\'\3\'\3(\3"+
-		"(\3(\5(\u01cd\n(\3(\3(\3)\3)\3)\3)\5)\u01d5\n)\3)\3)\3)\3*\3*\3*\7*\u01dd"+
-		"\n*\f*\16*\u01e0\13*\3+\3+\3+\3+\3+\7+\u01e7\n+\f+\16+\u01ea\13+\3+\2"+
-		"\2,\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@B"+
-		"DFHJLNPRT\2\b\4\299;;\3\2\31\32\3\2\33 \3\2!\"\3\2#%\3\2\',\2\u0209\2"+
-		"V\3\2\2\2\4o\3\2\2\2\6r\3\2\2\2\b{\3\2\2\2\n\u008c\3\2\2\2\f\u00a5\3\2"+
-		"\2\2\16\u00b3\3\2\2\2\20\u00b7\3\2\2\2\22\u00c2\3\2\2\2\24\u00d3\3\2\2"+
-		"\2\26\u0100\3\2\2\2\30\u0105\3\2\2\2\32\u0110\3\2\2\2\34\u011d\3\2\2\2"+
-		"\36\u0127\3\2\2\2 \u0132\3\2\2\2\"\u013d\3\2\2\2$\u0147\3\2\2\2&\u014a"+
-		"\3\2\2\2(\u014c\3\2\2\2*\u0155\3\2\2\2,\u015e\3\2\2\2.\u0167\3\2\2\2\60"+
-		"\u0170\3\2\2\2\62\u0185\3\2\2\2\64\u0187\3\2\2\2\66\u018c\3\2\2\28\u018e"+
-		"\3\2\2\2:\u0190\3\2\2\2<\u0192\3\2\2\2>\u0194\3\2\2\2@\u0196\3\2\2\2B"+
-		"\u0198\3\2\2\2D\u019d\3\2\2\2F\u01ac\3\2\2\2H\u01ae\3\2\2\2J\u01c0\3\2"+
-		"\2\2L\u01c2\3\2\2\2N\u01c9\3\2\2\2P\u01d0\3\2\2\2R\u01d9\3\2\2\2T\u01e1"+
-		"\3\2\2\2VZ\5\4\3\2WY\5\f\7\2XW\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3\2\2\2"+
-		"[`\3\2\2\2\\Z\3\2\2\2]_\5\6\4\2^]\3\2\2\2_b\3\2\2\2`^\3\2\2\2`a\3\2\2"+
-		"\2af\3\2\2\2b`\3\2\2\2ce\5\n\6\2dc\3\2\2\2eh\3\2\2\2fd\3\2\2\2fg\3\2\2"+
-		"\2gl\3\2\2\2hf\3\2\2\2ik\5\26\f\2ji\3\2\2\2kn\3\2\2\2lj\3\2\2\2lm\3\2"+
-		"\2\2m\3\3\2\2\2nl\3\2\2\2op\7\3\2\2pq\7;\2\2q\5\3\2\2\2rs\7\4\2\2sx\5"+
-		"\b\5\2tu\7\5\2\2uw\5\b\5\2vt\3\2\2\2wz\3\2\2\2xv\3\2\2\2xy\3\2\2\2y\7"+
-		"\3\2\2\2zx\3\2\2\2{\u0087\7;\2\2|\u0085\7\6\2\2}\u0086\79\2\2~\u0086\7"+
-		";\2\2\177\u0080\7\7\2\2\u0080\u0081\79\2\2\u0081\u0082\7\b\2\2\u0082\u0083"+
-		"\7\7\2\2\u0083\u0084\7\66\2\2\u0084\u0086\7\b\2\2\u0085}\3\2\2\2\u0085"+
-		"~\3\2\2\2\u0085\177\3\2\2\2\u0086\u0088\3\2\2\2\u0087|\3\2\2\2\u0087\u0088"+
-		"\3\2\2\2\u0088\u008a\3\2\2\2\u0089\u008b\5B\"\2\u008a\u0089\3\2\2\2\u008a"+
-		"\u008b\3\2\2\2\u008b\t\3\2\2\2\u008c\u008d\7\t\2\2\u008d\u008e\7;\2\2"+
-		"\u008e\u0090\7\n\2\2\u008f\u0091\5T+\2\u0090\u008f\3\2\2\2\u0090\u0091"+
-		"\3\2\2\2\u0091\u0092\3\2\2\2\u0092\u0094\7\13\2\2\u0093\u0095\t\2\2\2"+
-		"\u0094\u0093\3\2\2\2\u0094\u0095\3\2\2\2\u0095\u0096\3\2\2\2\u0096\u009a"+
-		"\7\f\2\2\u0097\u0099\5\6\4\2\u0098\u0097\3\2\2\2\u0099\u009c\3\2\2\2\u009a"+
-		"\u0098\3\2\2\2\u009a\u009b\3\2\2\2\u009b\u00a0\3\2\2\2\u009c\u009a\3\2"+
-		"\2\2\u009d\u009f\5\26\f\2\u009e\u009d\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0"+
-		"\u009e\3\2\2\2\u00a0\u00a1\3\2\2\2\u00a1\u00a3\3\2\2\2\u00a2\u00a0\3\2"+
-		"\2\2\u00a3\u00a4\7\r\2\2\u00a4\13\3\2\2\2\u00a5\u00a7\7\16\2\2\u00a6\u00a8"+
-		"\5\16\b\2\u00a7\u00a6\3\2\2\2\u00a7\u00a8\3\2\2\2\u00a8\u00a9\3\2\2\2"+
-		"\u00a9\u00aa\7;\2\2\u00aa\u00ad\7\f\2\2\u00ab\u00ae\5\20\t\2\u00ac\u00ae"+
-		"\5\24\13\2\u00ad\u00ab\3\2\2\2\u00ad\u00ac\3\2\2\2\u00ae\u00af\3\2\2\2"+
-		"\u00af\u00ad\3\2\2\2\u00af\u00b0\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b2"+
-		"\7\r\2\2\u00b2\r\3\2\2\2\u00b3\u00b4\7;\2\2\u00b4\u00b5\7\17\2\2\u00b5"+
-		"\17\3\2\2\2\u00b6\u00b8\7:\2\2\u00b7\u00b6\3\2\2\2\u00b7\u00b8\3\2\2\2"+
-		"\u00b8\u00b9\3\2\2\2\u00b9\u00ba\7\4\2\2\u00ba\u00bf\5\22\n\2\u00bb\u00bc"+
-		"\7\5\2\2\u00bc\u00be\5\22\n\2\u00bd\u00bb\3\2\2\2\u00be\u00c1\3\2\2\2"+
-		"\u00bf\u00bd\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0\21\3\2\2\2\u00c1\u00bf"+
-		"\3\2\2\2\u00c2\u00cd\7;\2\2\u00c3\u00cb\7\6\2\2\u00c4\u00cc\79\2\2\u00c5"+
-		"\u00c6\7\7\2\2\u00c6\u00c7\79\2\2\u00c7\u00c8\7\b\2\2\u00c8\u00c9\7\7"+
-		"\2\2\u00c9\u00ca\7\66\2\2\u00ca\u00cc\7\b\2\2\u00cb\u00c4\3\2\2\2\u00cb"+
-		"\u00c5\3\2\2\2\u00cc\u00ce\3\2\2\2\u00cd\u00c3\3\2\2\2\u00cd\u00ce\3\2"+
-		"\2\2\u00ce\u00d0\3\2\2\2\u00cf\u00d1\5B\"\2\u00d0\u00cf\3\2\2\2\u00d0"+
-		"\u00d1\3\2\2\2\u00d1\23\3\2\2\2\u00d2\u00d4\7:\2\2\u00d3\u00d2\3\2\2\2"+
-		"\u00d3\u00d4\3\2\2\2\u00d4\u00d5\3\2\2\2\u00d5\u00d6\7\t\2\2\u00d6\u00d7"+
-		"\7;\2\2\u00d7\u00d9\7\n\2\2\u00d8\u00da\5T+\2\u00d9\u00d8\3\2\2\2\u00d9"+
-		"\u00da\3\2\2\2\u00da\u00db\3\2\2\2\u00db\u00dd\7\13\2\2\u00dc\u00de\t"+
-		"\2\2\2\u00dd\u00dc\3\2\2\2\u00dd\u00de\3\2\2\2\u00de\u00df\3\2\2\2\u00df"+
-		"\u00e3\7\f\2\2\u00e0\u00e2\5\6\4\2\u00e1\u00e0\3\2\2\2\u00e2\u00e5\3\2"+
-		"\2\2\u00e3\u00e1\3\2\2\2\u00e3\u00e4\3\2\2\2\u00e4\u00e9\3\2\2\2\u00e5"+
-		"\u00e3\3\2\2\2\u00e6\u00e8\5\26\f\2\u00e7\u00e6\3\2\2\2\u00e8\u00eb\3"+
-		"\2\2\2\u00e9\u00e7\3\2\2\2\u00e9\u00ea\3\2\2\2\u00ea\u00ec\3\2\2\2\u00eb"+
-		"\u00e9\3\2\2\2\u00ec\u00ed\7\r\2\2\u00ed\25\3\2\2\2\u00ee\u00ef\7;\2\2"+
-		"\u00ef\u00f1\7\20\2\2\u00f0\u00ee\3\2\2\2\u00f0\u00f1\3\2\2\2\u00f1\u00f4"+
-		"\3\2\2\2\u00f2\u00f5\5\64\33\2\u00f3\u00f5\7;\2\2\u00f4\u00f2\3\2\2\2"+
-		"\u00f4\u00f3\3\2\2\2\u00f5\u00f6\3\2\2\2\u00f6\u0101\5B\"\2\u00f7\u0101"+
-		"\5\30\r\2\u00f8\u0101\5\32\16\2\u00f9\u0101\5\34\17\2\u00fa\u0101\5$\23"+
-		"\2\u00fb\u0101\5D#\2\u00fc\u0101\5L\'\2\u00fd\u0101\5N(\2\u00fe\u0101"+
-		"\5P)\2\u00ff\u0101\5&\24\2\u0100\u00f0\3\2\2\2\u0100\u00f7\3\2\2\2\u0100"+
-		"\u00f8\3\2\2\2\u0100\u00f9\3\2\2\2\u0100\u00fa\3\2\2\2\u0100\u00fb\3\2"+
-		"\2\2\u0100\u00fc\3\2\2\2\u0100\u00fd\3\2\2\2\u0100\u00fe\3\2\2\2\u0100"+
-		"\u00ff\3\2\2\2\u0101\u0103\3\2\2\2\u0102\u0104\7\64\2\2\u0103\u0102\3"+
-		"\2\2\2\u0103\u0104\3\2\2\2\u0104\27\3\2\2\2\u0105\u0106\7\21\2\2\u0106"+
-		"\u0107\5(\25\2\u0107\u010b\7\f\2\2\u0108\u010a\5\26\f\2\u0109\u0108\3"+
-		"\2\2\2\u010a\u010d\3\2\2\2\u010b\u0109\3\2\2\2\u010b\u010c\3\2\2\2\u010c"+
-		"\u010e\3\2\2\2\u010d\u010b\3\2\2\2\u010e\u010f\7\r\2\2\u010f\31\3\2\2"+
-		"\2\u0110\u0111\7\22\2\2\u0111\u0112\7;\2\2\u0112\u0113\7\23\2\2\u0113"+
-		"\u0114\5J&\2\u0114\u0118\7\f\2\2\u0115\u0117\5\26\f\2\u0116\u0115\3\2"+
-		"\2\2\u0117\u011a\3\2\2\2\u0118\u0116\3\2\2\2\u0118\u0119\3\2\2\2\u0119"+
-		"\u011b\3\2\2\2\u011a\u0118\3\2\2\2\u011b\u011c\7\r\2\2\u011c\33\3\2\2"+
-		"\2\u011d\u0121\5\36\20\2\u011e\u0120\5 \21\2\u011f\u011e\3\2\2\2\u0120"+
-		"\u0123\3\2\2\2\u0121\u011f\3\2\2\2\u0121\u0122\3\2\2\2\u0122\u0125\3\2"+
-		"\2\2\u0123\u0121\3\2\2\2\u0124\u0126\5\"\22\2\u0125\u0124\3\2\2\2\u0125"+
-		"\u0126\3\2\2\2\u0126\35\3\2\2\2\u0127\u0128\7\24\2\2\u0128\u0129\5(\25"+
-		"\2\u0129\u012d\7\f\2\2\u012a\u012c\5\26\f\2\u012b\u012a\3\2\2\2\u012c"+
-		"\u012f\3\2\2\2\u012d\u012b\3\2\2\2\u012d\u012e\3\2\2\2\u012e\u0130\3\2"+
-		"\2\2\u012f\u012d\3\2\2\2\u0130\u0131\7\r\2\2\u0131\37\3\2\2\2\u0132\u0133"+
-		"\7\25\2\2\u0133\u0134\5(\25\2\u0134\u0138\7\f\2\2\u0135\u0137\5\26\f\2"+
-		"\u0136\u0135\3\2\2\2\u0137\u013a\3\2\2\2\u0138\u0136\3\2\2\2\u0138\u0139"+
-		"\3\2\2\2\u0139\u013b\3\2\2\2\u013a\u0138\3\2\2\2\u013b\u013c\7\r\2\2\u013c"+
-		"!\3\2\2\2\u013d\u013e\7\26\2\2\u013e\u0142\7\f\2\2\u013f\u0141\5\26\f"+
-		"\2\u0140\u013f\3\2\2\2\u0141\u0144\3\2\2\2\u0142\u0140\3\2\2\2\u0142\u0143"+
-		"\3\2\2\2\u0143\u0145\3\2\2\2\u0144\u0142\3\2\2\2\u0145\u0146\7\r\2\2\u0146"+
-		"#\3\2\2\2\u0147\u0148\7\27\2\2\u0148\u0149\5(\25\2\u0149%\3\2\2\2\u014a"+
-		"\u014b\7\30\2\2\u014b\'\3\2\2\2\u014c\u0152\5*\26\2\u014d\u014e\5\66\34"+
-		"\2\u014e\u014f\5*\26\2\u014f\u0151\3\2\2\2\u0150\u014d\3\2\2\2\u0151\u0154"+
-		"\3\2\2\2\u0152\u0150\3\2\2\2\u0152\u0153\3\2\2\2\u0153)\3\2\2\2\u0154"+
-		"\u0152\3\2\2\2\u0155\u015b\5,\27\2\u0156\u0157\58\35\2\u0157\u0158\5,"+
-		"\27\2\u0158\u015a\3\2\2\2\u0159\u0156\3\2\2\2\u015a\u015d\3\2\2\2\u015b"+
-		"\u0159\3\2\2\2\u015b\u015c\3\2\2\2\u015c+\3\2\2\2\u015d\u015b\3\2\2\2"+
-		"\u015e\u0164\5.\30\2\u015f\u0160\5:\36\2\u0160\u0161\5.\30\2\u0161\u0163"+
-		"\3\2\2\2\u0162\u015f\3\2\2\2\u0163\u0166\3\2\2\2\u0164\u0162\3\2\2\2\u0164"+
-		"\u0165\3\2\2\2\u0165-\3\2\2\2\u0166\u0164\3\2\2\2\u0167\u016d\5\60\31"+
-		"\2\u0168\u0169\5<\37\2\u0169\u016a\5\60\31\2\u016a\u016c\3\2\2\2\u016b"+
-		"\u0168\3\2\2\2\u016c\u016f\3\2\2\2\u016d\u016b\3\2\2\2\u016d\u016e\3\2"+
-		"\2\2\u016e/\3\2\2\2\u016f\u016d\3\2\2\2\u0170\u0176\5\62\32\2\u0171\u0172"+
-		"\5> \2\u0172\u0173\5\62\32\2\u0173\u0175\3\2\2\2\u0174\u0171\3\2\2\2\u0175"+
-		"\u0178\3\2\2\2\u0176\u0174\3\2\2\2\u0176\u0177\3\2\2\2\u0177\61\3\2\2"+
-		"\2\u0178\u0176\3\2\2\2\u0179\u0186\5\64\33\2\u017a\u017b\7\n\2\2\u017b"+
-		"\u017c\5(\25\2\u017c\u017d\7\13\2\2\u017d\u0186\3\2\2\2\u017e\u0181\7"+
-		";\2\2\u017f\u0180\7\20\2\2\u0180\u0182\7;\2\2\u0181\u017f\3\2\2\2\u0181"+
-		"\u0182\3\2\2\2\u0182\u0186\3\2\2\2\u0183\u0186\5D#\2\u0184\u0186\5F$\2"+
-		"\u0185\u0179\3\2\2\2\u0185\u017a\3\2\2\2\u0185\u017e\3\2\2\2\u0185\u0183"+
-		"\3\2\2\2\u0185\u0184\3\2\2\2\u0186\63\3\2\2\2\u0187\u0188\5J&\2\u0188"+
-		"\u0189\7\7\2\2\u0189\u018a\5,\27\2\u018a\u018b\7\b\2\2\u018b\65\3\2\2"+
-		"\2\u018c\u018d\t\3\2\2\u018d\67\3\2\2\2\u018e\u018f\t\4\2\2\u018f9\3\2"+
-		"\2\2\u0190\u0191\t\5\2\2\u0191;\3\2\2\2\u0192\u0193\t\6\2\2\u0193=\3\2"+
-		"\2\2\u0194\u0195\7&\2\2\u0195?\3\2\2\2\u0196\u0197\t\7\2\2\u0197A\3\2"+
-		"\2\2\u0198\u0199\5@!\2\u0199\u019a\5(\25\2\u019aC\3\2\2\2\u019b\u019c"+
-		"\7;\2\2\u019c\u019e\7\20\2\2\u019d\u019b\3\2\2\2\u019d\u019e\3\2\2\2\u019e"+
-		"\u019f\3\2\2\2\u019f\u01a0\7;\2\2\u01a0\u01a2\7\n\2\2\u01a1\u01a3\5R*"+
-		"\2\u01a2\u01a1\3\2\2\2\u01a2\u01a3\3\2\2\2\u01a3\u01a4\3\2\2\2\u01a4\u01a5"+
-		"\7\13\2\2\u01a5E\3\2\2\2\u01a6\u01ad\7\65\2\2\u01a7\u01ad\7\66\2\2\u01a8"+
-		"\u01ad\7\67\2\2\u01a9\u01ad\78\2\2\u01aa\u01ad\5H%\2\u01ab\u01ad\7-\2"+
-		"\2\u01ac\u01a6\3\2\2\2\u01ac\u01a7\3\2\2\2\u01ac\u01a8\3\2\2\2\u01ac\u01a9"+
-		"\3\2\2\2\u01ac\u01aa\3\2\2\2\u01ac\u01ab\3\2\2\2\u01adG\3\2\2\2\u01ae"+
-		"\u01b9\7\7\2\2\u01af\u01b1\5R*\2\u01b0\u01af\3\2\2\2\u01b0\u01b1\3\2\2"+
-		"\2\u01b1\u01ba\3\2\2\2\u01b2\u01b3\5,\27\2\u01b3\u01b4\7.\2\2\u01b4\u01b7"+
-		"\5,\27\2\u01b5\u01b6\7/\2\2\u01b6\u01b8\5,\27\2\u01b7\u01b5\3\2\2\2\u01b7"+
-		"\u01b8\3\2\2\2\u01b8\u01ba\3\2\2\2\u01b9\u01b0\3\2\2\2\u01b9\u01b2\3\2"+
-		"\2\2\u01ba\u01bb\3\2\2\2\u01bb\u01bc\7\b\2\2\u01bcI\3\2\2\2\u01bd\u01c1"+
-		"\78\2\2\u01be\u01c1\5H%\2\u01bf\u01c1\7;\2\2\u01c0\u01bd\3\2\2\2\u01c0"+
-		"\u01be\3\2\2\2\u01c0\u01bf\3\2\2\2\u01c1K\3\2\2\2\u01c2\u01c3\7\60\2\2"+
-		"\u01c3\u01c5\7\n\2\2\u01c4\u01c6\5R*\2\u01c5\u01c4\3\2\2\2\u01c5\u01c6"+
-		"\3\2\2\2\u01c6\u01c7\3\2\2\2\u01c7\u01c8\7\13\2\2\u01c8M\3\2\2\2\u01c9"+
-		"\u01ca\7\61\2\2\u01ca\u01cc\7\n\2\2\u01cb\u01cd\5R*\2\u01cc\u01cb\3\2"+
-		"\2\2\u01cc\u01cd\3\2\2\2\u01cd\u01ce\3\2\2\2\u01ce\u01cf\7\13\2\2\u01cf"+
-		"O\3\2\2\2\u01d0\u01d1\7\62\2\2\u01d1\u01d4\7\n\2\2\u01d2\u01d3\7;\2\2"+
-		"\u01d3\u01d5\7\20\2\2\u01d4\u01d2\3\2\2\2\u01d4\u01d5\3\2\2\2\u01d5\u01d6"+
-		"\3\2\2\2\u01d6\u01d7\7;\2\2\u01d7\u01d8\7\13\2\2\u01d8Q\3\2\2\2\u01d9"+
-		"\u01de\5(\25\2\u01da\u01db\7\5\2\2\u01db\u01dd\5(\25\2\u01dc\u01da\3\2"+
-		"\2\2\u01dd\u01e0\3\2\2\2\u01de\u01dc\3\2\2\2\u01de\u01df\3\2\2\2\u01df"+
-		"S\3\2\2\2\u01e0\u01de\3\2\2\2\u01e1\u01e2\79\2\2\u01e2\u01e8\7;\2\2\u01e3"+
-		"\u01e4\7\5\2\2\u01e4\u01e5\79\2\2\u01e5\u01e7\7;\2\2\u01e6\u01e3\3\2\2"+
-		"\2\u01e7\u01ea\3\2\2\2\u01e8\u01e6\3\2\2\2\u01e8\u01e9\3\2\2\2\u01e9U"+
-		"\3\2\2\2\u01ea\u01e8\3\2\2\29Z`flx\u0085\u0087\u008a\u0090\u0094\u009a"+
-		"\u00a0\u00a7\u00ad\u00af\u00b7\u00bf\u00cb\u00cd\u00d0\u00d3\u00d9\u00dd"+
-		"\u00e3\u00e9\u00f0\u00f4\u0100\u0103\u010b\u0118\u0121\u0125\u012d\u0138"+
-		"\u0142\u0152\u015b\u0164\u016d\u0176\u0181\u0185\u019d\u01a2\u01ac\u01b0"+
-		"\u01b7\u01b9\u01c0\u01c5\u01cc\u01d4\u01de\u01e8";
-=======
-		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\4(\t(\4)\t)\4*\t*\3\2\3\2"+
-		"\7\2W\n\2\f\2\16\2Z\13\2\3\2\7\2]\n\2\f\2\16\2`\13\2\3\2\7\2c\n\2\f\2"+
-		"\16\2f\13\2\3\2\7\2i\n\2\f\2\16\2l\13\2\3\3\3\3\3\3\3\4\3\4\3\4\3\4\7"+
-		"\4u\n\4\f\4\16\4x\13\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5\u0084"+
-		"\n\5\5\5\u0086\n\5\3\5\5\5\u0089\n\5\3\6\3\6\3\6\3\6\5\6\u008f\n\6\3\6"+
-		"\3\6\5\6\u0093\n\6\3\6\3\6\7\6\u0097\n\6\f\6\16\6\u009a\13\6\3\6\7\6\u009d"+
-		"\n\6\f\6\16\6\u00a0\13\6\3\6\3\6\3\7\3\7\5\7\u00a6\n\7\3\7\3\7\3\7\3\7"+
-		"\6\7\u00ac\n\7\r\7\16\7\u00ad\3\7\3\7\3\b\3\b\3\b\3\t\5\t\u00b6\n\t\3"+
-		"\t\3\t\3\t\3\t\7\t\u00bc\n\t\f\t\16\t\u00bf\13\t\3\n\3\n\3\n\3\n\3\n\3"+
-		"\n\3\n\3\n\3\n\5\n\u00ca\n\n\5\n\u00cc\n\n\3\n\5\n\u00cf\n\n\3\13\5\13"+
-		"\u00d2\n\13\3\13\3\13\3\13\3\13\5\13\u00d8\n\13\3\13\3\13\5\13\u00dc\n"+
-		"\13\3\13\3\13\7\13\u00e0\n\13\f\13\16\13\u00e3\13\13\3\13\7\13\u00e6\n"+
-		"\13\f\13\16\13\u00e9\13\13\3\13\3\13\3\f\3\f\5\f\u00ef\n\f\3\f\3\f\5\f"+
-		"\u00f3\n\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u00fe\n\f\3\f\5\f\u0101"+
-		"\n\f\3\r\3\r\3\r\3\r\7\r\u0107\n\r\f\r\16\r\u010a\13\r\3\r\3\r\3\16\3"+
-		"\16\3\16\3\16\3\16\3\16\7\16\u0114\n\16\f\16\16\16\u0117\13\16\3\16\3"+
-		"\16\3\17\3\17\7\17\u011d\n\17\f\17\16\17\u0120\13\17\3\17\5\17\u0123\n"+
-		"\17\3\20\3\20\3\20\3\20\7\20\u0129\n\20\f\20\16\20\u012c\13\20\3\20\3"+
-		"\20\3\21\3\21\3\21\3\21\7\21\u0134\n\21\f\21\16\21\u0137\13\21\3\21\3"+
-		"\21\3\22\3\22\3\22\7\22\u013e\n\22\f\22\16\22\u0141\13\22\3\22\3\22\3"+
-		"\23\3\23\3\23\3\24\3\24\3\25\3\25\3\25\3\25\7\25\u014e\n\25\f\25\16\25"+
-		"\u0151\13\25\3\26\3\26\3\26\3\26\7\26\u0157\n\26\f\26\16\26\u015a\13\26"+
-		"\3\27\3\27\3\27\3\27\7\27\u0160\n\27\f\27\16\27\u0163\13\27\3\30\3\30"+
-		"\3\30\3\30\7\30\u0169\n\30\f\30\16\30\u016c\13\30\3\31\3\31\3\31\3\31"+
-		"\7\31\u0172\n\31\f\31\16\31\u0175\13\31\3\32\3\32\3\32\3\32\3\32\3\32"+
-		"\3\32\3\32\5\32\u017f\n\32\3\32\5\32\u0182\n\32\3\32\5\32\u0185\n\32\3"+
-		"\33\3\33\3\33\3\33\3\34\3\34\3\35\3\35\3\36\3\36\3\37\3\37\3 \3 \3!\3"+
-		"!\3\"\3\"\3\"\3#\3#\5#\u019c\n#\3#\3#\3#\5#\u01a1\n#\3#\3#\3$\3$\3$\3"+
-		"$\3$\3$\5$\u01ab\n$\3%\3%\5%\u01af\n%\3%\3%\3%\3%\3%\5%\u01b6\n%\5%\u01b8"+
-		"\n%\3%\3%\3&\3&\5&\u01be\n&\3&\3&\3&\5&\u01c3\n&\3\'\3\'\3\'\3\'\3\'\3"+
-		"(\3(\3(\3(\5(\u01ce\n(\3(\3(\3(\3)\3)\3)\7)\u01d6\n)\f)\16)\u01d9\13)"+
-		"\3*\3*\3*\3*\3*\7*\u01e0\n*\f*\16*\u01e3\13*\3*\2\2+\2\4\6\b\n\f\16\20"+
-		"\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPR\2\b\4\288::\3"+
-		"\2\31\32\3\2\33 \3\2!\"\3\2#%\3\2\',\2\u0201\2T\3\2\2\2\4m\3\2\2\2\6p"+
-		"\3\2\2\2\by\3\2\2\2\n\u008a\3\2\2\2\f\u00a3\3\2\2\2\16\u00b1\3\2\2\2\20"+
-		"\u00b5\3\2\2\2\22\u00c0\3\2\2\2\24\u00d1\3\2\2\2\26\u00fd\3\2\2\2\30\u0102"+
-		"\3\2\2\2\32\u010d\3\2\2\2\34\u011a\3\2\2\2\36\u0124\3\2\2\2 \u012f\3\2"+
-		"\2\2\"\u013a\3\2\2\2$\u0144\3\2\2\2&\u0147\3\2\2\2(\u0149\3\2\2\2*\u0152"+
-		"\3\2\2\2,\u015b\3\2\2\2.\u0164\3\2\2\2\60\u016d\3\2\2\2\62\u0184\3\2\2"+
-		"\2\64\u0186\3\2\2\2\66\u018a\3\2\2\28\u018c\3\2\2\2:\u018e\3\2\2\2<\u0190"+
-		"\3\2\2\2>\u0192\3\2\2\2@\u0194\3\2\2\2B\u0196\3\2\2\2D\u019b\3\2\2\2F"+
-		"\u01aa\3\2\2\2H\u01ac\3\2\2\2J\u01c2\3\2\2\2L\u01c4\3\2\2\2N\u01c9\3\2"+
-		"\2\2P\u01d2\3\2\2\2R\u01da\3\2\2\2TX\5\4\3\2UW\5\f\7\2VU\3\2\2\2WZ\3\2"+
-		"\2\2XV\3\2\2\2XY\3\2\2\2Y^\3\2\2\2ZX\3\2\2\2[]\5\6\4\2\\[\3\2\2\2]`\3"+
-		"\2\2\2^\\\3\2\2\2^_\3\2\2\2_d\3\2\2\2`^\3\2\2\2ac\5\n\6\2ba\3\2\2\2cf"+
-		"\3\2\2\2db\3\2\2\2de\3\2\2\2ej\3\2\2\2fd\3\2\2\2gi\5\26\f\2hg\3\2\2\2"+
-		"il\3\2\2\2jh\3\2\2\2jk\3\2\2\2k\3\3\2\2\2lj\3\2\2\2mn\7\3\2\2no\7:\2\2"+
-		"o\5\3\2\2\2pq\7\4\2\2qv\5\b\5\2rs\7\5\2\2su\5\b\5\2tr\3\2\2\2ux\3\2\2"+
-		"\2vt\3\2\2\2vw\3\2\2\2w\7\3\2\2\2xv\3\2\2\2y\u0085\7:\2\2z\u0083\7\6\2"+
-		"\2{\u0084\78\2\2|\u0084\7:\2\2}~\7\7\2\2~\177\78\2\2\177\u0080\7\b\2\2"+
-		"\u0080\u0081\7\7\2\2\u0081\u0082\7\65\2\2\u0082\u0084\7\b\2\2\u0083{\3"+
-		"\2\2\2\u0083|\3\2\2\2\u0083}\3\2\2\2\u0084\u0086\3\2\2\2\u0085z\3\2\2"+
-		"\2\u0085\u0086\3\2\2\2\u0086\u0088\3\2\2\2\u0087\u0089\5B\"\2\u0088\u0087"+
-		"\3\2\2\2\u0088\u0089\3\2\2\2\u0089\t\3\2\2\2\u008a\u008b\7\t\2\2\u008b"+
-		"\u008c\7:\2\2\u008c\u008e\7\n\2\2\u008d\u008f\5R*\2\u008e\u008d\3\2\2"+
-		"\2\u008e\u008f\3\2\2\2\u008f\u0090\3\2\2\2\u0090\u0092\7\13\2\2\u0091"+
-		"\u0093\t\2\2\2\u0092\u0091\3\2\2\2\u0092\u0093\3\2\2\2\u0093\u0094\3\2"+
-		"\2\2\u0094\u0098\7\f\2\2\u0095\u0097\5\6\4\2\u0096\u0095\3\2\2\2\u0097"+
-		"\u009a\3\2\2\2\u0098\u0096\3\2\2\2\u0098\u0099\3\2\2\2\u0099\u009e\3\2"+
-		"\2\2\u009a\u0098\3\2\2\2\u009b\u009d\5\26\f\2\u009c\u009b\3\2\2\2\u009d"+
-		"\u00a0\3\2\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a1\3\2"+
-		"\2\2\u00a0\u009e\3\2\2\2\u00a1\u00a2\7\r\2\2\u00a2\13\3\2\2\2\u00a3\u00a5"+
-		"\7\16\2\2\u00a4\u00a6\5\16\b\2\u00a5\u00a4\3\2\2\2\u00a5\u00a6\3\2\2\2"+
-		"\u00a6\u00a7\3\2\2\2\u00a7\u00a8\7:\2\2\u00a8\u00ab\7\f\2\2\u00a9\u00ac"+
-		"\5\20\t\2\u00aa\u00ac\5\24\13\2\u00ab\u00a9\3\2\2\2\u00ab\u00aa\3\2\2"+
-		"\2\u00ac\u00ad\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae\u00af"+
-		"\3\2\2\2\u00af\u00b0\7\r\2\2\u00b0\r\3\2\2\2\u00b1\u00b2\7:\2\2\u00b2"+
-		"\u00b3\7\17\2\2\u00b3\17\3\2\2\2\u00b4\u00b6\79\2\2\u00b5\u00b4\3\2\2"+
-		"\2\u00b5\u00b6\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\u00b8\7\4\2\2\u00b8\u00bd"+
-		"\5\22\n\2\u00b9\u00ba\7\5\2\2\u00ba\u00bc\5\22\n\2\u00bb\u00b9\3\2\2\2"+
-		"\u00bc\u00bf\3\2\2\2\u00bd\u00bb\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\21"+
-		"\3\2\2\2\u00bf\u00bd\3\2\2\2\u00c0\u00cb\7:\2\2\u00c1\u00c9\7\6\2\2\u00c2"+
-		"\u00ca\78\2\2\u00c3\u00c4\7\7\2\2\u00c4\u00c5\78\2\2\u00c5\u00c6\7\b\2"+
-		"\2\u00c6\u00c7\7\7\2\2\u00c7\u00c8\7\65\2\2\u00c8\u00ca\7\b\2\2\u00c9"+
-		"\u00c2\3\2\2\2\u00c9\u00c3\3\2\2\2\u00ca\u00cc\3\2\2\2\u00cb\u00c1\3\2"+
-		"\2\2\u00cb\u00cc\3\2\2\2\u00cc\u00ce\3\2\2\2\u00cd\u00cf\5B\"\2\u00ce"+
-		"\u00cd\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf\23\3\2\2\2\u00d0\u00d2\79\2\2"+
-		"\u00d1\u00d0\3\2\2\2\u00d1\u00d2\3\2\2\2\u00d2\u00d3\3\2\2\2\u00d3\u00d4"+
-		"\7\t\2\2\u00d4\u00d5\7:\2\2\u00d5\u00d7\7\n\2\2\u00d6\u00d8\5R*\2\u00d7"+
-		"\u00d6\3\2\2\2\u00d7\u00d8\3\2\2\2\u00d8\u00d9\3\2\2\2\u00d9\u00db\7\13"+
-		"\2\2\u00da\u00dc\t\2\2\2\u00db\u00da\3\2\2\2\u00db\u00dc\3\2\2\2\u00dc"+
-		"\u00dd\3\2\2\2\u00dd\u00e1\7\f\2\2\u00de\u00e0\5\6\4\2\u00df\u00de\3\2"+
-		"\2\2\u00e0\u00e3\3\2\2\2\u00e1\u00df\3\2\2\2\u00e1\u00e2\3\2\2\2\u00e2"+
-		"\u00e7\3\2\2\2\u00e3\u00e1\3\2\2\2\u00e4\u00e6\5\26\f\2\u00e5\u00e4\3"+
-		"\2\2\2\u00e6\u00e9\3\2\2\2\u00e7\u00e5\3\2\2\2\u00e7\u00e8\3\2\2\2\u00e8"+
-		"\u00ea\3\2\2\2\u00e9\u00e7\3\2\2\2\u00ea\u00eb\7\r\2\2\u00eb\25\3\2\2"+
-		"\2\u00ec\u00ed\7:\2\2\u00ed\u00ef\7\20\2\2\u00ee\u00ec\3\2\2\2\u00ee\u00ef"+
-		"\3\2\2\2\u00ef\u00f0\3\2\2\2\u00f0\u00f2\7:\2\2\u00f1\u00f3\5\64\33\2"+
-		"\u00f2\u00f1\3\2\2\2\u00f2\u00f3\3\2\2\2\u00f3\u00f4\3\2\2\2\u00f4\u00fe"+
-		"\5B\"\2\u00f5\u00fe\5\30\r\2\u00f6\u00fe\5\32\16\2\u00f7\u00fe\5\34\17"+
-		"\2\u00f8\u00fe\5$\23\2\u00f9\u00fe\5D#\2\u00fa\u00fe\5L\'\2\u00fb\u00fe"+
-		"\5N(\2\u00fc\u00fe\5&\24\2\u00fd\u00ee\3\2\2\2\u00fd\u00f5\3\2\2\2\u00fd"+
-		"\u00f6\3\2\2\2\u00fd\u00f7\3\2\2\2\u00fd\u00f8\3\2\2\2\u00fd\u00f9\3\2"+
-		"\2\2\u00fd\u00fa\3\2\2\2\u00fd\u00fb\3\2\2\2\u00fd\u00fc\3\2\2\2\u00fe"+
-		"\u0100\3\2\2\2\u00ff\u0101\7\63\2\2\u0100\u00ff\3\2\2\2\u0100\u0101\3"+
-		"\2\2\2\u0101\27\3\2\2\2\u0102\u0103\7\21\2\2\u0103\u0104\5(\25\2\u0104"+
-		"\u0108\7\f\2\2\u0105\u0107\5\26\f\2\u0106\u0105\3\2\2\2\u0107\u010a\3"+
-		"\2\2\2\u0108\u0106\3\2\2\2\u0108\u0109\3\2\2\2\u0109\u010b\3\2\2\2\u010a"+
-		"\u0108\3\2\2\2\u010b\u010c\7\r\2\2\u010c\31\3\2\2\2\u010d\u010e\7\22\2"+
-		"\2\u010e\u010f\7:\2\2\u010f\u0110\7\23\2\2\u0110\u0111\5J&\2\u0111\u0115"+
-		"\7\f\2\2\u0112\u0114\5\26\f\2\u0113\u0112\3\2\2\2\u0114\u0117\3\2\2\2"+
-		"\u0115\u0113\3\2\2\2\u0115\u0116\3\2\2\2\u0116\u0118\3\2\2\2\u0117\u0115"+
-		"\3\2\2\2\u0118\u0119\7\r\2\2\u0119\33\3\2\2\2\u011a\u011e\5\36\20\2\u011b"+
-		"\u011d\5 \21\2\u011c\u011b\3\2\2\2\u011d\u0120\3\2\2\2\u011e\u011c\3\2"+
-		"\2\2\u011e\u011f\3\2\2\2\u011f\u0122\3\2\2\2\u0120\u011e\3\2\2\2\u0121"+
-		"\u0123\5\"\22\2\u0122\u0121\3\2\2\2\u0122\u0123\3\2\2\2\u0123\35\3\2\2"+
-		"\2\u0124\u0125\7\24\2\2\u0125\u0126\5(\25\2\u0126\u012a\7\f\2\2\u0127"+
-		"\u0129\5\26\f\2\u0128\u0127\3\2\2\2\u0129\u012c\3\2\2\2\u012a\u0128\3"+
-		"\2\2\2\u012a\u012b\3\2\2\2\u012b\u012d\3\2\2\2\u012c\u012a\3\2\2\2\u012d"+
-		"\u012e\7\r\2\2\u012e\37\3\2\2\2\u012f\u0130\7\25\2\2\u0130\u0131\5(\25"+
-		"\2\u0131\u0135\7\f\2\2\u0132\u0134\5\26\f\2\u0133\u0132\3\2\2\2\u0134"+
-		"\u0137\3\2\2\2\u0135\u0133\3\2\2\2\u0135\u0136\3\2\2\2\u0136\u0138\3\2"+
-		"\2\2\u0137\u0135\3\2\2\2\u0138\u0139\7\r\2\2\u0139!\3\2\2\2\u013a\u013b"+
-		"\7\26\2\2\u013b\u013f\7\f\2\2\u013c\u013e\5\26\f\2\u013d\u013c\3\2\2\2"+
-		"\u013e\u0141\3\2\2\2\u013f\u013d\3\2\2\2\u013f\u0140\3\2\2\2\u0140\u0142"+
-		"\3\2\2\2\u0141\u013f\3\2\2\2\u0142\u0143\7\r\2\2\u0143#\3\2\2\2\u0144"+
-		"\u0145\7\27\2\2\u0145\u0146\5(\25\2\u0146%\3\2\2\2\u0147\u0148\7\30\2"+
-		"\2\u0148\'\3\2\2\2\u0149\u014f\5*\26\2\u014a\u014b\5\66\34\2\u014b\u014c"+
-		"\5*\26\2\u014c\u014e\3\2\2\2\u014d\u014a\3\2\2\2\u014e\u0151\3\2\2\2\u014f"+
-		"\u014d\3\2\2\2\u014f\u0150\3\2\2\2\u0150)\3\2\2\2\u0151\u014f\3\2\2\2"+
-		"\u0152\u0158\5,\27\2\u0153\u0154\58\35\2\u0154\u0155\5,\27\2\u0155\u0157"+
-		"\3\2\2\2\u0156\u0153\3\2\2\2\u0157\u015a\3\2\2\2\u0158\u0156\3\2\2\2\u0158"+
-		"\u0159\3\2\2\2\u0159+\3\2\2\2\u015a\u0158\3\2\2\2\u015b\u0161\5.\30\2"+
-		"\u015c\u015d\5:\36\2\u015d\u015e\5.\30\2\u015e\u0160\3\2\2\2\u015f\u015c"+
-		"\3\2\2\2\u0160\u0163\3\2\2\2\u0161\u015f\3\2\2\2\u0161\u0162\3\2\2\2\u0162"+
-		"-\3\2\2\2\u0163\u0161\3\2\2\2\u0164\u016a\5\60\31\2\u0165\u0166\5<\37"+
-		"\2\u0166\u0167\5\60\31\2\u0167\u0169\3\2\2\2\u0168\u0165\3\2\2\2\u0169"+
-		"\u016c\3\2\2\2\u016a\u0168\3\2\2\2\u016a\u016b\3\2\2\2\u016b/\3\2\2\2"+
-		"\u016c\u016a\3\2\2\2\u016d\u0173\5\62\32\2\u016e\u016f\5> \2\u016f\u0170"+
-		"\5\62\32\2\u0170\u0172\3\2\2\2\u0171\u016e\3\2\2\2\u0172\u0175\3\2\2\2"+
-		"\u0173\u0171\3\2\2\2\u0173\u0174\3\2\2\2\u0174\61\3\2\2\2\u0175\u0173"+
-<<<<<<< HEAD
-<<<<<<< HEAD
-		"\3\2\2\2\u0176\u0177\7:\2\2\u0177\u0179\7\20\2\2\u0178\u0176\3\2\2\2\u0178"+
-		"\u0179\3\2\2\2\u0179\u017a\3\2\2\2\u017a\u0187\5\64\33\2\u017b\u017c\7"+
-		"\n\2\2\u017c\u017d\5(\25\2\u017d\u017e\7\13\2\2\u017e\u0187\3\2\2\2\u017f"+
-		"\u0182\7:\2\2\u0180\u0181\7\20\2\2\u0181\u0183\7:\2\2\u0182\u0180\3\2"+
-		"\2\2\u0182\u0183\3\2\2\2\u0183\u0187\3\2\2\2\u0184\u0187\5D#\2\u0185\u0187"+
-		"\5F$\2\u0186\u0178\3\2\2\2\u0186\u017b\3\2\2\2\u0186\u017f\3\2\2\2\u0186"+
-		"\u0184\3\2\2\2\u0186\u0185\3\2\2\2\u0187\63\3\2\2\2\u0188\u0189\5J&\2"+
-		"\u0189\u018a\7\7\2\2\u018a\u018b\5,\27\2\u018b\u018c\7\b\2\2\u018c\65"+
-		"\3\2\2\2\u018d\u018e\t\3\2\2\u018e\67\3\2\2\2\u018f\u0190\t\4\2\2\u0190"+
-		"9\3\2\2\2\u0191\u0192\t\5\2\2\u0192;\3\2\2\2\u0193\u0194\t\6\2\2\u0194"+
-		"=\3\2\2\2\u0195\u0196\7&\2\2\u0196?\3\2\2\2\u0197\u0198\t\7\2\2\u0198"+
-		"A\3\2\2\2\u0199\u019a\5@!\2\u019a\u019b\5(\25\2\u019bC\3\2\2\2\u019c\u019d"+
-		"\7:\2\2\u019d\u019f\7\20\2\2\u019e\u019c\3\2\2\2\u019e\u019f\3\2\2\2\u019f"+
-		"\u01a0\3\2\2\2\u01a0\u01a1\7:\2\2\u01a1\u01a3\7\n\2\2\u01a2\u01a4\5P)"+
-		"\2\u01a3\u01a2\3\2\2\2\u01a3\u01a4\3\2\2\2\u01a4\u01a5\3\2\2\2\u01a5\u01a6"+
-		"\7\13\2\2\u01a6E\3\2\2\2\u01a7\u01ae\7\64\2\2\u01a8\u01ae\7\65\2\2\u01a9"+
-		"\u01ae\7\66\2\2\u01aa\u01ae\7\67\2\2\u01ab\u01ae\5H%\2\u01ac\u01ae\7-"+
-		"\2\2\u01ad\u01a7\3\2\2\2\u01ad\u01a8\3\2\2\2\u01ad\u01a9\3\2\2\2\u01ad"+
-		"\u01aa\3\2\2\2\u01ad\u01ab\3\2\2\2\u01ad\u01ac\3\2\2\2\u01aeG\3\2\2\2"+
-		"\u01af\u01ba\7\7\2\2\u01b0\u01b2\5P)\2\u01b1\u01b0\3\2\2\2\u01b1\u01b2"+
-		"\3\2\2\2\u01b2\u01bb\3\2\2\2\u01b3\u01b4\5,\27\2\u01b4\u01b5\7.\2\2\u01b5"+
-		"\u01b8\5,\27\2\u01b6\u01b7\7/\2\2\u01b7\u01b9\5,\27\2\u01b8\u01b6\3\2"+
-		"\2\2\u01b8\u01b9\3\2\2\2\u01b9\u01bb\3\2\2\2\u01ba\u01b1\3\2\2\2\u01ba"+
-		"\u01b3\3\2\2\2\u01bb\u01bc\3\2\2\2\u01bc\u01bd\7\b\2\2\u01bdI\3\2\2\2"+
-		"\u01be\u01c2\7:\2\2\u01bf\u01c2\7\67\2\2\u01c0\u01c2\5H%\2\u01c1\u01be"+
-		"\3\2\2\2\u01c1\u01bf\3\2\2\2\u01c1\u01c0\3\2\2\2\u01c2K\3\2\2\2\u01c3"+
-		"\u01c4\7\60\2\2\u01c4\u01c5\7\n\2\2\u01c5\u01c6\5P)\2\u01c6\u01c7\7\13"+
-		"\2\2\u01c7M\3\2\2\2\u01c8\u01c9\7\61\2\2\u01c9\u01cc\7\n\2\2\u01ca\u01cb"+
-		"\7:\2\2\u01cb\u01cd\7\20\2\2\u01cc\u01ca\3\2\2\2\u01cc\u01cd\3\2\2\2\u01cd"+
-		"\u01ce\3\2\2\2\u01ce\u01cf\7:\2\2\u01cf\u01d0\7\13\2\2\u01d0O\3\2\2\2"+
-		"\u01d1\u01d6\5(\25\2\u01d2\u01d3\7\5\2\2\u01d3\u01d5\5(\25\2\u01d4\u01d2"+
-		"\3\2\2\2\u01d5\u01d8\3\2\2\2\u01d6\u01d4\3\2\2\2\u01d6\u01d7\3\2\2\2\u01d7"+
-		"Q\3\2\2\2\u01d8\u01d6\3\2\2\2\u01d9\u01da\78\2\2\u01da\u01e0\7:\2\2\u01db"+
-		"\u01dc\7\5\2\2\u01dc\u01dd\78\2\2\u01dd\u01df\7:\2\2\u01de\u01db\3\2\2"+
-		"\2\u01df\u01e2\3\2\2\2\u01e0\u01de\3\2\2\2\u01e0\u01e1\3\2\2\2\u01e1S"+
-		"\3\2\2\2\u01e2\u01e0\3\2\2\28X^djv\u0083\u0085\u0088\u008e\u0092\u0098"+
-		"\u009e\u00a5\u00ab\u00ad\u00b5\u00bd\u00c9\u00cb\u00ce\u00d1\u00d7\u00db"+
-		"\u00e1\u00e7\u00ee\u00f2\u00fd\u0100\u0108\u0115\u011e\u0122\u012a\u0135"+
-		"\u013f\u014f\u0158\u0161\u016a\u0173\u0178\u0182\u0186\u019e\u01a3\u01ad"+
-		"\u01b1\u01b8\u01ba\u01c1\u01cc\u01d6\u01e0";
->>>>>>> Implemented array manipulation inside classes.
-=======
-		"\3\2\2\2\u0176\u0186\3\2\2\2\u0177\u0178\7\n\2\2\u0178\u0179\5(\25\2\u0179"+
-		"\u017a\7\13\2\2\u017a\u0186\3\2\2\2\u017b\u0186\5D#\2\u017c\u017f\7:\2"+
-		"\2\u017d\u017e\7\20\2\2\u017e\u0180\7:\2\2\u017f\u017d\3\2\2\2\u017f\u0180"+
-		"\3\2\2\2\u0180\u0182\3\2\2\2\u0181\u0183\5\64\33\2\u0182\u0181\3\2\2\2"+
-		"\u0182\u0183\3\2\2\2\u0183\u0186\3\2\2\2\u0184\u0186\5F$\2\u0185\u0176"+
-		"\3\2\2\2\u0185\u0177\3\2\2\2\u0185\u017b\3\2\2\2\u0185\u017c\3\2\2\2\u0185"+
-		"\u0184\3\2\2\2\u0186\63\3\2\2\2\u0187\u0188\7\7\2\2\u0188\u0189\5,\27"+
-		"\2\u0189\u018a\7\b\2\2\u018a\65\3\2\2\2\u018b\u018c\t\3\2\2\u018c\67\3"+
-		"\2\2\2\u018d\u018e\t\4\2\2\u018e9\3\2\2\2\u018f\u0190\t\5\2\2\u0190;\3"+
-		"\2\2\2\u0191\u0192\t\6\2\2\u0192=\3\2\2\2\u0193\u0194\7&\2\2\u0194?\3"+
-		"\2\2\2\u0195\u0196\t\7\2\2\u0196A\3\2\2\2\u0197\u0198\5@!\2\u0198\u0199"+
-		"\5(\25\2\u0199C\3\2\2\2\u019a\u019b\7:\2\2\u019b\u019d\7\20\2\2\u019c"+
-		"\u019a\3\2\2\2\u019c\u019d\3\2\2\2\u019d\u019e\3\2\2\2\u019e\u019f\7:"+
-		"\2\2\u019f\u01a1\7\n\2\2\u01a0\u01a2\5P)\2\u01a1\u01a0\3\2\2\2\u01a1\u01a2"+
-		"\3\2\2\2\u01a2\u01a3\3\2\2\2\u01a3\u01a4\7\13\2\2\u01a4E\3\2\2\2\u01a5"+
-		"\u01ac\7\64\2\2\u01a6\u01ac\7\65\2\2\u01a7\u01ac\7\66\2\2\u01a8\u01ac"+
-		"\7\67\2\2\u01a9\u01ac\5H%\2\u01aa\u01ac\7-\2\2\u01ab\u01a5\3\2\2\2\u01ab"+
-		"\u01a6\3\2\2\2\u01ab\u01a7\3\2\2\2\u01ab\u01a8\3\2\2\2\u01ab\u01a9\3\2"+
-		"\2\2\u01ab\u01aa\3\2\2\2\u01acG\3\2\2\2\u01ad\u01b8\7\7\2\2\u01ae\u01b0"+
-		"\5P)\2\u01af\u01ae\3\2\2\2\u01af\u01b0\3\2\2\2\u01b0\u01b9\3\2\2\2\u01b1"+
-		"\u01b2\5,\27\2\u01b2\u01b3\7.\2\2\u01b3\u01b6\5,\27\2\u01b4\u01b5\7/\2"+
-		"\2\u01b5\u01b7\5,\27\2\u01b6\u01b4\3\2\2\2\u01b6\u01b7\3\2\2\2\u01b7\u01b9"+
-		"\3\2\2\2\u01b8\u01af\3\2\2\2\u01b8\u01b1\3\2\2\2\u01b9\u01ba\3\2\2\2\u01ba"+
-		"\u01bb\7\b\2\2\u01bbI\3\2\2\2\u01bc\u01bd\7:\2\2\u01bd\u01bf\7\20\2\2"+
-		"\u01be\u01bc\3\2\2\2\u01be\u01bf\3\2\2\2\u01bf\u01c0\3\2\2\2\u01c0\u01c4"+
-		"\7:\2\2\u01c1\u01c4\7\67\2\2\u01c2\u01c4\5H%\2\u01c3\u01be\3\2\2\2\u01c3"+
-		"\u01c1\3\2\2\2\u01c3\u01c2\3\2\2\2\u01c4K\3\2\2\2\u01c5\u01c6\7\60\2\2"+
-		"\u01c6\u01c7\7\n\2\2\u01c7\u01c8\5P)\2\u01c8\u01c9\7\13\2\2\u01c9M\3\2"+
-		"\2\2\u01ca\u01cb\7\61\2\2\u01cb\u01ce\7\n\2\2\u01cc\u01cd\7:\2\2\u01cd"+
-		"\u01cf\7\20\2\2\u01ce\u01cc\3\2\2\2\u01ce\u01cf\3\2\2\2\u01cf\u01d0\3"+
-		"\2\2\2\u01d0\u01d1\7:\2\2\u01d1\u01d2\7\13\2\2\u01d2O\3\2\2\2\u01d3\u01d8"+
-		"\5(\25\2\u01d4\u01d5\7\5\2\2\u01d5\u01d7\5(\25\2\u01d6\u01d4\3\2\2\2\u01d7"+
-		"\u01da\3\2\2\2\u01d8\u01d6\3\2\2\2\u01d8\u01d9\3\2\2\2\u01d9Q\3\2\2\2"+
-		"\u01da\u01d8\3\2\2\2\u01db\u01dc\78\2\2\u01dc\u01e2\7:\2\2\u01dd\u01de"+
-		"\7\5\2\2\u01de\u01df\78\2\2\u01df\u01e1\7:\2\2\u01e0\u01dd\3\2\2\2\u01e1"+
-		"\u01e4\3\2\2\2\u01e2\u01e0\3\2\2\2\u01e2\u01e3\3\2\2\2\u01e3S\3\2\2\2"+
-		"\u01e4\u01e2\3\2\2\29X^djv\u0083\u0085\u0088\u008e\u0092\u0098\u009e\u00a5"+
-		"\u00ab\u00ad\u00b5\u00bd\u00c9\u00cb\u00ce\u00d1\u00d7\u00db\u00e1\u00e7"+
-		"\u00ee\u00f2\u00fd\u0100\u0108\u0115\u011e\u0122\u012a\u0135\u013f\u014f"+
-		"\u0158\u0161\u016a\u0173\u017f\u0182\u0185\u019c\u01a1\u01ab\u01af\u01b6"+
-		"\u01b8\u01be\u01c3\u01ce\u01d8\u01e2";
->>>>>>> Refactor
-=======
-		"\3\2\2\2\u0176\u0177\7\n\2\2\u0177\u0178\5(\25\2\u0178\u0179\7\13\2\2"+
-		"\u0179\u0185\3\2\2\2\u017a\u0185\5D#\2\u017b\u017e\7:\2\2\u017c\u017d"+
-		"\7\20\2\2\u017d\u017f\7:\2\2\u017e\u017c\3\2\2\2\u017e\u017f\3\2\2\2\u017f"+
-		"\u0181\3\2\2\2\u0180\u0182\5\64\33\2\u0181\u0180\3\2\2\2\u0181\u0182\3"+
-		"\2\2\2\u0182\u0185\3\2\2\2\u0183\u0185\5F$\2\u0184\u0176\3\2\2\2\u0184"+
-		"\u017a\3\2\2\2\u0184\u017b\3\2\2\2\u0184\u0183\3\2\2\2\u0185\63\3\2\2"+
-		"\2\u0186\u0187\7\7\2\2\u0187\u0188\5,\27\2\u0188\u0189\7\b\2\2\u0189\65"+
-		"\3\2\2\2\u018a\u018b\t\3\2\2\u018b\67\3\2\2\2\u018c\u018d\t\4\2\2\u018d"+
-		"9\3\2\2\2\u018e\u018f\t\5\2\2\u018f;\3\2\2\2\u0190\u0191\t\6\2\2\u0191"+
-		"=\3\2\2\2\u0192\u0193\7&\2\2\u0193?\3\2\2\2\u0194\u0195\t\7\2\2\u0195"+
-		"A\3\2\2\2\u0196\u0197\5@!\2\u0197\u0198\5(\25\2\u0198C\3\2\2\2\u0199\u019a"+
-		"\7:\2\2\u019a\u019c\7\20\2\2\u019b\u0199\3\2\2\2\u019b\u019c\3\2\2\2\u019c"+
-		"\u019d\3\2\2\2\u019d\u019e\7:\2\2\u019e\u01a0\7\n\2\2\u019f\u01a1\5P)"+
-		"\2\u01a0\u019f\3\2\2\2\u01a0\u01a1\3\2\2\2\u01a1\u01a2\3\2\2\2\u01a2\u01a3"+
-		"\7\13\2\2\u01a3E\3\2\2\2\u01a4\u01ab\7\64\2\2\u01a5\u01ab\7\65\2\2\u01a6"+
-		"\u01ab\7\66\2\2\u01a7\u01ab\7\67\2\2\u01a8\u01ab\5H%\2\u01a9\u01ab\7-"+
-		"\2\2\u01aa\u01a4\3\2\2\2\u01aa\u01a5\3\2\2\2\u01aa\u01a6\3\2\2\2\u01aa"+
-		"\u01a7\3\2\2\2\u01aa\u01a8\3\2\2\2\u01aa\u01a9\3\2\2\2\u01abG\3\2\2\2"+
-		"\u01ac\u01b7\7\7\2\2\u01ad\u01af\5P)\2\u01ae\u01ad\3\2\2\2\u01ae\u01af"+
-		"\3\2\2\2\u01af\u01b8\3\2\2\2\u01b0\u01b1\5,\27\2\u01b1\u01b2\7.\2\2\u01b2"+
-		"\u01b5\5,\27\2\u01b3\u01b4\7/\2\2\u01b4\u01b6\5,\27\2\u01b5\u01b3\3\2"+
-		"\2\2\u01b5\u01b6\3\2\2\2\u01b6\u01b8\3\2\2\2\u01b7\u01ae\3\2\2\2\u01b7"+
-		"\u01b0\3\2\2\2\u01b8\u01b9\3\2\2\2\u01b9\u01ba\7\b\2\2\u01baI\3\2\2\2"+
-		"\u01bb\u01bc\7:\2\2\u01bc\u01be\7\20\2\2\u01bd\u01bb\3\2\2\2\u01bd\u01be"+
-		"\3\2\2\2\u01be\u01bf\3\2\2\2\u01bf\u01c3\7:\2\2\u01c0\u01c3\7\67\2\2\u01c1"+
-		"\u01c3\5H%\2\u01c2\u01bd\3\2\2\2\u01c2\u01c0\3\2\2\2\u01c2\u01c1\3\2\2"+
-		"\2\u01c3K\3\2\2\2\u01c4\u01c5\7\60\2\2\u01c5\u01c6\7\n\2\2\u01c6\u01c7"+
-		"\5P)\2\u01c7\u01c8\7\13\2\2\u01c8M\3\2\2\2\u01c9\u01ca\7\61\2\2\u01ca"+
-		"\u01cd\7\n\2\2\u01cb\u01cc\7:\2\2\u01cc\u01ce\7\20\2\2\u01cd\u01cb\3\2"+
-		"\2\2\u01cd\u01ce\3\2\2\2\u01ce\u01cf\3\2\2\2\u01cf\u01d0\7:\2\2\u01d0"+
-		"\u01d1\7\13\2\2\u01d1O\3\2\2\2\u01d2\u01d7\5(\25\2\u01d3\u01d4\7\5\2\2"+
-		"\u01d4\u01d6\5(\25\2\u01d5\u01d3\3\2\2\2\u01d6\u01d9\3\2\2\2\u01d7\u01d5"+
-		"\3\2\2\2\u01d7\u01d8\3\2\2\2\u01d8Q\3\2\2\2\u01d9\u01d7\3\2\2\2\u01da"+
-		"\u01db\78\2\2\u01db\u01e1\7:\2\2\u01dc\u01dd\7\5\2\2\u01dd\u01de\78\2"+
-		"\2\u01de\u01e0\7:\2\2\u01df\u01dc\3\2\2\2\u01e0\u01e3\3\2\2\2\u01e1\u01df"+
-		"\3\2\2\2\u01e1\u01e2\3\2\2\2\u01e2S\3\2\2\2\u01e3\u01e1\3\2\2\29X^djv"+
-		"\u0083\u0085\u0088\u008e\u0092\u0098\u009e\u00a5\u00ab\u00ad\u00b5\u00bd"+
-		"\u00c9\u00cb\u00ce\u00d1\u00d7\u00db\u00e1\u00e7\u00ee\u00f2\u00fd\u0100"+
-		"\u0108\u0115\u011e\u0122\u012a\u0135\u013f\u014f\u0158\u0161\u016a\u0173"+
-		"\u017e\u0181\u0184\u019b\u01a0\u01aa\u01ae\u01b5\u01b7\u01bd\u01c2\u01cd"+
-		"\u01d7\u01e1";
->>>>>>> Fixed bug in grammar
+		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\4(\t(\4)\t)\4*\t*\4+\t+\4"+
+		",\t,\3\2\3\2\7\2[\n\2\f\2\16\2^\13\2\3\2\7\2a\n\2\f\2\16\2d\13\2\3\2\7"+
+		"\2g\n\2\f\2\16\2j\13\2\3\2\7\2m\n\2\f\2\16\2p\13\2\3\3\3\3\3\3\3\4\3\4"+
+		"\3\4\3\4\7\4y\n\4\f\4\16\4|\13\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3"+
+		"\5\5\5\u0088\n\5\5\5\u008a\n\5\3\5\5\5\u008d\n\5\3\6\3\6\3\6\3\6\5\6\u0093"+
+		"\n\6\3\6\3\6\5\6\u0097\n\6\3\6\3\6\7\6\u009b\n\6\f\6\16\6\u009e\13\6\3"+
+		"\6\7\6\u00a1\n\6\f\6\16\6\u00a4\13\6\3\6\3\6\3\7\3\7\5\7\u00aa\n\7\3\7"+
+		"\3\7\3\7\3\7\6\7\u00b0\n\7\r\7\16\7\u00b1\3\7\3\7\3\b\3\b\3\b\3\t\5\t"+
+		"\u00ba\n\t\3\t\3\t\3\t\3\t\7\t\u00c0\n\t\f\t\16\t\u00c3\13\t\3\n\3\n\3"+
+		"\n\3\n\3\n\3\n\3\n\3\n\3\n\5\n\u00ce\n\n\5\n\u00d0\n\n\3\n\5\n\u00d3\n"+
+		"\n\3\13\5\13\u00d6\n\13\3\13\3\13\3\13\3\13\5\13\u00dc\n\13\3\13\3\13"+
+		"\5\13\u00e0\n\13\3\13\3\13\7\13\u00e4\n\13\f\13\16\13\u00e7\13\13\3\13"+
+		"\7\13\u00ea\n\13\f\13\16\13\u00ed\13\13\3\13\3\13\3\f\3\f\5\f\u00f3\n"+
+		"\f\3\f\3\f\5\f\u00f7\n\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u0103"+
+		"\n\f\3\f\5\f\u0106\n\f\3\r\3\r\3\r\3\r\7\r\u010c\n\r\f\r\16\r\u010f\13"+
+		"\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\7\16\u0119\n\16\f\16\16\16\u011c"+
+		"\13\16\3\16\3\16\3\17\3\17\7\17\u0122\n\17\f\17\16\17\u0125\13\17\3\17"+
+		"\5\17\u0128\n\17\3\20\3\20\3\20\3\20\7\20\u012e\n\20\f\20\16\20\u0131"+
+		"\13\20\3\20\3\20\3\21\3\21\3\21\3\21\7\21\u0139\n\21\f\21\16\21\u013c"+
+		"\13\21\3\21\3\21\3\22\3\22\3\22\7\22\u0143\n\22\f\22\16\22\u0146\13\22"+
+		"\3\22\3\22\3\23\3\23\3\23\3\24\3\24\3\25\3\25\3\25\3\25\7\25\u0153\n\25"+
+		"\f\25\16\25\u0156\13\25\3\26\3\26\3\26\3\26\7\26\u015c\n\26\f\26\16\26"+
+		"\u015f\13\26\3\27\3\27\3\27\3\27\7\27\u0165\n\27\f\27\16\27\u0168\13\27"+
+		"\3\30\3\30\3\30\3\30\7\30\u016e\n\30\f\30\16\30\u0171\13\30\3\31\3\31"+
+		"\3\31\3\31\7\31\u0177\n\31\f\31\16\31\u017a\13\31\3\32\5\32\u017d\n\32"+
+		"\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\5\32\u0187\n\32\3\32\5\32\u018a"+
+		"\n\32\3\32\5\32\u018d\n\32\3\33\3\33\3\33\3\33\3\34\3\34\3\35\3\35\3\36"+
+		"\3\36\3\37\3\37\3 \3 \3!\3!\3\"\3\"\3#\3#\3#\3$\3$\5$\u01a6\n$\3$\3$\3"+
+		"$\5$\u01ab\n$\3$\3$\3%\3%\3%\3%\3%\3%\5%\u01b5\n%\3&\3&\5&\u01b9\n&\3"+
+		"&\3&\3\'\3\'\5\'\u01bf\n\'\3\'\3\'\3\'\5\'\u01c4\n\'\3(\3(\3(\5(\u01c9"+
+		"\n(\3(\3(\3)\3)\3)\5)\u01d0\n)\3)\3)\3*\3*\3*\3*\5*\u01d8\n*\3*\3*\3*"+
+		"\3+\3+\3+\7+\u01e0\n+\f+\16+\u01e3\13+\3,\3,\3,\3,\3,\7,\u01ea\n,\f,\16"+
+		",\u01ed\13,\3,\2\2-\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60"+
+		"\62\64\668:<>@BDFHJLNPRTV\2\b\4\2\67\6799\3\2\31\32\3\2\33 \3\2!\"\3\2"+
+		"#%\3\2\',\2\u020b\2X\3\2\2\2\4q\3\2\2\2\6t\3\2\2\2\b}\3\2\2\2\n\u008e"+
+		"\3\2\2\2\f\u00a7\3\2\2\2\16\u00b5\3\2\2\2\20\u00b9\3\2\2\2\22\u00c4\3"+
+		"\2\2\2\24\u00d5\3\2\2\2\26\u0102\3\2\2\2\30\u0107\3\2\2\2\32\u0112\3\2"+
+		"\2\2\34\u011f\3\2\2\2\36\u0129\3\2\2\2 \u0134\3\2\2\2\"\u013f\3\2\2\2"+
+		"$\u0149\3\2\2\2&\u014c\3\2\2\2(\u014e\3\2\2\2*\u0157\3\2\2\2,\u0160\3"+
+		"\2\2\2.\u0169\3\2\2\2\60\u0172\3\2\2\2\62\u017c\3\2\2\2\64\u018e\3\2\2"+
+		"\2\66\u0192\3\2\2\28\u0194\3\2\2\2:\u0196\3\2\2\2<\u0198\3\2\2\2>\u019a"+
+		"\3\2\2\2@\u019c\3\2\2\2B\u019e\3\2\2\2D\u01a0\3\2\2\2F\u01a5\3\2\2\2H"+
+		"\u01b4\3\2\2\2J\u01b6\3\2\2\2L\u01c3\3\2\2\2N\u01c5\3\2\2\2P\u01cc\3\2"+
+		"\2\2R\u01d3\3\2\2\2T\u01dc\3\2\2\2V\u01e4\3\2\2\2X\\\5\4\3\2Y[\5\f\7\2"+
+		"ZY\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\]\3\2\2\2]b\3\2\2\2^\\\3\2\2\2_a\5\6"+
+		"\4\2`_\3\2\2\2ad\3\2\2\2b`\3\2\2\2bc\3\2\2\2ch\3\2\2\2db\3\2\2\2eg\5\n"+
+		"\6\2fe\3\2\2\2gj\3\2\2\2hf\3\2\2\2hi\3\2\2\2in\3\2\2\2jh\3\2\2\2km\5\26"+
+		"\f\2lk\3\2\2\2mp\3\2\2\2nl\3\2\2\2no\3\2\2\2o\3\3\2\2\2pn\3\2\2\2qr\7"+
+		"\3\2\2rs\79\2\2s\5\3\2\2\2tu\7\4\2\2uz\5\b\5\2vw\7\5\2\2wy\5\b\5\2xv\3"+
+		"\2\2\2y|\3\2\2\2zx\3\2\2\2z{\3\2\2\2{\7\3\2\2\2|z\3\2\2\2}\u0089\79\2"+
+		"\2~\u0087\7\6\2\2\177\u0088\7\67\2\2\u0080\u0088\79\2\2\u0081\u0082\7"+
+		"\7\2\2\u0082\u0083\7\67\2\2\u0083\u0084\7\b\2\2\u0084\u0085\7\7\2\2\u0085"+
+		"\u0086\7\64\2\2\u0086\u0088\7\b\2\2\u0087\177\3\2\2\2\u0087\u0080\3\2"+
+		"\2\2\u0087\u0081\3\2\2\2\u0088\u008a\3\2\2\2\u0089~\3\2\2\2\u0089\u008a"+
+		"\3\2\2\2\u008a\u008c\3\2\2\2\u008b\u008d\5D#\2\u008c\u008b\3\2\2\2\u008c"+
+		"\u008d\3\2\2\2\u008d\t\3\2\2\2\u008e\u008f\7\t\2\2\u008f\u0090\79\2\2"+
+		"\u0090\u0092\7\n\2\2\u0091\u0093\5V,\2\u0092\u0091\3\2\2\2\u0092\u0093"+
+		"\3\2\2\2\u0093\u0094\3\2\2\2\u0094\u0096\7\13\2\2\u0095\u0097\t\2\2\2"+
+		"\u0096\u0095\3\2\2\2\u0096\u0097\3\2\2\2\u0097\u0098\3\2\2\2\u0098\u009c"+
+		"\7\f\2\2\u0099\u009b\5\6\4\2\u009a\u0099\3\2\2\2\u009b\u009e\3\2\2\2\u009c"+
+		"\u009a\3\2\2\2\u009c\u009d\3\2\2\2\u009d\u00a2\3\2\2\2\u009e\u009c\3\2"+
+		"\2\2\u009f\u00a1\5\26\f\2\u00a0\u009f\3\2\2\2\u00a1\u00a4\3\2\2\2\u00a2"+
+		"\u00a0\3\2\2\2\u00a2\u00a3\3\2\2\2\u00a3\u00a5\3\2\2\2\u00a4\u00a2\3\2"+
+		"\2\2\u00a5\u00a6\7\r\2\2\u00a6\13\3\2\2\2\u00a7\u00a9\7\16\2\2\u00a8\u00aa"+
+		"\5\16\b\2\u00a9\u00a8\3\2\2\2\u00a9\u00aa\3\2\2\2\u00aa\u00ab\3\2\2\2"+
+		"\u00ab\u00ac\79\2\2\u00ac\u00af\7\f\2\2\u00ad\u00b0\5\20\t\2\u00ae\u00b0"+
+		"\5\24\13\2\u00af\u00ad\3\2\2\2\u00af\u00ae\3\2\2\2\u00b0\u00b1\3\2\2\2"+
+		"\u00b1\u00af\3\2\2\2\u00b1\u00b2\3\2\2\2\u00b2\u00b3\3\2\2\2\u00b3\u00b4"+
+		"\7\r\2\2\u00b4\r\3\2\2\2\u00b5\u00b6\79\2\2\u00b6\u00b7\7\17\2\2\u00b7"+
+		"\17\3\2\2\2\u00b8\u00ba\78\2\2\u00b9\u00b8\3\2\2\2\u00b9\u00ba\3\2\2\2"+
+		"\u00ba\u00bb\3\2\2\2\u00bb\u00bc\7\4\2\2\u00bc\u00c1\5\22\n\2\u00bd\u00be"+
+		"\7\5\2\2\u00be\u00c0\5\22\n\2\u00bf\u00bd\3\2\2\2\u00c0\u00c3\3\2\2\2"+
+		"\u00c1\u00bf\3\2\2\2\u00c1\u00c2\3\2\2\2\u00c2\21\3\2\2\2\u00c3\u00c1"+
+		"\3\2\2\2\u00c4\u00cf\79\2\2\u00c5\u00cd\7\6\2\2\u00c6\u00ce\7\67\2\2\u00c7"+
+		"\u00c8\7\7\2\2\u00c8\u00c9\7\67\2\2\u00c9\u00ca\7\b\2\2\u00ca\u00cb\7"+
+		"\7\2\2\u00cb\u00cc\7\64\2\2\u00cc\u00ce\7\b\2\2\u00cd\u00c6\3\2\2\2\u00cd"+
+		"\u00c7\3\2\2\2\u00ce\u00d0\3\2\2\2\u00cf\u00c5\3\2\2\2\u00cf\u00d0\3\2"+
+		"\2\2\u00d0\u00d2\3\2\2\2\u00d1\u00d3\5D#\2\u00d2\u00d1\3\2\2\2\u00d2\u00d3"+
+		"\3\2\2\2\u00d3\23\3\2\2\2\u00d4\u00d6\78\2\2\u00d5\u00d4\3\2\2\2\u00d5"+
+		"\u00d6\3\2\2\2\u00d6\u00d7\3\2\2\2\u00d7\u00d8\7\t\2\2\u00d8\u00d9\79"+
+		"\2\2\u00d9\u00db\7\n\2\2\u00da\u00dc\5V,\2\u00db\u00da\3\2\2\2\u00db\u00dc"+
+		"\3\2\2\2\u00dc\u00dd\3\2\2\2\u00dd\u00df\7\13\2\2\u00de\u00e0\t\2\2\2"+
+		"\u00df\u00de\3\2\2\2\u00df\u00e0\3\2\2\2\u00e0\u00e1\3\2\2\2\u00e1\u00e5"+
+		"\7\f\2\2\u00e2\u00e4\5\6\4\2\u00e3\u00e2\3\2\2\2\u00e4\u00e7\3\2\2\2\u00e5"+
+		"\u00e3\3\2\2\2\u00e5\u00e6\3\2\2\2\u00e6\u00eb\3\2\2\2\u00e7\u00e5\3\2"+
+		"\2\2\u00e8\u00ea\5\26\f\2\u00e9\u00e8\3\2\2\2\u00ea\u00ed\3\2\2\2\u00eb"+
+		"\u00e9\3\2\2\2\u00eb\u00ec\3\2\2\2\u00ec\u00ee\3\2\2\2\u00ed\u00eb\3\2"+
+		"\2\2\u00ee\u00ef\7\r\2\2\u00ef\25\3\2\2\2\u00f0\u00f1\79\2\2\u00f1\u00f3"+
+		"\7\20\2\2\u00f2\u00f0\3\2\2\2\u00f2\u00f3\3\2\2\2\u00f3\u00f4\3\2\2\2"+
+		"\u00f4\u00f6\79\2\2\u00f5\u00f7\5\64\33\2\u00f6\u00f5\3\2\2\2\u00f6\u00f7"+
+		"\3\2\2\2\u00f7\u00f8\3\2\2\2\u00f8\u0103\5D#\2\u00f9\u0103\5\30\r\2\u00fa"+
+		"\u0103\5\32\16\2\u00fb\u0103\5\34\17\2\u00fc\u0103\5$\23\2\u00fd\u0103"+
+		"\5F$\2\u00fe\u0103\5N(\2\u00ff\u0103\5P)\2\u0100\u0103\5R*\2\u0101\u0103"+
+		"\5&\24\2\u0102\u00f2\3\2\2\2\u0102\u00f9\3\2\2\2\u0102\u00fa\3\2\2\2\u0102"+
+		"\u00fb\3\2\2\2\u0102\u00fc\3\2\2\2\u0102\u00fd\3\2\2\2\u0102\u00fe\3\2"+
+		"\2\2\u0102\u00ff\3\2\2\2\u0102\u0100\3\2\2\2\u0102\u0101\3\2\2\2\u0103"+
+		"\u0105\3\2\2\2\u0104\u0106\7\62\2\2\u0105\u0104\3\2\2\2\u0105\u0106\3"+
+		"\2\2\2\u0106\27\3\2\2\2\u0107\u0108\7\21\2\2\u0108\u0109\5(\25\2\u0109"+
+		"\u010d\7\f\2\2\u010a\u010c\5\26\f\2\u010b\u010a\3\2\2\2\u010c\u010f\3"+
+		"\2\2\2\u010d\u010b\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u0110\3\2\2\2\u010f"+
+		"\u010d\3\2\2\2\u0110\u0111\7\r\2\2\u0111\31\3\2\2\2\u0112\u0113\7\22\2"+
+		"\2\u0113\u0114\79\2\2\u0114\u0115\7\23\2\2\u0115\u0116\5L\'\2\u0116\u011a"+
+		"\7\f\2\2\u0117\u0119\5\26\f\2\u0118\u0117\3\2\2\2\u0119\u011c\3\2\2\2"+
+		"\u011a\u0118\3\2\2\2\u011a\u011b\3\2\2\2\u011b\u011d\3\2\2\2\u011c\u011a"+
+		"\3\2\2\2\u011d\u011e\7\r\2\2\u011e\33\3\2\2\2\u011f\u0123\5\36\20\2\u0120"+
+		"\u0122\5 \21\2\u0121\u0120\3\2\2\2\u0122\u0125\3\2\2\2\u0123\u0121\3\2"+
+		"\2\2\u0123\u0124\3\2\2\2\u0124\u0127\3\2\2\2\u0125\u0123\3\2\2\2\u0126"+
+		"\u0128\5\"\22\2\u0127\u0126\3\2\2\2\u0127\u0128\3\2\2\2\u0128\35\3\2\2"+
+		"\2\u0129\u012a\7\24\2\2\u012a\u012b\5(\25\2\u012b\u012f\7\f\2\2\u012c"+
+		"\u012e\5\26\f\2\u012d\u012c\3\2\2\2\u012e\u0131\3\2\2\2\u012f\u012d\3"+
+		"\2\2\2\u012f\u0130\3\2\2\2\u0130\u0132\3\2\2\2\u0131\u012f\3\2\2\2\u0132"+
+		"\u0133\7\r\2\2\u0133\37\3\2\2\2\u0134\u0135\7\25\2\2\u0135\u0136\5(\25"+
+		"\2\u0136\u013a\7\f\2\2\u0137\u0139\5\26\f\2\u0138\u0137\3\2\2\2\u0139"+
+		"\u013c\3\2\2\2\u013a\u0138\3\2\2\2\u013a\u013b\3\2\2\2\u013b\u013d\3\2"+
+		"\2\2\u013c\u013a\3\2\2\2\u013d\u013e\7\r\2\2\u013e!\3\2\2\2\u013f\u0140"+
+		"\7\26\2\2\u0140\u0144\7\f\2\2\u0141\u0143\5\26\f\2\u0142\u0141\3\2\2\2"+
+		"\u0143\u0146\3\2\2\2\u0144\u0142\3\2\2\2\u0144\u0145\3\2\2\2\u0145\u0147"+
+		"\3\2\2\2\u0146\u0144\3\2\2\2\u0147\u0148\7\r\2\2\u0148#\3\2\2\2\u0149"+
+		"\u014a\7\27\2\2\u014a\u014b\5(\25\2\u014b%\3\2\2\2\u014c\u014d\7\30\2"+
+		"\2\u014d\'\3\2\2\2\u014e\u0154\5*\26\2\u014f\u0150\5\66\34\2\u0150\u0151"+
+		"\5*\26\2\u0151\u0153\3\2\2\2\u0152\u014f\3\2\2\2\u0153\u0156\3\2\2\2\u0154"+
+		"\u0152\3\2\2\2\u0154\u0155\3\2\2\2\u0155)\3\2\2\2\u0156\u0154\3\2\2\2"+
+		"\u0157\u015d\5,\27\2\u0158\u0159\58\35\2\u0159\u015a\5,\27\2\u015a\u015c"+
+		"\3\2\2\2\u015b\u0158\3\2\2\2\u015c\u015f\3\2\2\2\u015d\u015b\3\2\2\2\u015d"+
+		"\u015e\3\2\2\2\u015e+\3\2\2\2\u015f\u015d\3\2\2\2\u0160\u0166\5.\30\2"+
+		"\u0161\u0162\5:\36\2\u0162\u0163\5.\30\2\u0163\u0165\3\2\2\2\u0164\u0161"+
+		"\3\2\2\2\u0165\u0168\3\2\2\2\u0166\u0164\3\2\2\2\u0166\u0167\3\2\2\2\u0167"+
+		"-\3\2\2\2\u0168\u0166\3\2\2\2\u0169\u016f\5\60\31\2\u016a\u016b\5> \2"+
+		"\u016b\u016c\5\60\31\2\u016c\u016e\3\2\2\2\u016d\u016a\3\2\2\2\u016e\u0171"+
+		"\3\2\2\2\u016f\u016d\3\2\2\2\u016f\u0170\3\2\2\2\u0170/\3\2\2\2\u0171"+
+		"\u016f\3\2\2\2\u0172\u0178\5\62\32\2\u0173\u0174\5@!\2\u0174\u0175\5\62"+
+		"\32\2\u0175\u0177\3\2\2\2\u0176\u0173\3\2\2\2\u0177\u017a\3\2\2\2\u0178"+
+		"\u0176\3\2\2\2\u0178\u0179\3\2\2\2\u0179\61\3\2\2\2\u017a\u0178\3\2\2"+
+		"\2\u017b\u017d\5<\37\2\u017c\u017b\3\2\2\2\u017c\u017d\3\2\2\2\u017d\u018c"+
+		"\3\2\2\2\u017e\u017f\7\n\2\2\u017f\u0180\5(\25\2\u0180\u0181\7\13\2\2"+
+		"\u0181\u018d\3\2\2\2\u0182\u018d\5F$\2\u0183\u0186\79\2\2\u0184\u0185"+
+		"\7\20\2\2\u0185\u0187\79\2\2\u0186\u0184\3\2\2\2\u0186\u0187\3\2\2\2\u0187"+
+		"\u0189\3\2\2\2\u0188\u018a\5\64\33\2\u0189\u0188\3\2\2\2\u0189\u018a\3"+
+		"\2\2\2\u018a\u018d\3\2\2\2\u018b\u018d\5H%\2\u018c\u017e\3\2\2\2\u018c"+
+		"\u0182\3\2\2\2\u018c\u0183\3\2\2\2\u018c\u018b\3\2\2\2\u018d\63\3\2\2"+
+		"\2\u018e\u018f\7\7\2\2\u018f\u0190\5,\27\2\u0190\u0191\7\b\2\2\u0191\65"+
+		"\3\2\2\2\u0192\u0193\t\3\2\2\u0193\67\3\2\2\2\u0194\u0195\t\4\2\2\u0195"+
+		"9\3\2\2\2\u0196\u0197\t\5\2\2\u0197;\3\2\2\2\u0198\u0199\t\5\2\2\u0199"+
+		"=\3\2\2\2\u019a\u019b\t\6\2\2\u019b?\3\2\2\2\u019c\u019d\7&\2\2\u019d"+
+		"A\3\2\2\2\u019e\u019f\t\7\2\2\u019fC\3\2\2\2\u01a0\u01a1\5B\"\2\u01a1"+
+		"\u01a2\5(\25\2\u01a2E\3\2\2\2\u01a3\u01a4\79\2\2\u01a4\u01a6\7\20\2\2"+
+		"\u01a5\u01a3\3\2\2\2\u01a5\u01a6\3\2\2\2\u01a6\u01a7\3\2\2\2\u01a7\u01a8"+
+		"\79\2\2\u01a8\u01aa\7\n\2\2\u01a9\u01ab\5T+\2\u01aa\u01a9\3\2\2\2\u01aa"+
+		"\u01ab\3\2\2\2\u01ab\u01ac\3\2\2\2\u01ac\u01ad\7\13\2\2\u01adG\3\2\2\2"+
+		"\u01ae\u01b5\7\63\2\2\u01af\u01b5\7\64\2\2\u01b0\u01b5\7\65\2\2\u01b1"+
+		"\u01b5\7\66\2\2\u01b2\u01b5\5J&\2\u01b3\u01b5\7-\2\2\u01b4\u01ae\3\2\2"+
+		"\2\u01b4\u01af\3\2\2\2\u01b4\u01b0\3\2\2\2\u01b4\u01b1\3\2\2\2\u01b4\u01b2"+
+		"\3\2\2\2\u01b4\u01b3\3\2\2\2\u01b5I\3\2\2\2\u01b6\u01b8\7\7\2\2\u01b7"+
+		"\u01b9\5T+\2\u01b8\u01b7\3\2\2\2\u01b8\u01b9\3\2\2\2\u01b9\u01ba\3\2\2"+
+		"\2\u01ba\u01bb\7\b\2\2\u01bbK\3\2\2\2\u01bc\u01bd\79\2\2\u01bd\u01bf\7"+
+		"\20\2\2\u01be\u01bc\3\2\2\2\u01be\u01bf\3\2\2\2\u01bf\u01c0\3\2\2\2\u01c0"+
+		"\u01c4\79\2\2\u01c1\u01c4\7\66\2\2\u01c2\u01c4\5J&\2\u01c3\u01be\3\2\2"+
+		"\2\u01c3\u01c1\3\2\2\2\u01c3\u01c2\3\2\2\2\u01c4M\3\2\2\2\u01c5\u01c6"+
+		"\7.\2\2\u01c6\u01c8\7\n\2\2\u01c7\u01c9\5T+\2\u01c8\u01c7\3\2\2\2\u01c8"+
+		"\u01c9\3\2\2\2\u01c9\u01ca\3\2\2\2\u01ca\u01cb\7\13\2\2\u01cbO\3\2\2\2"+
+		"\u01cc\u01cd\7/\2\2\u01cd\u01cf\7\n\2\2\u01ce\u01d0\5T+\2\u01cf\u01ce"+
+		"\3\2\2\2\u01cf\u01d0\3\2\2\2\u01d0\u01d1\3\2\2\2\u01d1\u01d2\7\13\2\2"+
+		"\u01d2Q\3\2\2\2\u01d3\u01d4\7\60\2\2\u01d4\u01d7\7\n\2\2\u01d5\u01d6\7"+
+		"9\2\2\u01d6\u01d8\7\20\2\2\u01d7\u01d5\3\2\2\2\u01d7\u01d8\3\2\2\2\u01d8"+
+		"\u01d9\3\2\2\2\u01d9\u01da\79\2\2\u01da\u01db\7\13\2\2\u01dbS\3\2\2\2"+
+		"\u01dc\u01e1\5(\25\2\u01dd\u01de\7\5\2\2\u01de\u01e0\5(\25\2\u01df\u01dd"+
+		"\3\2\2\2\u01e0\u01e3\3\2\2\2\u01e1\u01df\3\2\2\2\u01e1\u01e2\3\2\2\2\u01e2"+
+		"U\3\2\2\2\u01e3\u01e1\3\2\2\2\u01e4\u01e5\7\67\2\2\u01e5\u01eb\79\2\2"+
+		"\u01e6\u01e7\7\5\2\2\u01e7\u01e8\7\67\2\2\u01e8\u01ea\79\2\2\u01e9\u01e6"+
+		"\3\2\2\2\u01ea\u01ed\3\2\2\2\u01eb\u01e9\3\2\2\2\u01eb\u01ec\3\2\2\2\u01ec"+
+		"W\3\2\2\2\u01ed\u01eb\3\2\2\2:\\bhnz\u0087\u0089\u008c\u0092\u0096\u009c"+
+		"\u00a2\u00a9\u00af\u00b1\u00b9\u00c1\u00cd\u00cf\u00d2\u00d5\u00db\u00df"+
+		"\u00e5\u00eb\u00f2\u00f6\u0102\u0105\u010d\u011a\u0123\u0127\u012f\u013a"+
+		"\u0144\u0154\u015d\u0166\u016f\u0178\u017c\u0186\u0189\u018c\u01a5\u01aa"+
+		"\u01b4\u01b8\u01be\u01c3\u01c8\u01cf\u01d7\u01e1\u01eb";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -64,16 +64,19 @@ exp: add (addOp add)*;
 add: multModDiv (multDivOp multModDiv)*;
 multModDiv: val (expOp val)*;
 val:
-	'(' cond ')'
-	| funcCall
-	| ID ('.' ID)? indexation?
-	| constant; // TODO "addOp?"
+	unaryAddOp? (
+		'(' cond ')'
+		| funcCall
+		| ID ('.' ID)? indexation?
+		| constant // TODO "addOp?"
+	);
 indexation: '[' exp ']';
 
 // Operators
 boolOp: 'and' | 'or';
 cmpOp: '<' | '<=' | '>' | '>=' | 'is' | 'is not';
 addOp: '+' | '-';
+unaryAddOp: '+' | '-';
 multDivOp: '*' | '/' | '%';
 expOp: '**';
 assignOp: '=' | '+=' | '-=' | '*=' | '/=' | '%=';
@@ -88,7 +91,7 @@ constant:
 	| CONST_STR
 	| const_arr
 	| 'none';
-const_arr: '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
+const_arr: '[' condParam? ']';
 iterable: (ID '.')? ID | CONST_STR | const_arr;
 
 // Special functions

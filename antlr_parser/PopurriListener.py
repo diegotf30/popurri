@@ -269,6 +269,15 @@ class PopurriListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PopurriParser#unaryAddOp.
+    def enterUnaryAddOp(self, ctx:PopurriParser.UnaryAddOpContext):
+        pass
+
+    # Exit a parse tree produced by PopurriParser#unaryAddOp.
+    def exitUnaryAddOp(self, ctx:PopurriParser.UnaryAddOpContext):
+        pass
+
+
     # Enter a parse tree produced by PopurriParser#multDivOp.
     def enterMultDivOp(self, ctx:PopurriParser.MultDivOpContext):
         pass

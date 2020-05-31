@@ -816,7 +816,6 @@ class PopurriListener(ParseTreeListener):
 
     def enterForLoop(self, ctx):
         var_id = str(ctx.ID())
-        print(var_id, self.ctxWrapper.top())
         if self.ctxWrapper.varExistsInContext(var_id, ctx=self.ctxWrapper.top()):
             raise error(ctx, VAR_REDEFINITION.format(var_id))
 
@@ -836,9 +835,6 @@ class PopurriListener(ParseTreeListener):
     def exitForLoop(self, ctx):
 
         iter, iterable = self.for_loop_stack.pop()
-
-        # testing
-        # print(iter.address, iterable.address)
 
         # reserve memory for array index
         index_array = self.memHandler.reserve(
@@ -1066,7 +1062,7 @@ class PopurriListener(ParseTreeListener):
             self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     def exitAdd(self, ctx):
-        if self.quadWrapper.topOperator() in [ADD, SUBS]:
+        if self.quadWrapper.topOperator() in [ADD, MINUS]:
             self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     def exitMultModDiv(self, ctx):
@@ -1170,6 +1166,10 @@ class PopurriListener(ParseTreeListener):
             return id
 
     def enterVal(self, ctx):
+        if ctx.unaryAddOp() is not None:
+            self.quadWrapper.insertAddress(None)
+            self.quadWrapper.insertType(None)
+
         if ctx.cond() is not None:  # nested cond
             # Add fake bottom to operator_stack
             self.quadWrapper.insertOperator(FALSEBOTTOM)
@@ -1178,10 +1178,8 @@ class PopurriListener(ParseTreeListener):
         elif ctx.constant() is not None:  # const
             self.quadWrapper.insertAddress(self.getConstant(ctx.constant()))
 
-        # TODO implement arrays
-
     def exitVal(self, ctx):
-        if self.quadWrapper.topOperator() in [POWER]:
+        if self.quadWrapper.topOperator() in [POWER, UNARYADD, UNARYMINUS]:
             self.quadWrapper.generateQuad(ctx, self.memHandler)
 
     def enterBoolOp(self, ctx: PopurriParser.BoolOpContext):
@@ -1201,6 +1199,10 @@ class PopurriListener(ParseTreeListener):
 
     def enterExpOp(self, ctx: PopurriParser.ExpOpContext):
         self.quadWrapper.insertOperator(ctx.getText())
+
+    def enterUnaryAddOp(self, ctx:PopurriParser.UnaryAddOpContext):
+        op = ctx.getText()
+        self.quadWrapper.insertOperator(UNARYADD if op == '+' else UNARYMINUS) # Little hack due to how insertOperator tokenizes strings
 
     def enterIndexation(self, ctx):
         self.array_active = True
@@ -1263,7 +1265,7 @@ class PopurriListener(ParseTreeListener):
         self.inside_expression = True
 
     def exitAssignment(self, ctx):
-        if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
+        if self.quadWrapper.topOperator() in [ASSIGN, ADDASSIGN, MINUSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
             res_address = self.quadWrapper.popAddress()
             var_address = self.quadWrapper.popAddress()
             res_type = self.quadWrapper.popType()
@@ -1403,7 +1405,6 @@ class PopurriListener(ParseTreeListener):
     def enterIterable(self, ctx):
         if ctx.ID() is not None:
             returned_ids = self.validateCalledIds(ctx)
-            print(returned_ids)
             if type(returned_ids) is int:
 
                 array_var = self.ctxWrapper.getVariableByAddress(returned_ids)
@@ -1424,7 +1425,6 @@ class PopurriListener(ParseTreeListener):
             else:
                 array_var = self.ctxWrapper.getVariable(
                     str(ctx.ID()[1]))[str(ctx.ID()[1])]
-                # print(array_var[str(ctx.ID()[1])].arraySize)
                 self.for_loop_iter_var.type = stringifyToken(INT)
 
                 self.for_loop_iter_var.address = self.memHandler.reserve(

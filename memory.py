@@ -41,9 +41,6 @@ class MemoryHandler():
             )
 
         dtype -= INT
-        # Es algo hacky pero tendria que mover demasiado para fixear el problema
-        if dtype == 9:
-            dtype = 4
         return ctxMemory.start + reserved_address + (self.type_offset * dtype)
 
     def update(self, address, value):
@@ -60,15 +57,10 @@ class MemoryHandler():
                 dtype), stringifyToken(tokenizeByValue(value)))
             raise Exception(f'ERROR: {msg}')
 
-        if dtype == 42:
-            print('POINTER')
-            address -= ((37 - INT) * self.type_offset)
-        else:
-            address -= ((dtype - INT) * self.type_offset)
         # obtains the relative address within context address stack [1 -> TYPE_OFFSET]
+        address -= ((dtype - INT) * self.type_offset)
 
         # Update value
-        print(address, dtype, value)
         self.contexts[context].updateAddress(address, dtype, value)
 
     def getContextAddress(self, address):
@@ -87,18 +79,12 @@ class MemoryHandler():
 
     def getAddressType(self, address):
         'obtains the data type from address [INT, FLOAT, BOOL, STRING]'
-        returning_type = math.floor(address / self.type_offset % 5) + INT
-        if returning_type == 37:
-            return 42
         return math.floor(address / self.type_offset % 5) + INT
 
     def getValue(self, address):
         address, context = self.getContextAddress(address)
         dtype = self.getAddressType(address)
-        if dtype == 42:
-            address -= ((37 - INT) * self.type_offset)
-        else:
-            address -= ((dtype - INT) * self.type_offset)
+        address -= ((dtype - INT) * self.type_offset)
 
         return self.contexts[context].getValue(address, dtype)
 
