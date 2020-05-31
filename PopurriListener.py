@@ -1467,7 +1467,7 @@ class PopurriListener(ParseTreeListener):
 
     def enterPrintStmt(self, ctx):
         self.quadWrapper.insertAddress(FALSEBOTTOM)
-        self.statement = False
+        self.inside_expression = True
 
     def exitPrintStmt(self, ctx):
         self.handlePrint(PRINT)
