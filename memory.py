@@ -127,7 +127,8 @@ class Memory():
             INT: 0,
             FLOAT: 0,
             BOOL: 0,
-            STRING: 0
+            STRING: 0,
+            POINTER: 0
         }
         self.max_size = max_size
 
