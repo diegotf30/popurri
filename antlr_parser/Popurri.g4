@@ -15,7 +15,7 @@ ACCESS_TYPE: 'public' | 'protected' | 'private';
 ID: [_a-zA-Z][_a-zA-Z0-9]* [!?]?;
 
 program:
-	module classDeclaration* declarations* function* statement*;
+	module classDeclaration* declarations* function* statement* EOF;
 module: 'module' ID;
 
 declarations: 'var' declaration (',' declaration)*;
