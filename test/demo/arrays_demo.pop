@@ -1,10 +1,13 @@
 module arrays_demo
 
-var a : [int] [5]
-
-for i in a{
-    print('i :', i)
-    print('i + 1 :', i + 1)
-    a[i] = i
-    print('array val: ', a[i])
+class A {
+    var a : [int] [5]
+    var b : string
 }
+
+#var a : [int] [5]
+#print('ola', a[1])
+
+var a : A
+a.a[1] = 10
+print('ola', a.a[1])

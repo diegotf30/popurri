@@ -199,6 +199,14 @@ def run(obj_file):
                     dtype=tokenize(attr.type),
                     value=attr_val
                 )
+                if attr.isArray(): # Allocate array slots
+                    for i in range(attr.arraySize):
+                        slot_val = memHandler.getValue(attr.address + i)
+                        func_mem.reserve(
+                            context=LOCAL,
+                            dtype=tokenize(attr.type),
+                            value=slot_val
+                        )
 
             method_call = True  # Set flag so ERA quad doesnt flush mem
 
@@ -218,7 +226,7 @@ def run(obj_file):
 
             # Allocate required function memory
             ctxs = [LOCAL, TEMPORAL]
-            dtypes = [INT, FLOAT, BOOL, STRING]
+            dtypes = [INT, FLOAT, BOOL, STRING, POINTER]
             for i, era in enumerate([func.era_local, func.era_tmp]):
                 for j, type_allocations in enumerate(era):
                     for _ in range(type_allocations):

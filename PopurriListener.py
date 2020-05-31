@@ -517,6 +517,12 @@ class PopurriListener(ParseTreeListener):
                     context=tokenizeContext(self.ctxWrapper.top()),
                     dtype=tokenize(attr.type)
                 )
+                if attr.isArray(): # Allocate slots
+                    for _ in range(attr.arraySize):
+                        self.memHandler.reserve(
+                            context=tokenizeContext(self.ctxWrapper.top()),
+                            dtype=tokenize(attr.type)
+                        )
 
             context_vars = self.ctxWrapper.variables
             if self.ctxWrapper.insideClass():
@@ -1401,7 +1407,7 @@ class PopurriListener(ParseTreeListener):
             if type(returned_ids) is int:
 
                 array_var = self.ctxWrapper.getVariableByAddress(returned_ids)
-                self.for_loop_iter_var.type = INT
+                self.for_loop_iter_var.type = stringifyToken(INT)
 
                 self.for_loop_iter_var.address = self.memHandler.reserve(
                     context=TEMPORAL,
@@ -1419,7 +1425,7 @@ class PopurriListener(ParseTreeListener):
                 array_var = self.ctxWrapper.getVariable(
                     str(ctx.ID()[1]))[str(ctx.ID()[1])]
                 # print(array_var[str(ctx.ID()[1])].arraySize)
-                self.for_loop_iter_var.type = INT
+                self.for_loop_iter_var.type = stringifyToken(INT)
 
                 self.for_loop_iter_var.address = self.memHandler.reserve(
                     context=TEMPORAL,
