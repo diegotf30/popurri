@@ -22,7 +22,7 @@ declarations: 'var' declaration (',' declaration)*;
 //solamente he encontrado esta solucion al momento. Meter el parseo del arreglo en declaration, lo
 // demas, por alguna razon, ignoraba el '['
 declaration:
-	ID (':' (TYPE | ID | '[' TYPE ']' '[' CONST_I ']'))? assignment?;
+	ID (':' (TYPE | ID | '[' TYPE ']' '[' CONST_I ']'))?;
 
 function:
 	'func' ID '(' funcParams? ')' (TYPE | ID)? '{' declarations* statement* '}';
@@ -31,8 +31,7 @@ classDeclaration:
 	'class' parent? ID '{' (attributes | method)+ '}';
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
-attribute:
-	ID (':' (TYPE | '[' TYPE ']' '[' CONST_I ']'))? assignment?;
+attribute: ID (':' (TYPE | '[' TYPE ']' '[' CONST_I ']'))?;
 method:
 	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' declarations* statement* '}';
 
