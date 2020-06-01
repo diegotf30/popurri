@@ -10,6 +10,9 @@ TYPE_MISMATCH = 'Unsupported operand types for "{}" with "{}" and "{}"'
 EXPECTED_BOOL = 'Expected boolean value but got "{}"'
 VOID_FUNCTION_CALL_ON_EXPRESSION = 'CANNOT CALL VOID FUNCTION "{}" INSIDE EXPRESSION'
 
+# Arrays
+ARRAY_ASSIGNMENT = 'CANNOT USE \'=\' OPERATOR WITH AN ARRAY INDEXATION'
+
 # Functions
 FUNC_REDEFINITION = 'RE-DEFINITION OF FUNCTION "{}"'
 UNDEF_FUNC = 'TRYING TO CALL UNDEFINED FUNCTION "{}"'
@@ -39,3 +42,4 @@ SELF_USE_OUTSIDE_CLASS = 'CANNOT USE keyword \'self\' outside class context'
 # Runtime Error
 EXPECTED_TYPE = 'ERROR: Expected "{}" value but got "{}"'
 CANNOT_CAST = 'ERROR: Cannot cast input "{}" to "{}"'
+OUT_OF_RANGE = 'ERROR: {} out of range '

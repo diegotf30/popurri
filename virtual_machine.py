@@ -6,6 +6,7 @@ from operator import *
 import json
 from copy import deepcopy
 
+
 def importMemory(f):
     memHandler = MemoryHandler()
     mem_dict = json.loads(f.readline())
@@ -18,14 +19,15 @@ def importMemory(f):
 
     return memHandler
 
+
 def importContext(f):
     # Import Variables
     vars = json.loads(f.readline())
-    for ctx in vars.values(): # Iterate over contexts
-        for k,v in ctx.items():
-            if 'func ' in k or 'self' in v: # Inside method/object varTable
+    for ctx in vars.values():  # Iterate over contexts
+        for k, v in ctx.items():
+            if 'func ' in k or 'self' in v:  # Inside method/object varTable
                 for vid, vdict in v.items():
-                    if 'self' in vdict: # Var is object, iterate over attributes
+                    if 'self' in vdict:  # Var is object, iterate over attributes
                         for attrid, attrdict in vdict.items():
                             vdict[attrid] = Variable(**attrdict)
                     else:
@@ -44,7 +46,7 @@ def importContext(f):
 
 opMap = {
     ADD: add,
-    SUBS: sub,
+    MINUS: sub,
     MULT: mul,
     DIV: truediv,
     MOD: mod,
@@ -55,10 +57,19 @@ opMap = {
     GREATEREQ: ge,
     LESSER: lt,
     LESSEREQ: le,
+    UNARYADD: pos,
+    UNARYMINUS: neg,
 }
-def handleOperation(memHandler, op, l_val, r_val, res):
+
+
+def handleBinaryOperation(memHandler, op, l_val, r_val, res):
     opFunc = opMap[op]
     memHandler.update(res, opFunc(l_val, r_val))
+
+def handleUnaryOperation(memHandler, op, r_val, res):
+    opFunc = opMap[op]
+    memHandler.update(res, opFunc(r_val))
+
 
 def run(obj_file):
     with open(obj_file, 'r') as f:
@@ -68,7 +79,7 @@ def run(obj_file):
 
     # Reutilizing the ctx_stack in this wrapper to handle memory stacks
     memCtxWrapper = ContextWrapper()
-    memCtxWrapper.pop() # Remove global context
+    memCtxWrapper.pop()  # Remove global context
     # Flag
     method_call = False
     # Instruction Pointer
@@ -97,28 +108,39 @@ def run(obj_file):
 
         # Operations
         elif op == ASSIGN:
-            if type(l) == str: # l is a return value from a function
+            if type(l) == str:  # l is a return value from a function
                 func_name = 'func ' + l.split('.')[-1]
                 return_var = ctx.getVariable(func_name)
                 l_val = memHandler.getValue(return_var.address)
 
                 # Remove return value from memory & global varTable
                 del ctx.variables['global'][func_name]
-                memHandler.contexts[GLOBAL].sections[tokenize(return_var.type)].pop()
+                memHandler.contexts[GLOBAL].sections[tokenize(
+                    return_var.type)].pop()
 
+            if l_val >= 28000 and l_val <= 30000:
+                val_type = memHandler.getAddressType(l_val)
+                if val_type == POINTER:
+                    l_val = memHandler.getValue(l_val)
+            if res >= 28000 and res <= 30000:
+                res_type = memHandler.getAddressType(res)
+                if res_type == POINTER:
+                    res = memHandler.getValue(res)
             memHandler.update(res, l_val)
-        elif op in [ADD, SUBS, MULT, DIV, MOD, POWER, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ]:
-            handleOperation(memHandler, op, l_val, r_val, res)
-        elif op == ANDOP: # For some reason these arent implemented in operator pkg, so do them manually
+        elif op in [ADD, MINUS, MULT, DIV, MOD, POWER, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ]:
+            handleBinaryOperation(memHandler, op, l_val, r_val, res)
+        elif op in [UNARYADD, UNARYMINUS]:
+            handleUnaryOperation(memHandler, op, r_val, res)
+        elif op == ANDOP:  # For some reason these arent implemented in operator pkg, so do them manually
             memHandler.update(res, l_val and r_val)
         elif op == OROP:
             memHandler.update(res, l_val or r_val)
-        elif op in [ADDASSIGN, SUBSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
+        elif op in [ADDASSIGN, MINUSASSIGN, MULTASSIGN, DIVASSIGN, MODASSIGN]:
             res_val = memHandler.getValue(res)
-            # Move token one pos up, so ADDASSIGN -> ADD, SUBSASSIGN -> SUBS, etc.
+            # Move token one pos up, so ADDASSIGN -> ADD, MINUSASSIGN -> MINUS, etc.
             op -= 1
             # Applies short-hand operator and stores it in res
-            handleOperation(memHandler, op, res_val, l_val, res)
+            handleBinaryOperation(memHandler, op, res_val, l_val, res)
 
         # Special Functions
         elif op == INPUT:
@@ -133,10 +155,13 @@ def run(obj_file):
                     tmp = tmp == 'true'
                 # Input is casted to string by default, so no need to cast
             except Exception:
-                raise Exception(CANNOT_CAST.format(tmp, stringifyToken(res_type)))
+                raise Exception(CANNOT_CAST.format(
+                    tmp, stringifyToken(res_type)))
 
             memHandler.update(res, tmp)
         elif op == PRINT or op == PRINTLN:
+            if res >= 28000 and res <= 30000: # POINTER
+                res = memHandler.getValue(res)
             print(memHandler.getValue(res), end=' ' if PRINT else '\n')
 
         # Classes
@@ -144,10 +169,12 @@ def run(obj_file):
             # Push function's memory ctx to stack
             memCtxWrapper.push(memHandler)
             func_mem = memCtxWrapper.top()
-            func_mem.flush(LOCAL)
-            func_mem.flush(TEMPORAL)
+            # Flush allocated values from memory, but keep count of how many have been allocated
+            for context in [LOCAL, TEMPORAL]:
+                func_mem.flush(context)
+                func_mem.contexts[context].allocations = memHandler.contexts[context].allocations
 
-            if l == 'self': # Recursive class call
+            if l == 'self':  # Recursive class call
                 class_var = ctx.getAttributes(ctx.getClassContext())
                 ctx.push(ctx.getClassContext())
             else:
@@ -159,7 +186,7 @@ def run(obj_file):
                 ctx.push('class ' + class_var['self'].type)
 
             for attr in class_var.values():
-                if attr.id == 'self': # this attribute only contains the class name
+                if attr.id == 'self':  # this attribute only contains the class name
                     continue
 
                 attr_val = memHandler.getValue(attr.address)
@@ -168,8 +195,16 @@ def run(obj_file):
                     dtype=tokenize(attr.type),
                     value=attr_val
                 )
+                if attr.isArray(): # Allocate array slots
+                    for i in range(attr.arraySize):
+                        slot_val = memHandler.getValue(attr.address + i)
+                        func_mem.reserve(
+                            context=LOCAL,
+                            dtype=tokenize(attr.type),
+                            value=slot_val
+                        )
 
-            method_call = True # Set flag so ERA quad doesnt flush mem
+            method_call = True  # Set flag so ERA quad doesnt flush mem
 
         # Function Calls
         elif op == ERA:
@@ -177,8 +212,10 @@ def run(obj_file):
             if not method_call:
                 memCtxWrapper.push(memHandler)
                 func_mem = memCtxWrapper.top()
-                func_mem.flush(LOCAL)
-                func_mem.flush(TEMPORAL)
+                # Flush allocated values from memory, but keep count of how many have been allocated
+                for context in [LOCAL, TEMPORAL]:
+                    func_mem.flush(context)
+                    func_mem.contexts[context].allocations = memHandler.contexts[context].allocations
             else:
                 func_mem = memCtxWrapper.top()
 
@@ -187,7 +224,7 @@ def run(obj_file):
 
             # Allocate required function memory
             ctxs = [LOCAL, TEMPORAL]
-            dtypes = [INT, FLOAT, BOOL, STRING]
+            dtypes = [INT, FLOAT, BOOL, STRING, POINTER]
             for i, era in enumerate([func.era_local, func.era_tmp]):
                 for j, type_allocations in enumerate(era):
                     for _ in range(type_allocations):
@@ -196,7 +233,7 @@ def run(obj_file):
                             dtype=dtypes[j],
                         )
 
-            method_call = False # Reset flag
+            method_call = False  # Reset flag
         elif op == PARAM:
             if ctx.insideClass():
                 params = ctx.variables[ctx.getClassContext()][ctx.top()]
@@ -204,7 +241,7 @@ def run(obj_file):
                 params = ctx.variables[ctx.top()]
 
             # Update the local param address with the passed value
-            paramNo = int(res.split(' ')[1]) # res is formatted as 'param N'
+            paramNo = int(res.split(' ')[1])  # res is formatted as 'param N'
             for param in params.values():
                 if param.paramNo == paramNo:
                     func_mem = memCtxWrapper.top()
@@ -269,5 +306,13 @@ def run(obj_file):
             if 'class ' in ctx.top():
                 ctx.pop()
             continue
+
+        elif op == VERIFY:
+            index = l_val
+            lInf = r_val
+            lSup = memHandler.getValue(res)
+
+            if index < lInf or index > lSup:
+                raise Exception(OUT_OF_RANGE.format(index))
 
         ip += 1

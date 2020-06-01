@@ -1,0 +1,13 @@
+module arrays_demo
+
+class A {
+    var a : [int] [5]
+    var b : string
+}
+
+#var a : [int] [5]
+#print('ola', a[1])
+
+var a : A
+a.a[1] = 10
+print('ola', a.a[1])

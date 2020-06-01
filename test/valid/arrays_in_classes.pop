@@ -1,0 +1,12 @@
+module main
+class arrayClass {
+    private var strVar : [int][4]
+    public var b : int
+    func arrayManipulation(string a) {
+        self.b = 2
+        self.b = self.strVar[1]
+        self.strVar[1 + 1 + 1 + 1] = self.strVar[self.strVar[1 + 1 + 1]]
+    }
+}
+
+var arr : [int] [5]

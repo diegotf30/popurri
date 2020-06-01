@@ -70,13 +70,17 @@ bailes = {
         ("float", "int"): "float",
         ("float", "float"): "float",
         # "a" + "bc" = "abc"
-        ("string", "string"): "string"
+        ("string", "string"): "string",
+        # +10
+        (None, "int"): "int",
+        # +3.14
+        (None, "float"): "float"
     },
-    SUBS: {
+    MINUS: {
         ("int", "int"): "int",
         ("int", "float"): "float",
         ("float", "int"): "float",
-        ("float", "float"): "float"
+        ("float", "float"): "float",
     },
     #### multDivOp ####
     MULT: {
@@ -115,6 +119,19 @@ bailes = {
         ("float", "int"): "float",
         ("float", "float"): "float"
     },
+    #### unaryAddOp ####
+    UNARYADD: {
+        # +10
+        ("None", "int"): "int",
+        # +3.14
+        ("None", "float"): "float"
+    },
+    UNARYMINUS: {
+        # -10
+        ("None", "int"): "int",
+        # -3.14
+        ("None", "float"): "float"
+    }
 }
 
 # Append all combinations to "is" and "is not" operators

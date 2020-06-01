@@ -15,7 +15,7 @@ ACCESS_TYPE: 'public' | 'protected' | 'private';
 ID: [_a-zA-Z][_a-zA-Z0-9]* [!?]?;
 
 program:
-	module classDeclaration* declarations* function* statement*;
+	module classDeclaration* declarations* function* statement* EOF;
 module: 'module' ID;
 
 declarations: 'var' declaration (',' declaration)*;
@@ -32,13 +32,13 @@ classDeclaration:
 parent: ID '->';
 attributes: ACCESS_TYPE? 'var' attribute (',' attribute)*;
 attribute:
-	ID (':' (TYPE | '[' TYPE ']' '[' exp ']'))?;
+	ID (':' (TYPE | '[' TYPE ']' '[' CONST_I ']'))? assignment?;
 method:
 	ACCESS_TYPE? 'func' ID '(' funcParams? ')' (TYPE | ID)? '{' declarations* statement* '}';
 
 // Statements
 statement: (
-		(ID '.')? ID ('[' exp ']')? assignment
+		(ID '.')? ID indexation? assignment
 		| whileLoop
 		| forLoop
 		| branch
@@ -58,23 +58,25 @@ elseStmt: 'else' '{' statement* '}';
 returnStmt: 'return' cond;
 breakStmt: 'break';
 
-cond : cmp (boolOp cmp)*;
-cmp : exp (cmpOp exp)*;
-exp : add (addOp add)*;
-add : multModDiv (multDivOp multModDiv)*;
-multModDiv : val (expOp val)*;
+cond: cmp (boolOp cmp)*;
+cmp: exp (cmpOp exp)*;
+exp: add (addOp add)*;
+add: multModDiv (multDivOp multModDiv)*;
+multModDiv: val (expOp val)*;
 val:
-	'(' cond ')'
-	| ID ('.' ID)?
-	| funcCall
-	| constant
-	| indexation; // TODO "addOp?"
-indexation: iterable '[' exp ']';
+	unaryAddOp? (
+		'(' cond ')'
+		| funcCall
+		| ID ('.' ID)? indexation?
+		| constant // TODO "addOp?"
+	);
+indexation: '[' exp ']';
 
 // Operators
 boolOp: 'and' | 'or';
 cmpOp: '<' | '<=' | '>' | '>=' | 'is' | 'is not';
 addOp: '+' | '-';
+unaryAddOp: '+' | '-';
 multDivOp: '*' | '/' | '%';
 expOp: '**';
 assignOp: '=' | '+=' | '-=' | '*=' | '/=' | '%=';
@@ -89,8 +91,8 @@ constant:
 	| CONST_STR
 	| const_arr
 	| 'none';
-const_arr: '[' (condParam? | exp 'to' exp ('by' exp)?) ']';
-iterable: CONST_STR | const_arr | ID;
+const_arr: '[' condParam? ']';
+iterable: (ID '.')? ID | CONST_STR | const_arr;
 
 // Special functions
 printStmt: 'print' '(' condParam? ')';

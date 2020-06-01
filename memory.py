@@ -3,6 +3,7 @@ from error_tokens import *
 from copy import deepcopy
 import math
 
+
 class MemoryHandler():
     snapshot = None
     context_offset = None
@@ -17,14 +18,15 @@ class MemoryHandler():
         30000 -> 39999 : CONSTANT
         '''
         self.context_offset = context_offset
-        self.type_offset = int(context_offset / 4)
+        self.type_offset = int(context_offset / 5)
 
         if self.type_offset % 1 != 0:
             raise Exception('ERROR: \'context_offset\' must be divisible by 4')
 
         self.contexts = {}
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
-            self.contexts[ctx] = Memory(start=context_offset * i, max_size=self.type_offset)
+            self.contexts[ctx] = Memory(
+                start=context_offset * i, max_size=self.type_offset)
 
     def reserve(self, context, dtype, value=None):
         'reserves an address; assigns value if given'
@@ -50,12 +52,14 @@ class MemoryHandler():
         address, context = self.getContextAddress(address)
         dtype = self.getAddressType(address)
 
-        if tokenizeByValue(value) != dtype:
-            msg = EXPECTED_TYPE.format(stringifyToken(dtype), stringifyToken(tokenizeByValue(value)))
+        if tokenizeByValue(value) != dtype and dtype is not POINTER:
+            msg = EXPECTED_TYPE.format(stringifyToken(
+                dtype), stringifyToken(tokenizeByValue(value)))
             raise Exception(f'ERROR: {msg}')
 
         # obtains the relative address within context address stack [1 -> TYPE_OFFSET]
         address -= ((dtype - INT) * self.type_offset)
+
         # Update value
         self.contexts[context].updateAddress(address, dtype, value)
 
@@ -64,6 +68,7 @@ class MemoryHandler():
         given the address return the address without offset (GLOBAL, LOCAL, TEMPORAL or CONSTANT)
         and its respective context.
         '''
+
         for i, ctx in enumerate([GLOBAL, LOCAL, TEMPORAL, CONSTANT]):
             start = self.context_offset * i
             end = self.context_offset * (i + 1) - 1
@@ -74,7 +79,7 @@ class MemoryHandler():
 
     def getAddressType(self, address):
         'obtains the data type from address [INT, FLOAT, BOOL, STRING]'
-        return math.floor(address / self.type_offset % 4) + INT
+        return math.floor(address / self.type_offset % 5) + INT
 
     def getValue(self, address):
         address, context = self.getContextAddress(address)
@@ -91,7 +96,8 @@ class MemoryHandler():
 
     def flush(self, context=LOCAL):
         start_offset = context - GLOBAL
-        self.contexts[context] = Memory(start=self.context_offset * start_offset, max_size=self.type_offset)
+        self.contexts[context] = Memory(
+            start=self.context_offset * start_offset, max_size=self.type_offset)
 
     def count(self, context=LOCAL):
         'Returns a tuple with the amount of items allocated in each section'
@@ -100,13 +106,29 @@ class MemoryHandler():
 
 
 class Memory():
+    default_val_map = {
+        INT: 0,
+        FLOAT: 0.0,
+        BOOL: False,
+        STRING: '',
+        POINTER: None
+    }
+
     def __init__(self, start, max_size):
         self.start = start
         self.sections = {
             INT: [],
             FLOAT: [],
             BOOL: [],
-            STRING: []
+            STRING: [],
+            POINTER: []
+        }
+        self.allocations = {
+            INT: 0,
+            FLOAT: 0,
+            BOOL: 0,
+            STRING: 0,
+            POINTER: 0
         }
         self.max_size = max_size
 
@@ -115,16 +137,12 @@ class Memory():
         Increase the list size of the given type (INT, FLOAT, BOOL, STRING).
         returns the local address of the reserved space
         '''
-        if len(self.sections[dtype]) == self.max_size:
-            raise Exception(f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
+        if self.allocations[dtype] == self.max_size:
+            raise Exception(
+                f'ERROR: Cannot allocate any more values of type "{stringifyToken(dtype)}", limit is {self.max_size}')
 
-        default_val_map = {
-            INT: 0,
-            FLOAT: 0.0,
-            BOOL: False,
-            STRING: ''
-        }
-        self.sections[dtype].append(default_val_map[dtype])
+        self.sections[dtype].append(self.default_val_map[dtype])
+        self.allocations[dtype] += 1
         return len(self.sections[dtype]) - 1
 
     def updateAddress(self, address, dtype=None, value=None):

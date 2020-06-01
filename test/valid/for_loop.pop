@@ -1,0 +1,10 @@
+module for_loop
+
+var a : [int] [3]
+
+for i in a{
+    for j in a{
+        print(i, j)
+    }
+}
+print('hola')

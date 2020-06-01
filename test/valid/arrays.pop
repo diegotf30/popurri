@@ -1,9 +1,9 @@
-module main
+module arrays_demo
 
-var a : [ int ] [ 4 ]
-var b : [ string ] [ 5 ]
+var int_list : [int] [5]
 
-//b[4] = '4'
-//a[2] = 1
-//a[3] = 2
-//a[2] = 2
+int_list[0] = 10
+int_list[1] = 5
+int_list[2] = 6
+
+print(int_list[0])
