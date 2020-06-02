@@ -1,6 +1,7 @@
 module breakout
 
-var a = 100
+var a : int
+a = 10
 
 while a + 1 > 10 {
     a -= 2

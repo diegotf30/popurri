@@ -668,9 +668,9 @@ class PopurriListener(ParseTreeListener):
                         dtype=tokenize(attr.TYPE())
                     )
                 # No type defined, raise error
-                elif attr.assignment() is None:
-                    raise error(
-                        ctx, MUST_DECLARE_ATTRIBUTE_TYPE.format(str(attr.ID())))
+                # elif attr.assignment() is None:
+                #     raise error(
+                #         ctx, MUST_DECLARE_ATTRIBUTE_TYPE.format(str(attr.ID())))
 
                 var = Variable(
                     id=attr.ID(),
